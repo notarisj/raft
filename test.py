@@ -12,6 +12,7 @@ for i in range(5):
 # Start all nodes
 for node in nodes:
     node.timer.start()
+    time.sleep(0.5)
 
 # Let it run for a while
 time.sleep(50)
