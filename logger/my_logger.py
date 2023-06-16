@@ -3,6 +3,15 @@ import inspect
 import os
 
 
+def _get_caller_info():
+    frame = inspect.currentframe()
+    caller = inspect.getouterframes(frame)[2]
+    filename = os.path.basename(caller.filename)
+    line_number = caller.lineno
+    caller_name = caller.function
+    return f"{filename}:{line_number} - {caller_name}"
+
+
 class MyLogger:
     def __init__(self, log_level=logging.DEBUG):
         self.log_level = log_level
@@ -25,18 +34,10 @@ class MyLogger:
 
         return logger
 
-    def _get_caller_info(self):
-        frame = inspect.currentframe()
-        caller = inspect.getouterframes(frame)[2]
-        filename = os.path.basename(caller.filename)
-        line_number = caller.lineno
-        caller_name = caller.function
-        return f"{filename}:{line_number} - {caller_name}"
-
     def info(self, message):
-        caller_info = self._get_caller_info()
+        caller_info = _get_caller_info()
         self.logger.info(f"{caller_info} - {message}")
 
     def error(self, message):
-        caller_info = self._get_caller_info()
+        caller_info = _get_caller_info()
         self.logger.error(f"{caller_info} - {message}")
