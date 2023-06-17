@@ -24,7 +24,7 @@ max_val_for_timeout = 2
 
 
 class RaftServer:
-    def __init__(self, server_id, raft_servers):
+    def __init__(self, server_id, raft_servers, uncommitted_log_file_path=None, committed_log_file_path=None):
         self.commit_index = -1
         self.server_id = server_id
         self.raft_servers = raft_servers
@@ -35,7 +35,7 @@ class RaftServer:
         self.state = RaftState.FOLLOWER
         self.election_timeout = random.uniform(min_val_for_timeout, max_val_for_timeout)
         self.start = time.time()
-        self.log = Log()
+        self.log = Log(uncommitted_log_file_path, committed_log_file_path)
         self.log.append_entry(self.current_term, '')
         self.election_in_progress = False
 
@@ -49,7 +49,7 @@ class RaftServer:
                         for _server_id, server in raft_servers.items() if _server_id != server_id}
         self.start = time.time()
         self.heartbeat_interval = 0.5
-        self.leader = None
+        self.leader_id = None
         # create thread pool for handling client requests in parallel
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
         self.send_heartbeat_max_retry = 3
@@ -208,6 +208,7 @@ class RaftServer:
 
         if term >= self.current_term:
             self.reset_election_timeout()
+            self.leader_id = leader_id
 
         if term > self.current_term or (self.voted_for is None or self.voted_for == leader_id):
             self.transition_to_follower(verbose=False)
@@ -235,6 +236,7 @@ class RaftServer:
             return response
 
         if prev_log_index > 0 and prev_log_term == self.log.get_entry(prev_log_index).term:
+            logger.info('Deleting conflicting entries')
             self.log.delete_entries_after(prev_log_index)
 
         for entry in entries:
