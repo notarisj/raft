@@ -53,9 +53,11 @@ class RaftServer:
         # create thread pool for handling client requests in parallel
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
         self.send_heartbeat_max_retry = 3
+        threading.Thread(target=self.run).start()
 
     def __str__(self):
-        return f"Server(id={self.server_id}, state={self.state.name}, term={self.current_term}, votedFor={self.voted_for})"
+        return f"Server(id={self.server_id}, state={self.state.name}, " \
+               f"term={self.current_term}, votedFor={self.voted_for})"
 
     def run(self):
         logger.info(f"Starting RaftNode with ID: {self.server_id}")
@@ -97,40 +99,49 @@ class RaftServer:
         self.start = time.time()
         self.election_timeout = random.uniform(1, 2)
 
-    def send_append_entries_to_server(self, _server_id, max_retries, log_entries):
+    def send_append_entries_to_server(self, _server_id, max_retries, log_entries, prev_log_index, prev_log_term):
         retries = 0
-        while _server_id != self.server_id and retries < max_retries:
+        while retries < max_retries:
             try:
-                # def append_entries_rpc(self, term, leader_id, prev_log_index, prev_log_term, entries, leader_commit):
                 response = self.clients[_server_id].call(
-                    'append_entries', self.current_term, self.server_id,
-                    self.log.get_last_index(), self.log.get_entry(self.log.get_last_index()).term,
-                    log_entries, self.commit_index
+                    'append_entries', self.current_term, self.server_id, prev_log_index,
+                    prev_log_term, log_entries, self.commit_index
                 )
                 if response is None:
                     logger.info(f"Node {_server_id} is unreachable")
-                    # time.sleep(1)  # Wait a while before trying again
                     retries += 1
                     continue
                 if not response['success']:
                     logger.info(f"Node {_server_id} rejected heartbeat")
-                    # time.sleep(1)  # Wait a while before trying again
                     retries += 1
                     continue
                 break  # If the response was successful, break the loop
             except Exception as e:
                 logger.error(f"An error occurred: {e}")
-                # time.sleep(1)  # Wait a while before trying again
                 retries += 1
 
     def send_append_entries_to_server_multicast(self, log_entries=None):
+        prev_log_index = self.log.get_last_index()
+        prev_log_term = self.log.get_entry(self.log.get_last_index()).term
+
         if log_entries is None:
             log_entries = []
-        futures = {self.executor.submit(self.send_append_entries_to_server, _server_id, self.send_heartbeat_max_retry, log_entries)
-                   for _server_id in self.raft_servers.keys()
+        else:
+            threading.Thread(target=self.append_entries_to_leader, args=(log_entries,)).start()
+
+        futures = {self.executor.submit(self.send_append_entries_to_server, _server_id, self.send_heartbeat_max_retry,
+                                        log_entries, prev_log_index, prev_log_term)
+                   for _server_id in self.raft_servers.keys() if _server_id != self.server_id
                    }
         for future in concurrent.futures.as_completed(futures):
             future.result()
+        return
+
+    def append_entries_to_leader(self, log_entries):
+        logger.info(f"Appending entries to leader...")
+        for entry in log_entries:
+            self.log.append_entry(self.current_term, entry['command'])
+        logger.info(f"Appended entries to leader. Server state: {self}")
 
     def reset_election_timeout(self):
         self.start = time.time()
@@ -147,10 +158,6 @@ class RaftServer:
 
         for _server_id in self.raft_servers.keys():
             if _server_id != self.server_id:
-                # response = self.clients[_server_id].request_vote(
-                #     self.server_id, self.current_term,
-                #     self.log.get_entry(0).index, self.log.get_entry(0).command
-                # )
                 response = self.clients[_server_id].call(
                     'request_vote', self.server_id, self.current_term
                 )
@@ -181,7 +188,8 @@ class RaftServer:
                     return
 
     def append_entries_rpc(self, term, leader_id, prev_log_index, prev_log_term, entries, leader_commit):
-        logger.info(f"Received append_entries from RaftNode {leader_id} to RaftNode {self.server_id} with entries {entries}")
+        logger.info(
+            f"Received append_entries from RaftNode {leader_id} to RaftNode {self.server_id} with entries {entries}")
         response = {'term': self.current_term, 'success': False}
 
         if term < self.current_term:
@@ -199,18 +207,29 @@ class RaftServer:
             self.current_term = term
 
         if prev_log_index > self.log.get_last_index():
-            logger.info(f"RaftNode {self.server_id} rejected append_entries from RaftNode {leader_id}")
+            logger.info(
+                f"RaftNode {self.server_id} rejected append_entries from RaftNode {leader_id} due to missing entries. "
+                f"Previous log index: {prev_log_index}, Last log index: {self.log.get_last_index()}")
             return response
 
         if prev_log_index > 0 and prev_log_term != self.log.get_entry(prev_log_index).term:
-            logger.info(f"RaftNode {self.server_id} rejected append_entries from RaftNode {leader_id}")
+            logger.info(
+                f"RaftNode {self.server_id} rejected append_entries from RaftNode {leader_id} "
+                f"due to conflicting entries. Previous log index: {prev_log_index}, "
+                f"Previous log term: {prev_log_term}, "
+                f"Log term at index {prev_log_index}: {self.log.get_entry(prev_log_index).term}"
+            )
+            print('prev_log_term', prev_log_term)
+            print('self.log', self.log)
+            print('self.log.get_entry(prev_log_index)', self.log.get_entry(prev_log_index))
+            print('self.log.get_entry(prev_log_index).term', self.log.get_entry(prev_log_index).term)
             return response
 
         if prev_log_index > 0 and prev_log_term == self.log.get_entry(prev_log_index).term:
             self.log.delete_entries_after(prev_log_index)
 
         for entry in entries:
-            self.log.append_entry(entry['term'], entry['command'])
+            self.log.append_entry(self.current_term, entry['command'])
 
         if leader_commit > self.commit_index:
             self.commit_index = min(leader_commit, self.log.get_last_index())
@@ -237,5 +256,4 @@ class RaftServer:
                 f"Vote granted to RaftNode {candidate_id} by RaftNode {self.server_id}, transitioning to FOLLOWER state"
             )
             self.transition_to_follower()
-
         return response
