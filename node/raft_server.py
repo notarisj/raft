@@ -127,7 +127,9 @@ class RaftServer:
         if log_entries is None:
             log_entries = []
         else:
-            threading.Thread(target=self.append_entries_to_leader, args=(log_entries,)).start()
+            threading.Thread(target=self.append_entries_to_leader, args=(log_entries, prev_log_index, prev_log_term)).start()
+            # do not send any log entries if leaded has not appended yet
+            log_entries = []
 
         futures = {self.executor.submit(self.send_append_entries_to_server, _server_id, self.send_heartbeat_max_retry,
                                         log_entries, prev_log_index, prev_log_term)
@@ -137,11 +139,18 @@ class RaftServer:
             future.result()
         return
 
-    def append_entries_to_leader(self, log_entries):
+    def append_entries_to_leader(self, log_entries, prev_log_index, prev_log_term):
         logger.info(f"Appending entries to leader...")
         for entry in log_entries:
             self.log.append_entry(self.current_term, entry['command'])
         logger.info(f"Appended entries to leader. Server state: {self}")
+        futures = {self.executor.submit(self.send_append_entries_to_server, _server_id, self.send_heartbeat_max_retry,
+                                        log_entries, prev_log_index, prev_log_term)
+                   for _server_id in self.raft_servers.keys() if _server_id != self.server_id
+                   }
+        for future in concurrent.futures.as_completed(futures):
+            future.result()
+
 
     def reset_election_timeout(self):
         self.start = time.time()

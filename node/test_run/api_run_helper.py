@@ -1,4 +1,3 @@
-import threading
 import uvicorn
 
 from node.raft_server import RaftServer
@@ -7,6 +6,7 @@ from fastapi import FastAPI
 
 class RaftServerApp:
     def __init__(self, raft_server_id, uvicorn_host, uvicorn_port):
+        self.server = None
         self.raft_server_id = raft_server_id
         self.uvicorn_host = uvicorn_host
         self.uvicorn_port = uvicorn_port
