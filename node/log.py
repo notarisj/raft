@@ -1,6 +1,7 @@
 import os
 import json
 
+
 class LogEntry:
     def __init__(self, index, term, command, is_committed=False):
         self.index = index
@@ -9,7 +10,8 @@ class LogEntry:
         self.is_committed = is_committed
 
     def __str__(self):
-        return f"LogEntry(index={self.index}, term={self.term}, command={self.command}, is_committed={self.is_committed})"
+        return f"LogEntry(index={self.index}, term={self.term}, " \
+               f"command={self.command}, is_committed={self.is_committed})"
 
     def to_dict(self):
         return {
@@ -22,6 +24,7 @@ class LogEntry:
     @staticmethod
     def from_dict(d):
         return LogEntry(d['index'], d['term'], d['command'], d['is_committed'])
+
 
 class Log:
 
@@ -49,9 +52,13 @@ class Log:
         entry = LogEntry(index, term, command)
         self.entries.append(entry)
         self.append_to_file(entry, self.UNCOMMITTED_LOG_FILE_PATH)
+        return index
 
     def get_entry(self, index):
         return self.entries[index - 1]
+
+    def get_last_index(self):
+        return len(self.entries)
 
     def commit_entry(self, index):
         self.entries[index - 1].is_committed = True
@@ -80,3 +87,25 @@ class Log:
             for entry in self.entries[prev_log_index:]:
                 f.write(json.dumps(entry.to_dict()))
                 f.write('\n')
+
+    def contains_entry_at_index(self, index):
+        return index <= len(self.entries)
+
+    def commit_all_entries_after(self, prev_log_index):
+        for entry in self.entries[prev_log_index:]:
+            entry.is_committed = True
+            self.append_to_file(entry, self.COMMITTED_LOG_FILE_PATH)
+        self.entries = self.entries[:prev_log_index]
+        self.rewrite_file_from_entries(prev_log_index)
+
+    def get_all_commands_from_index(self, index):
+        return [entry.command for entry in self.entries[index:]]
+
+    def get_all_commands_from_term(self, term, index_sort=False):
+        commands = []
+        for entry in self.entries:
+            if entry.term == term:
+                commands.append(entry.command)
+        if index_sort:
+            commands.sort(key=lambda x: x.index)
+        return commands

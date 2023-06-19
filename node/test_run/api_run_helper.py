@@ -17,6 +17,9 @@ class RaftServerApp:
         self.servers = {1: {'host': 'localhost', 'port': 5001},
                         2: {'host': 'localhost', 'port': 5002},
                         3: {'host': 'localhost', 'port': 5003}}
+        self.api_servers = {1: {'host': 'localhost', 'port': 8001},
+                            2: {'host': 'localhost', 'port': 8002},
+                            3: {'host': 'localhost', 'port': 8003}}
 
     def create_app(self):
         app = FastAPI()
@@ -24,12 +27,13 @@ class RaftServerApp:
         @app.post("/append_entries")
         def append_entries(_append_entries: dict):
             if self.server.server_id != self.server.leader_id:
-                api_post_request(f"http://0.0.0.0:{self.servers[self.server.leader_id]['port']}/append_entries",
+                api_post_request(f"http://0.0.0.0:{self.api_servers[self.server.leader_id]['port']}/append_entries",
                                  _append_entries)
                 return {"message": f"Forwarded to leader server {self.server.leader_id}"}
-            entries = _append_entries.get("entries", [])
-            self.server.send_append_entries_to_server_multicast(entries)
-            return {"message": "Log entries appended"}
+            else:
+                commands = _append_entries.get("commands", [])
+                self.server.send_append_entries_to_server_multicast(commands)
+                return {"message": "Log entries appended"}
 
         @app.get("/get_log")
         def get_log():
