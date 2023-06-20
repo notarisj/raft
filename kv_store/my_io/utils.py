@@ -3,7 +3,7 @@ import struct
 from typing import Optional
 
 
-def send_message(message, conn) -> None:
+def send_message(message, conn):
     """
     Sends a message over the established connection.
 
@@ -33,6 +33,7 @@ def receive_message(conn) -> Optional[str]:
     Returns:
         message (str): The received message as a string.
     """
+    sys.stdout.flush()
     header = conn.recv(4)
     if not header:
         return None
