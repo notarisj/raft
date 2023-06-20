@@ -105,6 +105,9 @@ class Log:
             commands.append(entry.command)
         return commands
 
+    def get_all_entries_from_index(self, index):
+        return self.entries[index - 1:]
+
     def get_all_commands_from_term(self, term, index_sort=False):
         commands = []
         for entry in self.entries:

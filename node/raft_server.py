@@ -19,6 +19,9 @@ class RaftState(Enum):
     LEADER = 3
 
 
+# min_val_for_timeout = 0.15
+# max_val_for_timeout = 0.3
+
 min_val_for_timeout = 1
 max_val_for_timeout = 2
 
@@ -50,6 +53,7 @@ class RaftServer:
                         for _server_id, server in raft_servers.items() if _server_id != server_id}
         self.start = time.time()
         self.heartbeat_interval = 0.5
+        # self.heartbeat_interval = 0.1
         self.leader_id = None
         # create thread pool for handling client requests in parallel
         self.heartbeat_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
@@ -112,11 +116,12 @@ class RaftServer:
                            _server_id != self.server_id}
 
     def send_append_entries(self, _server_id):
-        commands = self.log.get_all_commands_from_index(self.next_index[_server_id])
+        # commands = self.log.get_all_commands_from_index(self.next_index[_server_id])
+        entries = self.log.get_all_entries_from_index(self.next_index[_server_id])
         try:
             response = self.clients[_server_id].call(
                 'append_entries', self.current_term, self.server_id, self.next_index[_server_id] - 1,
-                self.log.get_entry(self.next_index[_server_id] - 1).term, commands, self.commit_index
+                self.log.get_entry(self.next_index[_server_id] - 1).term, entries, self.commit_index
             )
             if response is None:
                 logger.info(f"Node {_server_id} is unreachable")
@@ -213,8 +218,7 @@ class RaftServer:
                     self.transition_to_follower()
                     return
 
-    def append_entries_rpc(self, term, leader_id, prev_log_index, prev_log_term, commands, leader_commit):
-
+    def append_entries_rpc(self, term, leader_id, prev_log_index, prev_log_term, entries, leader_commit):
         # # print all the input arguments
         # print("term: ", term)
         # print("leader_id: ", leader_id)
@@ -224,7 +228,7 @@ class RaftServer:
         # print("leader_commit: ", leader_commit)
 
         logger.info(
-            f"Received append_entries from RaftNode {leader_id} to RaftNode {self.server_id} with entries {commands}")
+            f"Received append_entries from RaftNode {leader_id} to RaftNode {self.server_id} with entries {entries}")
         response = {'term': self.current_term, 'success': False, 'index': -1}
 
         if term < self.current_term:
@@ -279,9 +283,9 @@ class RaftServer:
             return response
 
         # 4. Append any new entries not already in the log
-        if commands is not None:
-            for command in commands:
-                self.log.append_entry(term, command)
+        if entries is not None:
+            for entry in entries:
+                self.log.append_entry(entry['term'], entry['command'])
 
         # 5. If leaderCommit > commitIndex, set commitIndex = min(leaderCommit, index of last new entry)
         if leader_commit > self.commit_index:
