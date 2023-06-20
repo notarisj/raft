@@ -21,7 +21,7 @@ class CreateValues:
     def generate_line(self, index):
         top_level_key = "{}{}".format(self.top_lvl_key_prefix, index + 1)
         value = self.generate_value(self.parameters_controller.get_max_nesting_level())
-        line = '{{ "{}" : {} }}'.format(top_level_key, value)
+        line = '"{}": {}'.format(top_level_key, value)
         return line
 
     def generate_value(self, nesting_level):
@@ -39,21 +39,21 @@ class CreateValues:
     def generate_key_value_pair(self, key, nesting_level):
         if nesting_level > 0 and self.add_nested_value():
             nested_value = self.generate_value(nesting_level - 1)
-            return '"{}" : {}'.format(key, nested_value)
+            return '"{}": {}'.format(key, nested_value)
         else:
             value_type = self.data_map.get(key)
             if value_type == "int":
-                return '"{}" : {}'.format(key, random.randint(0, 100))
+                return '"{}": {}'.format(key, random.randint(0, 100))
             elif value_type == "float":
-                return '"{}" : {}'.format(key, random.uniform(0, 100))
+                return '"{}": {}'.format(key, random.uniform(0, 100))
             elif value_type == "string":
                 max_length = self.parameters_controller.get_max_string_length()
                 random_string = "".join(random.choices("abcdefghijklmnopqrstuvwxyz", k=max_length))
-                return '"{}" : "{}"'.format(key, random_string)
+                return '"{}": "{}"'.format(key, random_string)
             else:
                 print("Warning: Invalid type '{}' for key '{}'. It should be 'int', 'float', or 'string'. "
                       "Assuming 'int'.".format(value_type, key))
-                return '"{}" : {}'.format(key, random.randint(0, 100))
+                return '"{}": {}'.format(key, random.randint(0, 100))
 
     def add_nested_value(self):
         return random.random() <= self.nested_value_possibility

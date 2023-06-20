@@ -1,7 +1,7 @@
 import sys
 import time
 from parameters_controller import ParametersController
-from kv_store.io.read_file import ReadFile
+from kv_store.my_io.read_file import get_data_from_file
 from create_values import CreateValues
 
 
@@ -13,7 +13,7 @@ if __name__ == "__main__":
     parameters_controller = ParametersController()
     parameters_controller.read_parameters(sys.argv)
 
-    data_map = ReadFile.get_data_from_file(parameters_controller.get_key_file_path())
+    data_map = get_data_from_file(parameters_controller.get_key_file_path())
     parameters_controller.set_max_key_num_of_value(len(data_map))
 
     create_values = CreateValues(data_map, parameters_controller)
