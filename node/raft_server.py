@@ -57,8 +57,8 @@ class RaftServer:
         threading.Thread(target=self.run).start()
 
         # create leader next index for each follower
-        self.next_index = {_server_id: self.log.get_last_index() + 1 for _server_id in raft_servers.keys() if
-                           _server_id != self.server_id}
+        self.next_index = {}
+        self.set_next_index()
         self.active_append_threads = {_server_id: False for _server_id in self.clients.keys()}
 
     def __str__(self):
@@ -105,6 +105,11 @@ class RaftServer:
         self.leader_id = self.server_id
         self.start = time.time()
         self.election_timeout = random.uniform(1, 2)
+        self.set_next_index()
+
+    def set_next_index(self):
+        self.next_index = {_server_id: self.log.get_last_index() + 1 for _server_id in self.raft_servers.keys() if
+                           _server_id != self.server_id}
 
     def send_append_entries(self, _server_id):
         commands = self.log.get_all_commands_from_index(self.next_index[_server_id])
