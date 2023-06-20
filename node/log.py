@@ -65,8 +65,8 @@ class Log:
         self.append_to_file(self.entries[index - 1], self.COMMITTED_LOG_FILE_PATH)
         self.delete_line_from_file(index, self.UNCOMMITTED_LOG_FILE_PATH)
 
-    def get_last_index(self):
-        return len(self.entries)
+    def get_last_term(self):
+        return self.entries[-1].term
 
     def delete_line_from_file(self, index, file_path):
         with open(file_path, "r") as f:
@@ -81,6 +81,7 @@ class Log:
     def delete_entries_after(self, prev_log_index):
         self.entries = self.entries[:prev_log_index]
         self.rewrite_file_from_entries(prev_log_index)
+
 
     def rewrite_file_from_entries(self, prev_log_index):
         with open(self.UNCOMMITTED_LOG_FILE_PATH, "w") as f:
@@ -99,7 +100,10 @@ class Log:
         self.rewrite_file_from_entries(prev_log_index)
 
     def get_all_commands_from_index(self, index):
-        return [entry.command for entry in self.entries[index:]]
+        commands = []
+        for entry in self.entries[index - 1:]:
+            commands.append(entry.command)
+        return commands
 
     def get_all_commands_from_term(self, term, index_sort=False):
         commands = []

@@ -32,7 +32,7 @@ class RaftServerApp:
                 return {"message": f"Forwarded to leader server {self.server.leader_id}"}
             else:
                 commands = _append_entries.get("commands", [])
-                self.server.send_append_entries_to_server_multicast(commands)
+                self.server.append_entries_to_leader(commands)
                 return {"message": "Log entries appended"}
 
         @app.get("/get_log")
