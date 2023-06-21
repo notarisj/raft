@@ -1,78 +1,63 @@
 import unittest
-import tempfile
-import os
-import json
+from pymongo import MongoClient
 
-from log import Log, LogEntry
+from node import Log
 
 
-class LogTests(unittest.TestCase):
-
+class TestLog(unittest.TestCase):
     def setUp(self):
-        self.uncommitted_log_file_path = tempfile.mkstemp()[1]
-        self.committed_log_file_path = tempfile.mkstemp()[1]
-
-        self.log = Log(self.uncommitted_log_file_path, self.committed_log_file_path)
+        self.database_uri = 'mongodb://localhost:27017/'
+        self.database_name = 'test_database'
+        self.collection_name = 'test_collection'
+        self.log = Log(self.database_uri, self.database_name, self.collection_name)
 
     def tearDown(self):
-        os.remove(self.uncommitted_log_file_path)
-        os.remove(self.committed_log_file_path)
+        client = MongoClient(self.database_uri)
+        client.drop_database(self.database_name)
 
-    def test_append_entry(self):
-        term = 1
-        command = "Test command"
-        index = self.log.append_entry(term, command)
-
-        # Check that the entry is added to the log
+    def test_append_and_get_entry(self):
+        self.log.append_entry('term1', 'command1')
+        entry = self.log.get_entry(1)
         self.assertEqual(len(self.log.entries), 1)
-
-        # Check the properties of the added entry
-        entry = self.log.get_entry(index)
-        self.assertEqual(entry.index, index)
-        self.assertEqual(entry.term, term)
-        self.assertEqual(entry.command, command)
-        self.assertFalse(entry.is_committed)
-
-    def test_get_entry(self):
-        term = 1
-        command = "Test command"
-        index = self.log.append_entry(term, command)
-
-        # Check that the correct entry is retrieved
-        entry = self.log.get_entry(index)
-        self.assertEqual(entry.index, index)
-        self.assertEqual(entry.term, term)
-        self.assertEqual(entry.command, command)
-
-    def test_get_last_index(self):
-        # Add multiple entries to the log
-        for i in range(5):
-            self.log.append_entry(i, f"Command {i}")
-
-        # Check the last index
-        last_index = self.log.get_last_index()
-        self.assertEqual(last_index, 5)
+        self.assertEqual(entry.term, 'term1')
+        self.assertEqual(entry.command, 'command1')
 
     def test_commit_entry(self):
-        term = 1
-        command = "Test command"
-        index = self.log.append_entry(term, command)
+        self.log.append_entry('term1', 'command1')
+        self.log.commit_entry(1)
+        self.assertTrue(self.log.entries[0].is_committed)
 
-        # Commit the entry
-        self.log.commit_entry(index)
+    def test_delete_entries_after(self):
+        self.log.append_entry('term1', 'command1')
+        self.log.append_entry('term2', 'command2')
+        self.log.delete_entries_after(1)
+        self.assertEqual(len(self.log.entries), 1)
 
-        # Check that the entry is marked as committed
-        entry = self.log.get_entry(index)
-        self.assertTrue(entry.is_committed)
+    def test_get_last_index(self):
+        self.log.append_entry('term1', 'command1')
+        self.assertEqual(self.log.get_last_index(), 1)
 
-        # Check that the entry is moved to the committed log file
-        with open(self.committed_log_file_path, 'r') as f:
-            committed_entries = [LogEntry.from_dict(json.loads(line)) for line in f]
-        self.assertEqual(len(committed_entries), 1)
-        self.assertEqual(committed_entries[0].index, index)
+    def test_get_last_term(self):
+        self.log.append_entry('term1', 'command1')
+        self.assertEqual(self.log.get_last_term(), 'term1')
 
-    # Write more test cases for the remaining methods in the Log class
+    def test_commit_entries(self):
+        self.log.append_entry('term1', 'command1')
+        self.log.append_entry('term2', 'command2')
+        self.log.commit_entries(0, 2)
+        self.assertTrue(all(entry.is_committed for entry in self.log.entries))
+
+    def test_get_last_commit_index(self):
+        self.log.append_entry('term1', 'command1')
+        self.log.commit_entry(1)
+        self.assertEqual(self.log.get_last_commit_index(), 1)
+
+    def test_get_all_entries_from_index(self):
+        self.log.append_entry('term1', 'command1')
+        self.log.append_entry('term2', 'command2')
+        entries = self.log.get_all_entries_from_index(1)
+        self.assertEqual(len(entries), 2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

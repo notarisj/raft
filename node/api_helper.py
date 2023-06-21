@@ -40,4 +40,3 @@ def api_post_request(url, payload):
         # Request was unsuccessful
         # Raise an exception with the error message
         raise Exception(f'Request failed with status code {response.status_code}')
-

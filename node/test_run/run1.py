@@ -5,5 +5,6 @@ if __name__ == "__main__":
     uvicorn_host = "0.0.0.0"
     uvicorn_port = 8001
 
-    app = RaftServerApp(raft_server_id, uvicorn_host, uvicorn_port, 'uncommitted_log_1.txt', 'committed_log_1.txt')
+    app = RaftServerApp(raft_server_id, uvicorn_host, uvicorn_port, 'mongodb://localhost:27017',
+                        'raft', 'log_1')
     app.start()

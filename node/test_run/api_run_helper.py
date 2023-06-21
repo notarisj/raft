@@ -6,14 +6,14 @@ from fastapi import FastAPI
 
 
 class RaftServerApp:
-    def __init__(self, raft_server_id, uvicorn_host, uvicorn_port, uncommitted_log_file_path=None,
-                 committed_log_file_path=None):
+    def __init__(self, raft_server_id, uvicorn_host, uvicorn_port, database_uri, database_name, collection_name):
         self.server = None
         self.raft_server_id = raft_server_id
         self.uvicorn_host = uvicorn_host
         self.uvicorn_port = uvicorn_port
-        self.uncommitted_log_file_path = uncommitted_log_file_path
-        self.committed_log_file_path = committed_log_file_path
+        self.database_uri = database_uri
+        self.database_name = database_name
+        self.collection_name = collection_name
         self.servers = {1: {'host': 'localhost', 'port': 5001},
                         2: {'host': 'localhost', 'port': 5002},
                         3: {'host': 'localhost', 'port': 5003}}
@@ -43,7 +43,6 @@ class RaftServerApp:
 
     def start(self):
         self.server = RaftServer(self.raft_server_id, self.servers,
-                                 self.uncommitted_log_file_path,
-                                 self.committed_log_file_path)
+                                 self.database_uri, self.database_name, self.collection_name)
         app = self.create_app()
         uvicorn.run(app, host=self.uvicorn_host, port=self.uvicorn_port)
