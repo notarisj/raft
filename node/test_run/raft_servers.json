@@ -1,0 +1,17 @@
+{
+  "1": {
+    "host": "localhost",
+    "raft_port": 5001,
+    "api_port": 8001
+  },
+  "2": {
+    "host": "localhost",
+    "raft_port": 5002,
+    "api_port": 8002
+  },
+  "3": {
+    "host": "localhost",
+    "raft_port": 5003,
+    "api_port": 8003
+  }
+}
