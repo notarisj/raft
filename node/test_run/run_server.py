@@ -18,8 +18,8 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
 
-    raft_config = IniConfig('/home/notaris/Documents/git/raft/node/test_run/config.ini')
-    raft_servers_config = JsonConfig('/home/notaris/Documents/git/raft/node/test_run/raft_servers.json').config
+    raft_config = IniConfig('node/test_run/config.ini')
+    raft_servers_config = JsonConfig('node/test_run/raft_servers.json').config
 
     server_id = args.server_id if args.server_id is not None else \
         raft_config.get_property('raft', 'server_id')

@@ -33,7 +33,7 @@ class RaftServerApp:
         self.database_uri = database_uri
         self.database_name = database_name
         self.collection_name = collection_name
-        self.raft_config = JsonConfig('/home/notaris/Documents/git/raft/node/test_run/raft_servers.json')
+        self.raft_config = JsonConfig('node/test_run/raft_servers.json')
         self.servers, self.api_servers = split_dictionary(self.raft_config.config)
 
     def create_app(self):
