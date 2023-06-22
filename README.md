@@ -62,8 +62,7 @@ more details.
 
 ## Communication Diagram
 In the following diagram, the communication between the key value store and raft nodes is shown.
-![Communications diagram](./diagram/communication_diagram.svg)
-
+<img src="./diagram/communication_diagram.svg" alt="Communications diagram" style="display: block; margin: 0 auto;" width="800">
 
 ## License
 
