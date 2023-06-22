@@ -11,6 +11,6 @@ setup(
         'pymongo~=4.3.3',
         'uvicorn~=0.21.0',
         'fastapi~=0.94.0',
-        'requests~=2.30.0',
+        'requests~=2.31.0',
     ],
 )
