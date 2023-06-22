@@ -45,7 +45,7 @@ class Log:
         index = len(self.entries) + 1
         entry = LogEntry(index, term, command)
         self.entries.append(entry)
-        # self.save_entry(entry)
+        self.save_entry(entry)
         return index
 
     def get_entry(self, index):
@@ -59,29 +59,50 @@ class Log:
     def commit_entry(self, index):
         entry = self.entries[index - 1]
         entry.is_committed = True
-        self.save_entry(entry)
+        self.collection.update_one({'index': index}, {'$set': entry.to_dict()})
 
     def delete_entry_from_collection(self, entry):
         self.collection.delete_one({'index': entry.index})
 
     def delete_entries_after(self, prev_log_index):
         self.entries = self.entries[:prev_log_index]
-        self.collection.delete_many({'index': {'$gt': prev_log_index}})
+        result = self.collection.delete_many({'index': {'$gt': prev_log_index}})
+        print(f"Deleted {result.deleted_count} entries from collection.")
 
     def get_last_term(self):
         return self.entries[-1].term
 
-    def commit_entries(self, commit_index, leader_commit):
-        print(f"Committing entries from {commit_index} to {leader_commit}")
-        for entry in self.entries[commit_index:leader_commit]:
+    def commit_entries(self, commit_index, new_commit_index):
+        print(f"Committing entries from {commit_index} to {new_commit_index}")
+        for entry in self.entries[commit_index:new_commit_index]:
+            print('inside commit entries')
             entry.is_committed = True
-            self.save_entry(entry)
+            self.collection.update_one({'index': entry.index}, {'$set': entry.to_dict()})
+
+    # def get_last_commit_index(self):
+    #     return self.collection.count_documents({'is_committed': True})
 
     def get_last_commit_index(self):
-        return self.collection.count_documents({'is_committed': True})
+        for i in range(len(self.entries) - 1, -1, -1):
+            if self.entries[i].is_committed:
+                return i + 1
 
     def get_all_entries_from_index(self, index):
         return self.entries[index - 1:]
 
     def is_empty(self):
         return len(self.entries) == 0
+
+    def update_entry(self, index):
+        entry = self.entries[index - 1]
+        self.collection.update_one({'index': index}, {'$set': entry.to_dict()})
+
+    def is_up_to_date(self, last_log_index, last_log_term):
+        print(f"last_log_index: {last_log_index}, last_log_term: {last_log_term}")
+        print(f"self.get_last_index(): {self.get_last_index()}, self.get_last_term(): {self.get_last_term()}")
+        if last_log_term > self.get_last_term():
+            return True
+        elif last_log_term == self.get_last_term() and last_log_index >= self.get_last_index():
+            return True
+        else:
+            return False
