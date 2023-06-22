@@ -22,7 +22,7 @@ pip install dist/raft*.tar.gz
 ## Usage
 
 ### Running the Application
-You can start the server using the run_server.sh bash script. This script takes in a 
+You can start the server using the [run_server.sh](./node/test_run/bash/run_server.sh) bash script. This script takes in a 
 directory path and optional arguments for configuration. If no parameters are provided,
 the script will use the default configuration from the [config.ini](./node/test_run/config.ini) 
 file. Note that if you want to test it in the same machine, you need to change the ports
