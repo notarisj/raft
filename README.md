@@ -60,6 +60,11 @@ Options:
 Please refer to the [run_server.sh](./node/test_run/bash/run_server.sh) script for 
 more details.
 
+## Communication Diagram
+In the following diagram, the communication between the key value store and raft nodes is shown.
+![Communications diagram](./diagram/communication_diagram.svg)
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
