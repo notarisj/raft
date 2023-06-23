@@ -1,6 +1,9 @@
 import json
 
 from src.kv_store.trie_data_structure.data_tree import Tree
+from src.logger import MyLogger
+
+logger = MyLogger()
 
 
 class RequestHandler:
@@ -26,8 +29,8 @@ class RequestHandler:
             key_search = query_parts[1].replace("\"", "")
             return self._execute_search_request(key_search)
         else:
-            print("Wrong query: " + query)
-            print("Wrong type of query. Request must be: PUT, DELETE, SEARCH.")
+            logger.info(f"Wrong query: {query}")
+            logger.info("Wrong type of query. Request must be: PUT, DELETE, SEARCH.")
             return "WRONG QUERY TYPE"
 
     def _execute_put_request(self, query) -> str:
@@ -40,9 +43,9 @@ class RequestHandler:
                 self.trie.insert(query)
             except IndexError:
                 self.trie.delete(splitted_data[0])
-                print("Error while indexing data of \"" + query + "\". "
-                      "Data don't have the right format.")
-                print("Server will not index \"" + splitted_data[0] + "\".")
+                logger.info("Error while indexing data of \"" + query + "\". "
+                                                                        "Data don't have the right format.")
+                logger.info("Server will not index \"" + splitted_data[0] + "\".")
                 return "ERROR"
             return "OK"
         else:

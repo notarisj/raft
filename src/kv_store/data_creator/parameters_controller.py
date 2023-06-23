@@ -1,3 +1,8 @@
+from src.logger import MyLogger
+
+logger = MyLogger()
+
+
 class ParametersController:
     def __init__(self):
         self.key_file_path = ""
@@ -29,7 +34,8 @@ class ParametersController:
                 else:
                     raise ValueError("Error: Invalid parameter flag: {}".format(flag))
             except ValueError:
-                raise ValueError("Error: Failed to convert value '{}' for parameter flag '{}' to an integer".format(value, flag))
+                raise ValueError(
+                    "Error: Failed to convert value '{}' for parameter flag '{}' to an integer".format(value, flag))
 
     def get_key_file_path(self):
         return self.key_file_path
@@ -45,8 +51,8 @@ class ParametersController:
 
     def set_max_key_num_of_value(self, new_size):
         if new_size < self.max_key_num_of_value:
-            print("Warning: The max number of keys inside values must not be greater than the number of keys. "
-                  "Changing value from {} to {}".format(self.max_key_num_of_value, new_size))
+            logger.info("Warning: The max number of keys inside values must not be greater than the number of keys. "
+                        "Changing value from {} to {}".format(self.max_key_num_of_value, new_size))
             self.max_key_num_of_value = new_size
 
     def get_max_string_length(self):

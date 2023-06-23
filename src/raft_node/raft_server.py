@@ -23,6 +23,7 @@ class RaftState(Enum):
 min_val_for_timeout = 0.15
 max_val_for_timeout = 0.3
 
+
 # min_val_for_timeout = 3
 # max_val_for_timeout = 4
 
@@ -345,19 +346,15 @@ class RaftServer:
     def request_vote_rpc(self, candidate_id, term, last_log_index, last_log_term):
         logger.info(f"RPC call received: request_vote for RaftNode {self.server_id}")
         response = {'term': self.current_term, 'vote_granted': False}
-        print(1)
         if term < self.current_term:
             logger.info(
                 f"Received outdated term, responding to RaftNode {candidate_id} with current term {self.current_term}")
             return response
-        print(2)
         if term >= self.current_term:
             self.reset_election_timeout()
-        print(3)
-        print("self.log.is_up_to_date(last_log_index,last_log_term", self.log.is_up_to_date(last_log_index, last_log_term))
 
         if (self.voted_for is None or self.voted_for == candidate_id) and self.log.is_up_to_date(last_log_index,
-                                                                                               last_log_term):
+                                                                                                 last_log_term):
             self.voted_for = candidate_id
             response['vote_granted'] = True
             logger.info(f"Vote granted to RaftNode {candidate_id} by RaftNode {self.server_id}")

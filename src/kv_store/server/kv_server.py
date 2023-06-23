@@ -1,11 +1,17 @@
+import socket
 import threading
 from json import JSONDecodeError
 
+from src.kv_store.my_io.utils import receive_message, send_message
+from src.kv_store.server.command_handler import search_top_lvl_key, search
 from src.kv_store.server.message_handler import *
 from src.kv_store.server.api_requester import APIRequester
 from src.kv_store.server.message_handler import get_key
 from src.kv_store.server.query_handler import RequestHandler
 from src.kv_store.my_io.read_file import get_servers_from_file
+from src.logger import MyLogger
+
+logger = MyLogger()
 
 
 class KVServer:
@@ -25,7 +31,7 @@ class KVServer:
 
         while True:
             client_socket, client_address = self.kv_server_socket.accept()
-            print("New connection from:", client_address)
+            logger.info(f"New connection from: {client_address}")
             threading.Thread(target=self.handle_client, args=(client_socket,)).start()
 
     def _client_socket_bind(self):
@@ -33,24 +39,24 @@ class KVServer:
             self.kv_server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.kv_server_socket.bind((self.kv_server_host, self.kv_server_port))
             self.kv_server_socket.listen()
-            print("KV server started on {}:{}".format(self.kv_server_host, self.kv_server_port))
+            logger.info("KV server started on {}:{}".format(self.kv_server_host, self.kv_server_port))
         except OSError as e:
-            print("KV socket binding error:", str(e))
+            logger.info(f"KV socket binding error: {str(e)}")
             self._client_close_socket()
 
     def _client_close_socket(self):
         if self.kv_server_socket:
             try:
                 self.kv_server_socket.close()
-                print("KV server socket closed.")
+                logger.info("KV server socket closed.")
             except OSError as e:
-                print("Error while closing KV socket:", str(e))
+                logger.info(f"Error while closing KV socket: {str(e)}")
             self.kv_server_socket = None
 
     def handle_client(self, client_socket):
         while True:
             request = receive_message(client_socket)
-            print("Received request:", request)
+            logger.info(f"Received request: {request}")
             if request is None or request == "exit":
                 break
 

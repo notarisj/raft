@@ -2,6 +2,10 @@ import sys
 import struct
 from typing import Optional
 
+from src.logger import MyLogger
+
+logger = MyLogger()
+
 
 def send_message(message, conn):
     """
@@ -22,7 +26,7 @@ def send_message(message, conn):
         conn.sendall(header)
         conn.sendall(message.encode())
     except (BrokenPipeError, AttributeError):
-        print("Error sending message. Please ensure you are connected to the server.")
+        logger.info("Error sending message. Please ensure you are connected to the server.")
     # logger.log_info(f"[+] Message sent successfully")
 
 
@@ -45,7 +49,7 @@ def receive_message(conn) -> Optional[str]:
             chunk_size = min(remaining_size, 4096)
             chunk = conn.recv(chunk_size)
             if not chunk:
-                print("Disconnected from the server.")
+                logger.info("Disconnected from the server.")
                 break
             message_chunks.append(chunk)
             remaining_size -= len(chunk)
@@ -53,7 +57,7 @@ def receive_message(conn) -> Optional[str]:
         # logger.log_info("[+] Message received successfully")
         return message
     except (ConnectionResetError, AttributeError):
-        print("Connection lost. Disconnected from the server.")
+        logger.info("Connection lost. Disconnected from the server.")
         return None
 
 

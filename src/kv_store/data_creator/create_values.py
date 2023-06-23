@@ -1,6 +1,10 @@
 import os
 import random
 
+from src.logger import MyLogger
+
+logger = MyLogger()
+
 
 class CreateValues:
     def __init__(self, data_map, parameters_controller):
@@ -51,8 +55,8 @@ class CreateValues:
                 random_string = "".join(random.choices("abcdefghijklmnopqrstuvwxyz", k=max_length))
                 return '"{}": "{}"'.format(key, random_string)
             else:
-                print("Warning: Invalid type '{}' for key '{}'. It should be 'int', 'float', or 'string'. "
-                      "Assuming 'int'.".format(value_type, key))
+                logger.info("Warning: Invalid type '{}' for key '{}'. It should be 'int', 'float', or 'string'. "
+                            "Assuming 'int'.".format(value_type, key))
                 return '"{}": {}'.format(key, random.randint(0, 100))
 
     def add_nested_value(self):
@@ -72,7 +76,7 @@ class CreateValues:
         try:
             with open(self.created_file_path, "w") as file:
                 file.write(data)
-            print("Successfully wrote to the file.")
+            logger.info("Successfully wrote to the file.")
         except IOError as e:
-            print("Error: Failed to write to the file '{}'. {}".format(self.created_file_path, str(e)))
+            logger.info("Error: Failed to write to the file '{}'. {}".format(self.created_file_path, str(e)))
             exit(-1)

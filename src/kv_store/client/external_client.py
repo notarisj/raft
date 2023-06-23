@@ -2,6 +2,10 @@ import json
 import socket
 import re
 
+from src.logger import MyLogger
+
+logger = MyLogger()
+
 
 class ExternalClient:
     def __init__(self, _server_ip, _server_port):
@@ -13,9 +17,9 @@ class ExternalClient:
         try:
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client_socket.connect((self.server_ip, self.server_port))
-            print("Connected to {}:{}".format(self.server_ip, self.server_port))
+            logger.info("Connected to {}:{}".format(self.server_ip, self.server_port))
         except ConnectionRefusedError:
-            print("Failed to connect to {}:{}. Please ensure the server is running.".format(
+            logger.info("Failed to connect to {}:{}. Please ensure the server is running.".format(
                 self.server_ip, self.server_port))
 
     def start_interaction(self):
@@ -27,14 +31,14 @@ class ExternalClient:
                 break
             # response = send_request_opened_connection(formatted_message, self.client_socket)
             # print(response)
-            print(formatted_message)
+            logger.info(formatted_message)
 
     def disconnect(self):
         try:
             self.client_socket.close()
-            print("Disconnected from the server.")
+            logger.info("Disconnected from the server.")
         except AttributeError:
-            print("No active connection to the server.")
+            logger.info("No active connection to the server.")
 
     def message_formatter(self, message) -> str:
         if message.lower() == 'exit':
