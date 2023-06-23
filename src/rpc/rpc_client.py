@@ -2,7 +2,7 @@
 
 import xmlrpc.client
 
-from logger import MyLogger
+from src.logger import MyLogger
 
 logger = MyLogger()
 

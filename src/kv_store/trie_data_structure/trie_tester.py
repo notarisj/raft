@@ -1,4 +1,4 @@
-from kv_store.server.query_handler import RequestHandler
+from src.kv_store.server.query_handler import RequestHandler
 
 
 class TrieTester:

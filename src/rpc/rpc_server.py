@@ -1,7 +1,7 @@
 # rpc_server.py
 
 from xmlrpc.server import SimpleXMLRPCServer
-from logger import MyLogger
+from src.logger import MyLogger
 
 logger = MyLogger()
 

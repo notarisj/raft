@@ -2,8 +2,6 @@ import json
 import socket
 import re
 
-from kv_store.my_io.utils import send_request_opened_connection
-
 
 class ExternalClient:
     def __init__(self, _server_ip, _server_port):

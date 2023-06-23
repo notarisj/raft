@@ -1,7 +1,7 @@
 import unittest
 from pymongo import MongoClient
 
-from node import Log
+from src.raft_node import Log
 
 
 class TestLog(unittest.TestCase):

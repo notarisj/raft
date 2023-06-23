@@ -59,7 +59,7 @@ def receive_message(conn) -> Optional[str]:
 
 def send_request_opened_connection(request, conn) -> str:
     """
-    Sends a request to a specified node address and receives the response.
+    Sends a request to a specified raft_node address and receives the response.
 
     Args:
         request (str): The request to be sent.

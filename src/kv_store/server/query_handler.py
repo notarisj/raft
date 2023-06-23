@@ -1,7 +1,6 @@
 import json
 
-from kv_store.trie_data_structure.data_tree import Tree
-from kv_store.server.message_handler import get_msg_command
+from src.kv_store.trie_data_structure.data_tree import Tree
 
 
 class RequestHandler:

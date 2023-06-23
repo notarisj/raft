@@ -1,12 +1,11 @@
 import threading
 from json import JSONDecodeError
 
-from kv_store.server.message_handler import *
-from kv_store.server.command_handler import *
-from kv_store.server.api_requester import APIRequester
-from kv_store.server.message_handler import get_key
-from kv_store.server.query_handler import RequestHandler
-from kv_store.my_io.read_file import get_servers_from_file
+from src.kv_store.server.message_handler import *
+from src.kv_store.server.api_requester import APIRequester
+from src.kv_store.server.message_handler import get_key
+from src.kv_store.server.query_handler import RequestHandler
+from src.kv_store.my_io.read_file import get_servers_from_file
 
 
 class KVServer:

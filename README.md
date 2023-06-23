@@ -22,28 +22,28 @@ pip install dist/raft*.tar.gz
 ## Usage
 
 ### Running the Application
-You can start the server using the [run_server.sh](./node/test_run/bash/run_server.sh) bash script. This script takes in a 
+You can start the server using the [run_server.sh](src/raft_node/deploy/bash/run_server.sh) bash script. This script takes in a 
 directory path and optional arguments for configuration. If no parameters are provided,
-the script will use the default configuration from the [config.ini](./node/test_run/config.ini) 
+the script will use the default configuration from the [config.ini](src/raft_node/deploy/config.ini) 
 file. Note that if you want to test it in the same machine, you need to change the ports
-in [raft_servers.json](./node/test_run/raft_servers.json) and pass `--mongo_collection_name` 
+in [raft_servers.json](src/raft_node/deploy/raft_servers.json) and pass `--mongo_collection_name` 
 for each node.
 
 The usage is as follows:
 
 Install mongodb (if not installed)
 ```bash
-./node/test_run/bash/install_mongodb.sh
+./src/raft_node/deploy/bash/install_mongodb.sh
 ```
 
 Start the server:
 ```bash
-./node/test_run/bash/run_server.sh <directory_path> [options]
+./src/raft_node/deploy/bash/run_server.sh <directory_path> [options]
 ```
 
 Example usage:
 ```bash
-./node/test_run/bash/run_server.sh . --server_id 1 --mongo_collection_name raft1
+./src/raft_node/deploy/bash/run_server.sh . --server_id 1 --mongo_collection_name raft1
 ```
 
 Options:
@@ -57,7 +57,7 @@ Options:
 - `--mongo_collection_name <mongo_collection_name>`
 
 
-Please refer to the [run_server.sh](./node/test_run/bash/run_server.sh) script for 
+Please refer to the [run_server.sh](src/raft_node/deploy/bash/run_server.sh) script for 
 more details.
 
 ## Communication Diagram

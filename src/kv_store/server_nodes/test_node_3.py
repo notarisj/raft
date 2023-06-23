@@ -1,4 +1,4 @@
-from kv_store.server.kv_server import KVServer
+from src.kv_store.server.kv_server import KVServer
 
 if __name__ == '__main__':
     kv_server = KVServer(_kv_server_host='localhost', _kv_server_port=9003,

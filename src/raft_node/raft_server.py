@@ -6,10 +6,10 @@ import math
 
 from enum import Enum
 
-from logger import MyLogger
-from node.log import Log
-from rpc.rpc_client import RPCClient
-from rpc.rpc_server import RPCServer
+from src.logger import MyLogger
+from src.raft_node.log import Log
+from src.rpc.rpc_client import RPCClient
+from src.rpc.rpc_server import RPCServer
 
 logger = MyLogger()
 

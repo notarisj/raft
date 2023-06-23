@@ -1,7 +1,7 @@
 import sys
 import time
 from parameters_controller import ParametersController
-from kv_store.my_io.read_file import get_data_from_file
+from src.kv_store.my_io.read_file import get_data_from_file
 from create_values import CreateValues
 
 

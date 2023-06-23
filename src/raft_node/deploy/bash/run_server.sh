@@ -23,7 +23,7 @@ cd "$1"
 export PYTHONPATH="${PYTHONPATH}:$1"
 
 # Store the command to be executed
-command="python3 node/test_run/run_server.py"
+command="python3 src/raft_node/deploy/run_server.py"
 
 # Parse command-line arguments
 while [[ $# -gt 1 ]]; do

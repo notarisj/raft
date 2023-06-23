@@ -1,8 +1,8 @@
 import uvicorn
 
-from configurations import JsonConfig
-from node.api_helper import api_post_request
-from node.raft_server import RaftServer
+from src.configurations import JsonConfig
+from src.raft_node.api_helper import api_post_request
+from src.raft_node.raft_server import RaftServer
 from fastapi import FastAPI
 
 
@@ -33,7 +33,7 @@ class RaftServerApp:
         self.database_uri = database_uri
         self.database_name = database_name
         self.collection_name = collection_name
-        self.raft_config = JsonConfig('node/test_run/raft_servers.json')
+        self.raft_config = JsonConfig('src/raft_node/deploy/raft_servers.json')
         self.servers, self.api_servers = split_dictionary(self.raft_config.config)
 
     def create_app(self):
