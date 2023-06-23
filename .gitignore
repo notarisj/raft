@@ -1,2 +1,5 @@
-
 .idea
+*.pyc
+raft.egg-info/
+dist/
+.DS_Store
