@@ -70,6 +70,8 @@ class Log:
         print(f"Deleted {result.deleted_count} entries from collection.")
 
     def get_last_term(self):
+        if len(self.entries) == 0:
+            return 0
         return self.entries[-1].term
 
     def commit_entries(self, commit_index, new_commit_index):
@@ -99,7 +101,8 @@ class Log:
 
     def is_up_to_date(self, last_log_index, last_log_term):
         print(f"last_log_index: {last_log_index}, last_log_term: {last_log_term}")
-        print(f"self.get_last_index(): {self.get_last_index()}, self.get_last_term(): {self.get_last_term()}")
+        print(f"self.get_last_index(): {self.get_last_index()}")
+        print(f"self.get_last_term(): {self.get_last_term()}")
         if last_log_term > self.get_last_term():
             return True
         elif last_log_term == self.get_last_term() and last_log_index >= self.get_last_index():
