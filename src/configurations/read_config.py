@@ -41,6 +41,19 @@ class IniConfig:
         """
         return dict(self.config.items(section))
 
+    def save(self, ini_file):
+        """
+        Saves the INI configuration to a file.
+
+        Args:
+            ini_file (str): The path to save the INI configuration.
+
+        Returns:
+            None
+        """
+        with open(ini_file, 'w') as f:
+            self.config.write(f)
+
 
 class JsonConfig:
     def __init__(self, json_file):
@@ -76,3 +89,16 @@ class JsonConfig:
             dict: The JSON configuration as a dictionary.
         """
         return self.config
+
+    def save(self, json_file):
+        """
+        Saves the JSON configuration to a file.
+
+        Args:
+            json_file (str): The path to save the JSON configuration.
+
+        Returns:
+            None
+        """
+        with open(json_file, 'w') as f:
+            json.dump(self.config, f)
