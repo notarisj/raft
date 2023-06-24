@@ -4,6 +4,8 @@ import json
 from requests import RequestException
 from requests.auth import HTTPBasicAuth
 
+from src.configurations import IniConfig
+
 """
     Example usage
 
@@ -20,6 +22,8 @@ from requests.auth import HTTPBasicAuth
     except Exception as e:
         print('Error:', str(e))
 """
+
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 def get_server_state(host, port, username, password):
@@ -64,25 +68,11 @@ class ApiHelper:
         elif response.status_code == 401:
             return {'get_state': False, 'message': 'Login failed: Incorrect username or password'}
 
-    def start_server(self, host, port, username=None, password=None):
+    def start_stop_server(self, host, port, action, username=None, password=None):
         if username is None or password is None:
             username = self.username
             password = self.password
-        url = f'https://{host}:{port}/start_server'
-        try:
-            response = api_post_request(url, {}, username, password)
-            if response is None:
-                return False
-            elif response.status_code == 200:
-                return True
-        except Exception as e:
-            print('Error:', str(e))
-
-    def stop_server(self, host, port, username=None, password=None):
-        if username is None or password is None:
-            username = self.username
-            password = self.password
-        url = f'https://{host}:{port}/stop_server'
+        url = f'https://{host}:{port}/{action}'
         try:
             response = api_post_request(url, {}, username, password)
             if response is None:
@@ -117,8 +107,8 @@ def api_post_request(url, payload, username='admin', password='admin'):
     }
 
     # Make the POST request with basic authentication
-    response = requests.post(url, data=json_payload, headers=headers,
-                             auth=HTTPBasicAuth(username, password), verify='/home/notaris/Documents/git/raft/src/raft_node/ssl/certificate.pem')
+    response = requests.post(url, data=json_payload, headers=headers, auth=HTTPBasicAuth(username, password),
+                             verify=raft_config.get_property('SSL', 'ssl_cert_file'))
 
     # Check the response status code
     if response.status_code == 200:
@@ -136,7 +126,8 @@ def api_get_request(url, username='admin', password='admin'):
     headers = {}
 
     # Make the GET request with basic authentication
-    response = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, password), verify='/home/notaris/Documents/git/raft/src/raft_node/ssl/certificate.pem')
+    response = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, password),
+                            verify=raft_config.get_property('SSL', 'ssl_cert_file'))
 
     # Check the response status code
     return response

@@ -1,5 +1,4 @@
 import concurrent.futures
-import threading
 
 import uvicorn
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -133,4 +132,3 @@ class RaftServerApp:
         print(self.ssl_cert_file)
         uvicorn.run(app, host=self.uvicorn_host, port=int(self.uvicorn_port),
                     ssl_keyfile=self.ssl_key_file, ssl_certfile=self.ssl_cert_file)
-
