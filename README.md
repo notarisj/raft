@@ -60,6 +60,11 @@ Options:
 Please refer to the [run_server.sh](src/raft_node/deploy/bash/run_server.sh) script for 
 more details.
 
+## Generate SSL certificate for th API
+```bash
+openssl req -newkey rsa:2048 -nodes -keyout private_key.pem -x509 -days 365 -out certificate.pem -subj "/CN=localhost" -addext "subjectAltName = IP:127.0.0.1, DNS:localhost"
+```
+
 ## Communication Diagram
 In the following diagram, the communication between the key value store and raft nodes is shown.
 <img src="./diagram/communication_diagram.svg" alt="Communications diagram" style="display: block; margin: 0 auto;" width="800">

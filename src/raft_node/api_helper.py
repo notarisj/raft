@@ -117,7 +117,8 @@ def api_post_request(url, payload, username='admin', password='admin'):
     }
 
     # Make the POST request with basic authentication
-    response = requests.post(url, data=json_payload, headers=headers, auth=HTTPBasicAuth(username, password))
+    response = requests.post(url, data=json_payload, headers=headers,
+                             auth=HTTPBasicAuth(username, password), verify='/home/notaris/Documents/git/raft/src/raft_node/ssl/certificate.pem')
 
     # Check the response status code
     if response.status_code == 200:
@@ -135,7 +136,7 @@ def api_get_request(url, username='admin', password='admin'):
     headers = {}
 
     # Make the GET request with basic authentication
-    response = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, password))
+    response = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, password), verify='/home/notaris/Documents/git/raft/src/raft_node/ssl/certificate.pem')
 
     # Check the response status code
     return response

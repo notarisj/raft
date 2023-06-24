@@ -10,7 +10,7 @@ headers = {}
 params = {}
 
 # Path to the SSL certificate file
-certificate_path = "/Users/notaris/git/raft/src/raft_node/ssl/certificate.crt"
+certificate_path = "/home/notaris/Documents/git/raft/src/raft_node/ssl/certificate.crt"
 
 # Define the username and password
 username = "admin"

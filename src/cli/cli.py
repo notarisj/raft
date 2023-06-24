@@ -45,8 +45,7 @@ class RaftCli:
             self.api_password = self.session.prompt("API Password [admin]: ", is_password=True)
             if not self.api_password:
                 self.api_password = 'admin'
-            self.api_helper = ApiHelper(self.host, self.port, self.api_username, self.api_password,
-                                        '/Users/notaris/git/raft/src/raft_node/ssl/certificate.crt')
+            self.api_helper = ApiHelper(self.host, self.port, self.api_username, self.api_password)
             response = self.api_helper.login()
             login_true = response['login']
             if login_true:
