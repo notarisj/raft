@@ -31,15 +31,15 @@ def get_server_state(host, port, username, password):
     try:
         response = api_get_request(url, username, password)
         if response is None:
-            return {'status': 'Bad', 'message': 'Error: Could not connect to API server.'}
+            return {'status': 'ERROR', 'message': 'Could not connect to API server.'}
         elif response.status_code == 200:
             return response.json()
         elif response.status_code == 401:
-            return {'status': 'Bad', 'message': 'Login failed: Incorrect username or password.'}
+            return {'status': 'ERROR', 'message': 'Login failed, incorrect username or password.'}
     except RequestException:
-        return {'status': 'Bad', 'message': 'Error: Request to API server failed.'}
+        return {'status': 'ERROR', 'message': 'Request to API server failed.'}
     except ValueError:
-        return {'status': 'Bad', 'message': 'Error: Invalid JSON response from API server.'}
+        return {'status': 'ERROR', 'message': 'Invalid JSON response from API server.'}
 
 
 class ApiHelper:

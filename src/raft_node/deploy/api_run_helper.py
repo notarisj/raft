@@ -109,7 +109,8 @@ class RaftServerApp:
         def get_state(_: str = Depends(get_current_username)):
             return {"status": "OK",
                     "leader_id": str(self.server.leader_id),
-                    "is_running": self.server.is_running}
+                    "is_running": self.server.is_running,
+                    "message": 'All OK'}
 
         @app.post("/start_server")
         def get_state(_: str = Depends(get_current_username)):
