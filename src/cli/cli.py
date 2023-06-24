@@ -7,7 +7,7 @@ from src.cli.cli_commands import run_htop, basic_commands, show_help, show_wellc
 from src.raft_node.api_helper import ApiHelper, get_server_state
 
 
-def exit():
+def _exit():
     print("Exiting Raft CLI. Bye!")
     sys.exit(0)
 
@@ -69,12 +69,12 @@ class RaftCli:
     def start_cl(self):
         response = self.api_helper.get_servers()
         for server_id, info in response['api_servers'].items():
-            self.api_helper.start_server(info['host'], info['port'])
+            self.api_helper.start_stop_server(info['host'], info['port'], 'start_server')
 
     def stop_cl(self):
         response = self.api_helper.get_servers()
         for server_id, info in response['api_servers'].items():
-            self.api_helper.stop_server(info['host'], info['port'])
+            self.api_helper.start_stop_server(info['host'], info['port'], 'stop_server')
 
     def _get_state(self):
         # response = self.api_helper.get_state()
@@ -105,7 +105,7 @@ class RaftCli:
             "login": self.login,
             "help": show_help,
             "clear": lambda: print(execute_command(user_input)),
-            "exit": lambda: exit(),
+            "exit": lambda: _exit(),
             "logout": self.logout,
             "get_state": lambda: self._get_state(),
             "start_cl": lambda: self.start_cl(),
