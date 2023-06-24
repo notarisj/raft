@@ -52,7 +52,8 @@ class RaftServer:
         self.server = RPCServer(host=self.hostname, port=self.port)
         self.server.register_function(self.append_entries_rpc, 'append_entries')
         self.server.register_function(self.request_vote_rpc, 'request_vote')
-        self.server_thread = threading.Thread(target=self.server.run)
+        # self.server_thread = \
+        threading.Thread(target=self.server.run).start()
         # Create RPC clients for all other servers
         self.clients = {_server_id: RPCClient(host=server['host'], port=server['port'])
                         for _server_id, server in raft_servers.items() if _server_id != server_id}
@@ -63,13 +64,13 @@ class RaftServer:
         # create thread pool for handling client requests in parallel
         self.heartbeat_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
         self.append_entries_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
-        threading.Thread(target=self.run).start()
 
         # create leader next index for each follower
         self.next_index = {}
         self.set_next_index()
         self.active_append_threads = {_server_id: False for _server_id in self.clients.keys()}
         self.follower_append_index = {}
+        self.is_running = False
 
     def __str__(self):
         return f"Server(id={self.server_id}, state={self.state.name}, " \
@@ -77,11 +78,11 @@ class RaftServer:
 
     def run(self):
         logger.info(f"Starting RaftNode with ID: {self.server_id}")
-        self.server_thread.start()
+        # self.server_thread.start()
         self.transition_to_follower()
-        delay = random.uniform(0, 5)  # Randomize the initial delay before the first election
+        delay = random.uniform(0, 0.1)  # Randomize the initial delay before the first election
         time.sleep(delay)
-        while True:
+        while self.is_running:
             if self.state == RaftState.FOLLOWER:
                 if time.time() - self.start > self.election_timeout:
                     self.transition_to_candidate()

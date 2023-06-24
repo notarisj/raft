@@ -1,6 +1,6 @@
 import unittest
-from pymongo import MongoClient
 
+from pymongo import MongoClient
 from src.raft_node import Log
 
 
