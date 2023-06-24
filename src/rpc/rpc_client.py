@@ -1,17 +1,21 @@
 # rpc_client.py
-
+import ssl
 import xmlrpc.client
 
+from src.configurations import IniConfig
 from src.logger import MyLogger
 
 logger = MyLogger()
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 class RPCClient:
-
     def __init__(self, host="localhost", port=8000):
-        url = f"http://{host}:{port}"
-        self.server_proxy = xmlrpc.client.ServerProxy(url, allow_none=True)
+        url = f"https://{host}:{port}"  # Use HTTPS instead of HTTP
+        context = ssl.create_default_context(cafile=raft_config.get_property('SSL', 'ssl_cert_file'))
+        context.check_hostname = True
+        context.verify_mode = ssl.CERT_REQUIRED
+        self.server_proxy = xmlrpc.client.ServerProxy(url, allow_none=True, context=context)
         logger.info(f"RPC client initialized. Connected to {url}.")
 
     def call(self, method, *args):

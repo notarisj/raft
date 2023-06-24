@@ -1,8 +1,8 @@
 import concurrent.futures
-import threading
 
 import uvicorn
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from starlette.responses import RedirectResponse
 
 from src.configurations import JsonConfig
 from src.raft_node.api_helper import api_post_request
@@ -55,7 +55,8 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(HTTPBasic()
 
 class RaftServerApp:
 
-    def __init__(self, raft_server_id, uvicorn_host, uvicorn_port, database_uri, database_name, collection_name):
+    def __init__(self, raft_server_id, uvicorn_host, uvicorn_port, database_uri, database_name, collection_name,
+                 ssl_cert_file, ssl_key_file):
         self.server = None
         self.raft_server_id = raft_server_id
         self.uvicorn_host = uvicorn_host
@@ -66,10 +67,20 @@ class RaftServerApp:
         self.raft_config = JsonConfig('src/raft_node/deploy/raft_servers.json')
         self.servers, self.api_servers = split_dictionary(self.raft_config.config)
         self.server_executor = concurrent.futures.ThreadPoolExecutor()
+        self.ssl_cert_file = ssl_cert_file
+        self.ssl_key_file = ssl_key_file
 
     def create_app(self):
         app = FastAPI()
 
+        @app.middleware("http")
+        async def force_https(request: Request, call_next):
+            """Middleware to force HTTPS redirect"""
+            if request.url.scheme == "http":
+                https_url = request.url.replace(scheme="https")
+                response = RedirectResponse(url=https_url)
+                return response
+            return await call_next(request)
 
         @app.post("/append_entries")
         def append_entries(_append_entries: dict, _: str = Depends(get_current_username)):
@@ -117,4 +128,7 @@ class RaftServerApp:
         self.server = RaftServer(self.raft_server_id, self.servers,
                                  self.database_uri, self.database_name, self.collection_name)
         app = self.create_app()
-        uvicorn.run(app, host=self.uvicorn_host, port=int(self.uvicorn_port))
+        print(self.ssl_key_file)
+        print(self.ssl_cert_file)
+        uvicorn.run(app, host=self.uvicorn_host, port=int(self.uvicorn_port),
+                    ssl_keyfile=self.ssl_key_file, ssl_certfile=self.ssl_cert_file)
