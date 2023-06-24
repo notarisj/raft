@@ -12,6 +12,8 @@ def parse_arguments():
     parser.add_argument('--mongo_port', help='MongoDB port')
     parser.add_argument('--mongo_db_name', help='MongoDB database name')
     parser.add_argument('--mongo_collection_name', help='MongoDB collection name')
+    parser.add_argument('--ssl_cert_file', help='SSL certificate file')
+    parser.add_argument('--ssl_key_file', help='SSL key file')
     return parser.parse_args()
 
 
@@ -35,9 +37,13 @@ if __name__ == "__main__":
         raft_config.get_property('MongoDB', 'mongo_db_name')
     mongo_collection_name = args.mongo_collection_name if args.mongo_collection_name is not None else \
         raft_config.get_property('MongoDB', 'mongo_collection_name')
+    ssl_cert_file = args.ssl_cert_file if args.ssl_cert_file is not None else \
+        raft_config.get_property('SSL', 'ssl_cert_file')
+    ssl_key_file = args.ssl_cert_file if args.ssl_cert_file is not None else \
+        raft_config.get_property('SSL', 'ssl_key_file')
 
     mongo_uri = f"mongodb://{mongo_host}:{mongo_port}"
 
     app = RaftServerApp(int(server_id), uvicorn_host, uvicorn_port, mongo_uri,
-                        mongo_db_name, mongo_collection_name)
+                        mongo_db_name, mongo_collection_name, ssl_cert_file, ssl_key_file)
     app.start()

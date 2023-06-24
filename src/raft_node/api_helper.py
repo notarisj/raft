@@ -23,7 +23,7 @@ from requests.auth import HTTPBasicAuth
 
 
 def get_server_state(host, port, username, password):
-    url = f'http://{host}:{port}/get_state'
+    url = f'https://{host}:{port}/get_state'
     try:
         response = api_get_request(url, username, password)
         if response is None:
@@ -68,7 +68,7 @@ class ApiHelper:
         if username is None or password is None:
             username = self.username
             password = self.password
-        url = f'http://{host}:{port}/start_server'
+        url = f'https://{host}:{port}/start_server'
         try:
             response = api_post_request(url, {}, username, password)
             if response is None:
@@ -82,7 +82,7 @@ class ApiHelper:
         if username is None or password is None:
             username = self.username
             password = self.password
-        url = f'http://{host}:{port}/stop_server'
+        url = f'https://{host}:{port}/stop_server'
         try:
             response = api_post_request(url, {}, username, password)
             if response is None:
@@ -93,14 +93,14 @@ class ApiHelper:
             print('Error:', str(e))
 
     def make_api_post_request(self, endpoint, payload):
-        url = f'http://{self.host}:{self.port}/{endpoint}'
+        url = f'https://{self.host}:{self.port}/{endpoint}'
         try:
             return api_post_request(url, payload, self.username, self.password)
         except Exception as e:
             print('Error:', str(e))
 
     def make_api_get_request(self, endpoint):
-        url = f'http://{self.host}:{self.port}/{endpoint}'
+        url = f'https://{self.host}:{self.port}/{endpoint}'
         try:
             return api_get_request(url, self.username, self.password)
         except Exception as e:
