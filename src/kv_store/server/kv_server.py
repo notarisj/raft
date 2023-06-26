@@ -1,7 +1,9 @@
 import socket
+import ssl
 import threading
 from json import JSONDecodeError
 
+from src.configurations import IniConfig
 from src.kv_store.my_io.utils import receive_message, send_message
 from src.kv_store.server.command_handler import search_top_lvl_key, search
 from src.kv_store.server.message_handler import *
@@ -12,6 +14,7 @@ from src.kv_store.my_io.read_file import get_servers_from_file
 from src.logger import MyLogger
 
 logger = MyLogger()
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 class KVServer:
@@ -38,6 +41,15 @@ class KVServer:
         try:
             self.kv_server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.kv_server_socket.bind((self.kv_server_host, self.kv_server_port))
+
+            # Create an SSL context
+            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            context.load_cert_chain(certfile=raft_config.get_property('SSL', 'ssl_cert_file'),
+                                    keyfile=raft_config.get_property('SSL', 'ssl_key_file'))
+
+            # Wrap the server socket with SSL
+            self.kv_server_socket = context.wrap_socket(self.kv_server_socket, server_side=True)
+
             self.kv_server_socket.listen()
             logger.info("KV server started on {}:{}".format(self.kv_server_host, self.kv_server_port))
         except OSError as e:

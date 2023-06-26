@@ -1,10 +1,13 @@
 import json
 import socket
 import re
+import ssl
 
+from src.configurations import IniConfig
 from src.logger import MyLogger
 
 logger = MyLogger()
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 class ExternalClient:
@@ -16,6 +19,15 @@ class ExternalClient:
     def connect(self):
         try:
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Create an SSL context
+            context = ssl.create_default_context(cafile=raft_config.get_property('SSL', 'ssl_cert_file'))
+            context.check_hostname = True
+            context.verify_mode = ssl.CERT_REQUIRED
+
+            # Wrap the client socket with SSL
+            self.client_socket = context.wrap_socket(self.client_socket, server_hostname=self.server_ip)
+
             self.client_socket.connect((self.server_ip, self.server_port))
             logger.info("Connected to {}:{}".format(self.server_ip, self.server_port))
         except ConnectionRefusedError:
