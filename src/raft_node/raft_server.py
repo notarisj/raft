@@ -63,7 +63,6 @@ class RaftServer:
         # create leader next index for each follower
         self.next_index = {}
         self.set_next_index()
-        self.active_append_threads = {_server_id: False for _server_id in self.clients.keys()}
         self.follower_append_index = {}
         self.is_running = False
 
@@ -84,6 +83,26 @@ class RaftServer:
                 threading.Thread(target=self.send_append_entries_to_server_multicast).start()
                 self.reset_election_timeout()
             time.sleep(self.heartbeat_interval)
+
+    def add_node(self, server_id, host, port):
+        self.raft_servers[server_id] = {'host': host, 'port': port}
+        self.clients[server_id] = RPCClient(host=host, port=port)
+        self.next_index[server_id] = 1
+        self.follower_append_index[server_id] = 0
+
+    def update_node(self, server_id, host, port):
+        self.raft_servers[server_id] = {'host': host, 'port': port}
+        self.clients[server_id] = RPCClient(host=host, port=port)
+
+    def delete_node(self, server_id):
+        if server_id in self.raft_servers:
+            del self.raft_servers[server_id]
+        if server_id in self.clients:
+            del self.clients[server_id]
+        if server_id in self.next_index:
+            del self.next_index[server_id]
+        if server_id in self.follower_append_index:
+            del self.follower_append_index[server_id]
 
     def transition_to_follower(self, verbose=True):
         if verbose:

@@ -38,7 +38,7 @@ class TestIniConfig(unittest.TestCase):
 
     def test_save(self):
         new_ini_file = os.path.join(self.tmp_dir.name, 'new.ini')
-        self.ini_config.save(new_ini_file)
+        self.ini_config.save()
         self.assertTrue(os.path.isfile(new_ini_file))
 
         with open(new_ini_file) as f:
@@ -80,7 +80,7 @@ class TestJsonConfig(unittest.TestCase):
 
     def test_save(self):
         new_json_file = os.path.join(self.tmp_dir.name, 'new.json')
-        self.json_config.save(new_json_file)
+        self.json_config.save()
         self.assertTrue(os.path.isfile(new_json_file))
 
         with open(new_json_file) as f:

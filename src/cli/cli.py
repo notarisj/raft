@@ -126,7 +126,8 @@ class RaftCli:
             "get_state": lambda: self._get_state(),
             "start_cl": lambda: self.start_cl(),
             "stop_cl": lambda: self.stop_cl(),
-            "edit_config": lambda: edit_json_file(raft_config.get_property('servers', 'raft_servers_path')),
+            "edit_config": lambda: edit_json_file(raft_config.get_property('servers', 'raft_servers_path'),
+                                                  self.api_helper),
             "": lambda: None
         }
 

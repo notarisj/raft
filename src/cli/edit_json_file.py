@@ -10,7 +10,7 @@ def save_json_file(file_path, data):
         json.dump(data, file, indent=2)
 
 
-def edit_json_file(file_path):
+def edit_json_file(file_path, api_helper):
     with open(file_path, 'r') as file:
         data = json.load(file)
 
@@ -40,13 +40,23 @@ def edit_json_file(file_path):
         user_input = session.prompt('\n> ', style=style)
 
         if user_input == '1':
+            new_host = session.prompt('Enter host: ', style=style)
+            new_raft_port = int(session.prompt('Enter raft_port: ', style=style))
+            new_api_port = int(session.prompt('Enter api_port: ', style=style))
             new_node = {
-                'host': session.prompt('Enter host: ', style=style),
-                'raft_port': int(session.prompt('Enter raft_port: ', style=style)),
-                'api_port': int(session.prompt('Enter api_port: ', style=style))
+                'host': new_host,
+                'raft_port': new_raft_port,
+                'api_port': new_api_port
             }
             node_id = str(int(max(data, key=lambda x: int(x))) + 1)
             data[node_id] = new_node
+            payload = {
+                "id": node_id,
+                'host': new_host,
+                'raft_port': new_raft_port,
+                'api_port': new_api_port
+            }
+            push_update(api_helper, payload, 'add_node')
             print(f"\nNode {node_id} has been added.")
             save_json_file(file_path, data)
         elif user_input == '2':
@@ -63,6 +73,13 @@ def edit_json_file(file_path):
                     'raft_port': new_raft_port,
                     'api_port': new_api_port
                 }
+                payload = {
+                    "id": node_id,
+                    'host': new_host,
+                    'raft_port': new_raft_port,
+                    'api_port': new_api_port
+                }
+                push_update(api_helper, payload, 'update_node')
                 print(f"\nNode {node_id} has been updated.")
                 save_json_file(file_path, data)
             else:
@@ -71,6 +88,7 @@ def edit_json_file(file_path):
             node_id = session.prompt('Enter the node ID to delete: ', style=style)
             if node_id in data:
                 del data[node_id]
+                push_update(api_helper, node_id, 'delete_node')
                 print(f"\nNode {node_id} has been deleted.")
                 save_json_file(file_path, data)
             else:
@@ -79,3 +97,9 @@ def edit_json_file(file_path):
             break
         else:
             print("Invalid input. Please enter a valid operation.")
+
+
+def push_update(api_helper, payload, action):
+    response = api_helper.get_servers()
+    for server_id, info in response['api_servers'].items():
+        api_helper.node_actions(info['host'], info['port'], payload, action)

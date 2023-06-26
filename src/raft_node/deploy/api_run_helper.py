@@ -95,10 +95,45 @@ class RaftServerApp:
 
         @app.get("/get_log")
         def get_log(_: str = Depends(get_current_username)):
+            print(self.raft_config.get_all_properties())
             return self.server.log.entries
 
         @app.get("/authenticate")
         async def read_protected_endpoint(_: str = Depends(get_current_username)):
+            return {'status': 'OK'}
+
+        @app.post("/add_node")
+        async def read_protected_endpoint(server: dict, _: str = Depends(get_current_username)):
+            self.server.add_node(server['id'], server['host'], server['raft_port'])
+            entry = {
+                'host': server['host'],
+                'raft_port': server['raft_port'],
+                'api_port': server['api_port']
+            }
+            self.raft_config.config[server['id']] = entry
+            self.raft_config.save()
+            self.api_servers[server['id']] = {'host': server['host'], 'port': server['api_port']}
+            return {'status': 'OK'}
+
+        @app.post("/update_node")
+        async def read_protected_endpoint(server: dict, _: str = Depends(get_current_username)):
+            self.server.update_node(server['id'], server['host'], server['raft_port'])
+            entry = {
+                'host': server['host'],
+                'raft_port': server['raft_port'],
+                'api_port': server['api_port']
+            }
+            self.raft_config.config[server['id']] = entry
+            self.raft_config.save()
+            self.api_servers[server['id']] = {'host': server['host'], 'port': server['api_port']}
+            return {'status': 'OK'}
+
+        @app.post("/delete_node/{server_id}")
+        async def read_protected_endpoint(server_id: int, _: str = Depends(get_current_username)):
+            self.server.delete_node(int(server_id))
+            del self.raft_config.config[str(server_id)]
+            self.raft_config.save()
+            del self.api_servers[server_id]
             return {'status': 'OK'}
 
         @app.get("/get_servers")
