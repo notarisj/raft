@@ -5,7 +5,11 @@ from prompt_toolkit import PromptSession
 from tabulate import tabulate
 
 from src.cli.cli_commands import run_htop, basic_commands, show_help, show_wellcome_screen, execute_command
+from src.cli.edit_json_file import edit_json_file
+from src.configurations import IniConfig
 from src.raft_node.api_helper import ApiHelper, get_server_state
+
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 def _exit():
@@ -122,6 +126,7 @@ class RaftCli:
             "get_state": lambda: self._get_state(),
             "start_cl": lambda: self.start_cl(),
             "stop_cl": lambda: self.stop_cl(),
+            "edit_config": lambda: edit_json_file(raft_config.get_property('servers', 'raft_servers_path')),
             "": lambda: None
         }
 

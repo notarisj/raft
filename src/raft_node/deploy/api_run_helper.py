@@ -129,7 +129,5 @@ class RaftServerApp:
         self.server = RaftServer(self.raft_server_id, self.servers,
                                  self.database_uri, self.database_name, self.collection_name)
         app = self.create_app()
-        print(self.ssl_key_file)
-        print(self.ssl_cert_file)
         uvicorn.run(app, host=self.uvicorn_host, port=int(self.uvicorn_port),
                     ssl_keyfile=self.ssl_key_file, ssl_certfile=self.ssl_cert_file)
