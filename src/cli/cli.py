@@ -94,13 +94,13 @@ class RaftCli:
             if state_response['status'] == 'OK':
                 if server_id == state_response['leader_id']:
                     table.append([server_id, '\033[32m\u25CF\033[0m online', is_running,
-                                  'Leader', info['host'], info["port"]])
+                                  state_response['state'], info['host'], info["port"]])
                 else:
                     table.append([server_id, '\033[32m\u25CF\033[0m online', is_running,
-                                  'Follower', info['host'], info["port"]])
+                                  state_response['state'], info['host'], info["port"]])
             else:
                 table.append([server_id, '\033[31m\u25CF\033[0m offline', is_running,
-                              'Follower', info['host'], info["port"]])
+                              state_response['state'], info['host'], info["port"]])
 
         # Set align='left' for all columns
         align_options = ['center'] * len(headers)

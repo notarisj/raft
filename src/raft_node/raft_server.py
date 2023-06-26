@@ -45,11 +45,10 @@ class RaftServer:
         self.election_in_progress = False
 
         # Create RPC server, register RPC functions and create RPC server thread
-        self.server = RPCServer(host=self.hostname, port=self.port)
-        self.server.register_function(self.append_entries_rpc, 'append_entries')
-        self.server.register_function(self.request_vote_rpc, 'request_vote')
-        # self.server_thread = \
-        threading.Thread(target=self.server.run).start()
+        self.rpc_server = RPCServer(host=self.hostname, port=self.port)
+        self.rpc_server.register_function(self.append_entries_rpc, 'append_entries')
+        self.rpc_server.register_function(self.request_vote_rpc, 'request_vote')
+
         # Create RPC clients for all other servers
         self.clients = {_server_id: RPCClient(host=server['host'], port=server['port'])
                         for _server_id, server in raft_servers.items() if _server_id != server_id}
@@ -72,7 +71,7 @@ class RaftServer:
 
     def run(self):
         logger.info(f"Starting RaftNode with ID: {self.server_id}")
-        # self.server_thread.start()
+        threading.Thread(target=self.rpc_server.run).start()
         self.transition_to_follower()
         while self.is_running:
             if self.state == RaftState.FOLLOWER:

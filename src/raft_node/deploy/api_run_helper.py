@@ -6,7 +6,7 @@ from starlette.responses import RedirectResponse
 
 from src.configurations import JsonConfig
 from src.raft_node.api_helper import api_post_request
-from src.raft_node.raft_server import RaftServer
+from src.raft_node.raft_server import RaftServer, RaftState
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 
 
@@ -145,6 +145,7 @@ class RaftServerApp:
             return {"status": "OK",
                     "leader_id": str(self.server.leader_id),
                     "is_running": self.server.is_running,
+                    "state": self.server.state.name,
                     "message": 'All OK'}
 
         @app.post("/start_server")
@@ -156,6 +157,8 @@ class RaftServerApp:
         @app.post("/stop_server")
         def get_state(_: str = Depends(get_current_username)):
             self.server.is_running = False
+            self.server.state = RaftState.FOLLOWER
+            self.server.rpc_server.stop()
             return {"status": 'OK'}
 
         return app
