@@ -43,7 +43,7 @@ class KVServer:
             self.kv_server_socket.bind((self.kv_server_host, self.kv_server_port))
 
             # Create an SSL context
-            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             context.load_cert_chain(certfile=raft_config.get_property('SSL', 'ssl_cert_file'),
                                     keyfile=raft_config.get_property('SSL', 'ssl_key_file'))
 
