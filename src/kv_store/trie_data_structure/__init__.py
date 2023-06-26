@@ -1,3 +1,3 @@
-from .data_tree import Tree
+from .data_tree import Trie
 
-__all__ = ["Tree"]
+__all__ = ["Trie"]
