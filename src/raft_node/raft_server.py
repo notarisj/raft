@@ -6,26 +6,20 @@ import math
 
 from enum import Enum
 
+from src.configurations import IniConfig
 from src.logger import MyLogger
 from src.raft_node.log import Log
 from src.rpc.rpc_client import RPCClient
 from src.rpc.rpc_server import RPCServer
 
 logger = MyLogger()
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 class RaftState(Enum):
     FOLLOWER = 1
     CANDIDATE = 2
     LEADER = 3
-
-
-min_val_for_timeout = 0.15
-max_val_for_timeout = 0.3
-
-
-# min_val_for_timeout = 3
-# max_val_for_timeout = 4
 
 
 class RaftServer:
@@ -37,7 +31,9 @@ class RaftServer:
         self.current_term = 0
         self.voted_for = None
         self.state = RaftState.FOLLOWER
-        self.election_timeout = random.uniform(min_val_for_timeout, max_val_for_timeout)
+        self.min_val_for_timeout = float(raft_config.get_property('raft', 'min_val_for_timeout'))
+        self.max_val_for_timeout = float(raft_config.get_property('raft', 'max_val_for_timeout'))
+        self.election_timeout = random.uniform(self.min_val_for_timeout, self.max_val_for_timeout)
         self.start = time.time()
         self.log = Log(database_uri, database_name, collection_name)
         if self.log.is_empty():
@@ -58,8 +54,7 @@ class RaftServer:
         self.clients = {_server_id: RPCClient(host=server['host'], port=server['port'])
                         for _server_id, server in raft_servers.items() if _server_id != server_id}
         self.start = time.time()
-        # self.heartbeat_interval = 1
-        self.heartbeat_interval = 0.1
+        self.heartbeat_interval = float(raft_config.get_property('raft', 'heartbeat_interval'))
         self.leader_id = None
         # create thread pool for handling client requests in parallel
         self.heartbeat_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
@@ -80,8 +75,6 @@ class RaftServer:
         logger.info(f"Starting RaftNode with ID: {self.server_id}")
         # self.server_thread.start()
         self.transition_to_follower()
-        delay = random.uniform(0, 0.1)  # Randomize the initial delay before the first election
-        time.sleep(delay)
         while self.is_running:
             if self.state == RaftState.FOLLOWER:
                 if time.time() - self.start > self.election_timeout:
@@ -106,7 +99,7 @@ class RaftServer:
         self.current_term += 1
         self.voted_for = self.server_id
         self.start = time.time()
-        self.election_timeout = random.uniform(1, 2)
+        self.election_timeout = random.uniform(self.min_val_for_timeout, self.max_val_for_timeout)
         self.start_election()
 
     def transition_to_leader(self, verbose=True):
@@ -209,7 +202,6 @@ class RaftServer:
 
     def reset_election_timeout(self):
         self.start = time.time()
-        self.election_timeout = random.uniform(min_val_for_timeout, max_val_for_timeout)
 
     def start_election(self):
         if self.election_in_progress:

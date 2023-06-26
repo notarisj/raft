@@ -22,7 +22,7 @@ def edit_json_file(file_path):
 
     # Interactive editing loop
     while True:
-        print("Current JSON data:")
+        print("Raft Nodes:")
         headers = ["Node ID", "Host", "Raft Port", "API Port"]
         table = []
         for node_id, node_data in data.items():
