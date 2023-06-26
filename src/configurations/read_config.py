@@ -15,6 +15,7 @@ class IniConfig:
         """
         self.config = configparser.ConfigParser()
         self.config.read(ini_file)
+        self.path = ini_file
 
     def get_property(self, section, key):
         """
@@ -41,7 +42,7 @@ class IniConfig:
         """
         return dict(self.config.items(section))
 
-    def save(self, ini_file):
+    def save(self):
         """
         Saves the INI configuration to a file.
 
@@ -51,7 +52,7 @@ class IniConfig:
         Returns:
             None
         """
-        with open(ini_file, 'w') as f:
+        with open(self.path, 'w') as f:
             self.config.write(f)
 
 
@@ -66,6 +67,7 @@ class JsonConfig:
         Returns:
             None
         """
+        self.path = json_file
         with open(json_file) as f:
             self.config = json.load(f)
 
@@ -90,7 +92,7 @@ class JsonConfig:
         """
         return self.config
 
-    def save(self, json_file):
+    def save(self):
         """
         Saves the JSON configuration to a file.
 
@@ -100,5 +102,5 @@ class JsonConfig:
         Returns:
             None
         """
-        with open(json_file, 'w') as f:
-            json.dump(self.config, f)
+        with open(self.path, 'w') as f:
+            json.dump(self.config, f, indent=2)

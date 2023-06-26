@@ -6,7 +6,7 @@ from starlette.responses import RedirectResponse
 
 from src.configurations import JsonConfig
 from src.raft_node.api_helper import api_post_request
-from src.raft_node.raft_server import RaftServer
+from src.raft_node.raft_server import RaftServer, RaftState
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 
 
@@ -95,10 +95,45 @@ class RaftServerApp:
 
         @app.get("/get_log")
         def get_log(_: str = Depends(get_current_username)):
+            print(self.raft_config.get_all_properties())
             return self.server.log.entries
 
         @app.get("/authenticate")
         async def read_protected_endpoint(_: str = Depends(get_current_username)):
+            return {'status': 'OK'}
+
+        @app.post("/add_node")
+        async def read_protected_endpoint(server: dict, _: str = Depends(get_current_username)):
+            self.server.add_node(server['id'], server['host'], server['raft_port'])
+            entry = {
+                'host': server['host'],
+                'raft_port': server['raft_port'],
+                'api_port': server['api_port']
+            }
+            self.raft_config.config[server['id']] = entry
+            self.raft_config.save()
+            self.api_servers[server['id']] = {'host': server['host'], 'port': server['api_port']}
+            return {'status': 'OK'}
+
+        @app.post("/update_node")
+        async def read_protected_endpoint(server: dict, _: str = Depends(get_current_username)):
+            self.server.update_node(server['id'], server['host'], server['raft_port'])
+            entry = {
+                'host': server['host'],
+                'raft_port': server['raft_port'],
+                'api_port': server['api_port']
+            }
+            self.raft_config.config[server['id']] = entry
+            self.raft_config.save()
+            self.api_servers[server['id']] = {'host': server['host'], 'port': server['api_port']}
+            return {'status': 'OK'}
+
+        @app.post("/delete_node/{server_id}")
+        async def read_protected_endpoint(server_id: int, _: str = Depends(get_current_username)):
+            self.server.delete_node(int(server_id))
+            del self.raft_config.config[str(server_id)]
+            self.raft_config.save()
+            del self.api_servers[server_id]
             return {'status': 'OK'}
 
         @app.get("/get_servers")
@@ -110,6 +145,7 @@ class RaftServerApp:
             return {"status": "OK",
                     "leader_id": str(self.server.leader_id),
                     "is_running": self.server.is_running,
+                    "state": self.server.state.name,
                     "message": 'All OK'}
 
         @app.post("/start_server")
@@ -121,6 +157,8 @@ class RaftServerApp:
         @app.post("/stop_server")
         def get_state(_: str = Depends(get_current_username)):
             self.server.is_running = False
+            self.server.state = RaftState.FOLLOWER
+            self.server.rpc_server.stop()
             return {"status": 'OK'}
 
         return app
@@ -129,7 +167,5 @@ class RaftServerApp:
         self.server = RaftServer(self.raft_server_id, self.servers,
                                  self.database_uri, self.database_name, self.collection_name)
         app = self.create_app()
-        print(self.ssl_key_file)
-        print(self.ssl_cert_file)
         uvicorn.run(app, host=self.uvicorn_host, port=int(self.uvicorn_port),
                     ssl_keyfile=self.ssl_key_file, ssl_certfile=self.ssl_cert_file)

@@ -5,7 +5,11 @@ from prompt_toolkit import PromptSession
 from tabulate import tabulate
 
 from src.cli.cli_commands import run_htop, basic_commands, show_help, show_wellcome_screen, execute_command
+from src.cli.edit_json_file import edit_json_file
+from src.configurations import IniConfig
 from src.raft_node.api_helper import ApiHelper, get_server_state
+
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 def _exit():
@@ -90,13 +94,13 @@ class RaftCli:
             if state_response['status'] == 'OK':
                 if server_id == state_response['leader_id']:
                     table.append([server_id, '\033[32m\u25CF\033[0m online', is_running,
-                                  'Leader', info['host'], info["port"]])
+                                  state_response['state'], info['host'], info["port"]])
                 else:
                     table.append([server_id, '\033[32m\u25CF\033[0m online', is_running,
-                                  'Follower', info['host'], info["port"]])
+                                  state_response['state'], info['host'], info["port"]])
             else:
                 table.append([server_id, '\033[31m\u25CF\033[0m offline', is_running,
-                              'Follower', info['host'], info["port"]])
+                              state_response['state'], info['host'], info["port"]])
 
         # Set align='left' for all columns
         align_options = ['center'] * len(headers)
@@ -122,6 +126,8 @@ class RaftCli:
             "get_state": lambda: self._get_state(),
             "start_cl": lambda: self.start_cl(),
             "stop_cl": lambda: self.stop_cl(),
+            "edit_config": lambda: edit_json_file(raft_config.get_property('servers', 'raft_servers_path'),
+                                                  self.api_helper),
             "": lambda: None
         }
 

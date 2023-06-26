@@ -6,26 +6,20 @@ import math
 
 from enum import Enum
 
+from src.configurations import IniConfig
 from src.logger import MyLogger
 from src.raft_node.log import Log
 from src.rpc.rpc_client import RPCClient
 from src.rpc.rpc_server import RPCServer
 
 logger = MyLogger()
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 class RaftState(Enum):
     FOLLOWER = 1
     CANDIDATE = 2
     LEADER = 3
-
-
-min_val_for_timeout = 0.15
-max_val_for_timeout = 0.3
-
-
-# min_val_for_timeout = 3
-# max_val_for_timeout = 4
 
 
 class RaftServer:
@@ -37,7 +31,9 @@ class RaftServer:
         self.current_term = 0
         self.voted_for = None
         self.state = RaftState.FOLLOWER
-        self.election_timeout = random.uniform(min_val_for_timeout, max_val_for_timeout)
+        self.min_val_for_timeout = float(raft_config.get_property('raft', 'min_val_for_timeout'))
+        self.max_val_for_timeout = float(raft_config.get_property('raft', 'max_val_for_timeout'))
+        self.election_timeout = random.uniform(self.min_val_for_timeout, self.max_val_for_timeout)
         self.start = time.time()
         self.log = Log(database_uri, database_name, collection_name)
         if self.log.is_empty():
@@ -49,17 +45,15 @@ class RaftServer:
         self.election_in_progress = False
 
         # Create RPC server, register RPC functions and create RPC server thread
-        self.server = RPCServer(host=self.hostname, port=self.port)
-        self.server.register_function(self.append_entries_rpc, 'append_entries')
-        self.server.register_function(self.request_vote_rpc, 'request_vote')
-        # self.server_thread = \
-        threading.Thread(target=self.server.run).start()
+        self.rpc_server = RPCServer(host=self.hostname, port=self.port)
+        self.rpc_server.register_function(self.append_entries_rpc, 'append_entries')
+        self.rpc_server.register_function(self.request_vote_rpc, 'request_vote')
+
         # Create RPC clients for all other servers
         self.clients = {_server_id: RPCClient(host=server['host'], port=server['port'])
                         for _server_id, server in raft_servers.items() if _server_id != server_id}
         self.start = time.time()
-        # self.heartbeat_interval = 1
-        self.heartbeat_interval = 0.1
+        self.heartbeat_interval = float(raft_config.get_property('raft', 'heartbeat_interval'))
         self.leader_id = None
         # create thread pool for handling client requests in parallel
         self.heartbeat_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
@@ -68,7 +62,6 @@ class RaftServer:
         # create leader next index for each follower
         self.next_index = {}
         self.set_next_index()
-        self.active_append_threads = {_server_id: False for _server_id in self.clients.keys()}
         self.follower_append_index = {}
         self.is_running = False
 
@@ -78,10 +71,8 @@ class RaftServer:
 
     def run(self):
         logger.info(f"Starting RaftNode with ID: {self.server_id}")
-        # self.server_thread.start()
+        threading.Thread(target=self.rpc_server.run).start()
         self.transition_to_follower()
-        delay = random.uniform(0, 0.1)  # Randomize the initial delay before the first election
-        time.sleep(delay)
         while self.is_running:
             if self.state == RaftState.FOLLOWER:
                 if time.time() - self.start > self.election_timeout:
@@ -91,6 +82,26 @@ class RaftServer:
                 threading.Thread(target=self.send_append_entries_to_server_multicast).start()
                 self.reset_election_timeout()
             time.sleep(self.heartbeat_interval)
+
+    def add_node(self, server_id, host, port):
+        self.raft_servers[server_id] = {'host': host, 'port': port}
+        self.clients[server_id] = RPCClient(host=host, port=port)
+        self.next_index[server_id] = 1
+        self.follower_append_index[server_id] = 0
+
+    def update_node(self, server_id, host, port):
+        self.raft_servers[server_id] = {'host': host, 'port': port}
+        self.clients[server_id] = RPCClient(host=host, port=port)
+
+    def delete_node(self, server_id):
+        if server_id in self.raft_servers:
+            del self.raft_servers[server_id]
+        if server_id in self.clients:
+            del self.clients[server_id]
+        if server_id in self.next_index:
+            del self.next_index[server_id]
+        if server_id in self.follower_append_index:
+            del self.follower_append_index[server_id]
 
     def transition_to_follower(self, verbose=True):
         if verbose:
@@ -106,7 +117,7 @@ class RaftServer:
         self.current_term += 1
         self.voted_for = self.server_id
         self.start = time.time()
-        self.election_timeout = random.uniform(1, 2)
+        self.election_timeout = random.uniform(self.min_val_for_timeout, self.max_val_for_timeout)
         self.start_election()
 
     def transition_to_leader(self, verbose=True):
@@ -209,7 +220,6 @@ class RaftServer:
 
     def reset_election_timeout(self):
         self.start = time.time()
-        self.election_timeout = random.uniform(min_val_for_timeout, max_val_for_timeout)
 
     def start_election(self):
         if self.election_in_progress:

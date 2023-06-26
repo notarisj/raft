@@ -7,7 +7,7 @@ from prompt_toolkit.completion import WordCompleter
 
 basic_commands = WordCompleter(["status", "list", "add", "remove", "restart", "start",
                                 "stop", "start_cl", "stop_cl", "login", "exit", "help",
-                                "clear", "get_state"])
+                                "clear", "get_state", "edit_config"])
 
 
 def show_wellcome_screen():

@@ -82,6 +82,24 @@ class ApiHelper:
         except Exception as e:
             print('Error:', str(e))
 
+    def node_actions(self, host, port, payload, action, username=None, password=None):
+        if username is None or password is None:
+            username = self.username
+            password = self.password
+        if action == 'delete_node':
+            url = f'https://{host}:{port}/{action}/{payload}'
+            payload = {}
+        else:
+            url = f'https://{host}:{port}/{action}'
+        try:
+            response = api_post_request(url, payload, username, password)
+            if response is None:
+                return False
+            elif response.status_code == 200:
+                return True
+        except Exception as e:
+            print('Error:', str(e))
+
     def make_api_post_request(self, endpoint, payload):
         url = f'https://{self.host}:{self.port}/{endpoint}'
         try:

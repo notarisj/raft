@@ -23,7 +23,11 @@ class RPCServer:
         self.server.register_function(function, name)
         logger.info(f"Function '{function.__name__}' registered.")
 
+    def stop(self):
+        logger.info("Stopping RPC server...")
+        self.server.shutdown()
+        logger.info("RPC server stopped.")
+
     def run(self):
         logger.info("RPC server is running.")
         self.server.serve_forever()
-        logger.info("RPC server stopped.")
