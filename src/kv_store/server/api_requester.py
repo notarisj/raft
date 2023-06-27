@@ -6,7 +6,7 @@ class APIRequester:
     def __init__(self, _host, _port):
         self.host = _host
         self.port = _port
-        self.url = f"http://{_host}:{_port}"
+        self.url = f"https://{_host}:{_port}"
 
     def post_append_entry(self, payload_json, _endpoint="/append_entries"):
         send_url = self.url + _endpoint

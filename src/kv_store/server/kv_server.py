@@ -13,6 +13,7 @@ from src.kv_store.my_io.read_file import get_servers_from_file
 from src.kv_store.server.raft_json import RaftJSON, RaftJSONEncoder
 from src.kv_store.server.server_json import ServerJSON
 from src.logger import MyLogger
+from src.raft_node.api_helper import api_post_request
 
 logger = MyLogger()
 
@@ -25,7 +26,9 @@ class KVServer:
         self.kv_server_host = _kv_server_host
         self.kv_server_port = _kv_server_port
         self.kv_server_socket = None
-        self.api_requester = APIRequester(_raft_server_host, _raft_server_port)
+        self.raft_server_host = _raft_server_host
+        self.raft_server_port = _raft_server_port
+        # self.api_requester = APIRequester(_raft_server_host, _raft_server_port)
         self.server_list = get_servers_from_file(_server_list_file)
         self.server_ids = [server[2] for server in self.server_list]
         self.query_handler = RequestHandler()
@@ -97,13 +100,15 @@ class KVServer:
                 # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="DELETE", _rep_ids=shuffled_rep_ids)
                 raft_obj = RaftJSON("RAFT", ["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
                 raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
-                self.api_requester.post_append_entry(raft_request)
+                # self.api_requester.post_append_entry(raft_request)
+                api_post_request(f"http://0.0.0.0:{self.raft_server_port}/append_entries", raft_request)
 
                 # stage 2 --> PUT after deletion
                 # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="PUT", _rep_ids=shuffled_rep_ids)
                 raft_obj = RaftJSON("RAFT", [server_instance.commands], shuffled_rep_ids)
                 raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
-                self.api_requester.post_append_entry(raft_request)
+                # self.api_requester.post_append_entry(raft_request)
+                api_post_request(f"http://0.0.0.0:{self.raft_server_port}/append_entries", raft_request)
 
                 response = "Top level key \"" + server_instance.get_command_key() + "\" already exists. Send deletion message and then insert."
                 send_message(response, client_socket)
@@ -115,7 +120,8 @@ class KVServer:
                 # request = json.dumps(data)
                 raft_obj = RaftJSON("RAFT", [server_instance.commands], shuffled_rep_ids)
                 raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
-                self.api_requester.post_append_entry(raft_request)
+                # self.api_requester.post_append_entry(raft_request)
+                api_post_request(f"http://0.0.0.0:{self.raft_server_port}/append_entries", raft_request)
                 response = "Send insertion message for command \"{}\"".format(get_msg_command(request))
                 send_message(response, client_socket)
         elif command_type == 'DELETE':
@@ -125,7 +131,8 @@ class KVServer:
                 # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="DELETE", _rep_ids=shuffled_rep_ids)
                 raft_obj = RaftJSON("RAFT", ["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
                 raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
-                self.api_requester.post_append_entry(raft_request)
+                # self.api_requester.post_append_entry(raft_request)
+                api_post_request(f"http://0.0.0.0:{self.raft_server_port}/append_entries", raft_request)
                 response = "Send deletion message for top level key \"{}\"".format(get_key(request))
                 send_message(response, client_socket)
             else:
