@@ -1,6 +1,7 @@
 import json
+from typing import Any
 
-from src.kv_store.trie_data_structure.data_tree import Tree
+from src.kv_store.trie_data_structure.data_tree import Trie
 from src.logger import MyLogger
 
 logger = MyLogger()
@@ -8,32 +9,33 @@ logger = MyLogger()
 
 class RequestHandler:
     def __init__(self):
-        self.trie = Tree()
+        self.trie = Trie()
 
-    @staticmethod
-    def _parse_key_value(query) -> list[str]:
-        return query.split(" ", 1)
-
-    def execute(self, query) -> str:
-        data = json.loads(query)
-        query = data['command']
-        query_parts = self._parse_key_value(query)
-
-        command = query_parts[0]
+    def execute(self, query) -> str | None:
+        # data = json.loads(query)
+        # query = data['commands']
+        # query_parts = self._parse_key_value(query)
+        # command = query_parts[0]
+        query_payload = query.get_command_value()
+        command = query.get_command_type()
 
         if command == "PUT":
-            return self._execute_put_request(query_parts[1])
+            return self._execute_put_request(query_payload)
         elif command == "DELETE":
-            return self._execute_delete_request(query_parts[1])
+            return self._execute_delete_request(query_payload)
         elif command == "SEARCH":
-            key_search = query_parts[1].replace("\"", "")
+            key_search = query_payload.replace("\"", "")
             return self._execute_search_request(key_search)
         else:
             logger.info(f"Wrong query: {query}")
             logger.info("Wrong type of query. Request must be: PUT, DELETE, SEARCH.")
-            return "WRONG QUERY TYPE"
+            return None
 
-    def _execute_put_request(self, query) -> str:
+    # @staticmethod
+    # def _parse_key_value(query) -> list[str]:
+    #     return query.split(" ", 1)
+
+    def _execute_put_request(self, query) -> str | None:
         splitted_data = query.split(": ", 1)
 
         if self.trie.search(splitted_data[0]) is None:
@@ -46,12 +48,12 @@ class RequestHandler:
                 logger.info("Error while indexing data of \"" + query + "\". "
                                                                         "Data don't have the right format.")
                 logger.info("Server will not index \"" + splitted_data[0] + "\".")
-                return "ERROR"
+                return None
             return "OK"
         else:
             return "Data \"" + query + "\" already exists."
 
-    def _execute_search_request(self, query) -> str:
+    def _execute_search_request(self, query) -> str | dict:
         query = query.replace("\"", "")
         result = self.trie.search(query)
 

@@ -5,6 +5,8 @@ import ssl
 
 from src.configurations import IniConfig
 from src.logger import MyLogger
+from src.kv_store.my_io.utils import send_request_opened_connection
+from src.kv_store.server.server_json import ServerJSON, ServerJSONEncoder
 
 logger = MyLogger()
 raft_config = IniConfig('src/raft_node/deploy/config.ini')
@@ -41,9 +43,9 @@ class ExternalClient:
             if message.lower() == 'exit':
                 self.disconnect()
                 break
-            # response = send_request_opened_connection(formatted_message, self.client_socket)
-            # print(response)
             logger.info(formatted_message)
+            response = send_request_opened_connection(formatted_message, self.client_socket)
+            logger.info(response)
 
     def disconnect(self):
         try:
@@ -69,8 +71,10 @@ class ExternalClient:
                 return_msg = "Invalid format. Please use the following format: DELETE \"key\""
                 return return_msg
 
-        message = self.escape_quotes(message)
-        return self.get_basic_format(message)
+        # message = self.escape_quotes(message)
+        server_obj = ServerJSON("CLIENT", message)
+        server_json = json.dumps(server_obj, cls=ServerJSONEncoder)
+        return server_json
 
     @staticmethod
     def put_format_checker(message) -> bool:

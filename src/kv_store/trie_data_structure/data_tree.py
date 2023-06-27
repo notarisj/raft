@@ -1,75 +1,79 @@
-class Node:
-    def __init__(self, key, value):
+from collections import ChainMap
+
+
+class TrieNode:
+    def __init__(self, key, value=None):
         self.key = key
         self.value = value
-        self.children = []
+        self.children = {}
 
 
-class Tree:
+class Trie:
     def __init__(self):
-        self.root = Node("root", None)
+        self.root = TrieNode("")
 
-    def insert(self, json_obj):
-        self.build_tree(self.root, json_obj)
+    def build_trie(self, key, value):
+        node = self.root
+        for char in key:
+            if char not in node.children:
+                node.children[char] = TrieNode(char)
+            node = node.children[char]
+        node.value = value
 
-    def build_tree(self, node, json_obj):
-        if isinstance(json_obj, dict):
-            for key, value in json_obj.items():
-                child_node = Node(key, None)  # Set value as None initially
-                node.children.append(child_node)
-                self.build_tree(child_node, value)
+    def insert(self, _json_obj, prefix="") -> None:
+        if isinstance(_json_obj, dict):
+            if not _json_obj:  # Empty dictionary case
+                self.build_trie(prefix, {})
+            else:
+                for key, value in _json_obj.items():
+                    new_prefix = f"{prefix}.{key}" if prefix else key
+                    self.insert(value, new_prefix)
         else:
-            node.value = json_obj  # Store the value when it is not a dictionary
+            self.build_trie(prefix, _json_obj)
 
-    def print_tree(self, node=None, indent=""):
-        if node is None:
-            node = self.root
-        print(indent + node.key + ": " + str(node.value))
-        for child in node.children:
-            self.print_tree(child, indent + "  ")
-
-    def search(self, key_path, node=None, visited_keys=None):
-        if node is None:
-            node = self.root
-
-        if visited_keys is None:
-            visited_keys = {}
-
-        keys = key_path.split('.')
-        current_key = keys[0]
-        remaining_keys = '.'.join(keys[1:])
-
-        if current_key == "":
-            return self.get_value(node, visited_keys)
-
-        for child in node.children:
-            if child.key == current_key:
-                visited_keys[child.key] = True
-                result = self.search(remaining_keys, child, visited_keys.copy())  # Use a copy of visited_keys
-                if result is not None:
-                    return result
-
-        return None
-
-    def delete(self, top_key):
-        self.delete_node(self.root, top_key)
-
-    def delete_node(self, node, key):
-        for child in node.children:
-            if child.key == key:
-                node.children.remove(child)
-                return
-
-            self.delete_node(child, key)
-
-    def get_value(self, node, visited_keys):
-        if len(node.children) > 0:
-            value = {}
-            for child in node.children:
-                child_value = self.get_value(child, visited_keys)
-                if child_value is not None:
-                    value.update(child_value)
-            return {node.key: value} if value else {node.key: {}}  # Return an empty dictionary if value is None
+    def search(self, key) -> dict | None:
+        node = self.root
+        for char in key:
+            if char not in node.children:
+                return None
+            node = node.children[char]
+        if "." in node.children:
+            return self.traverse_subtree(node.children["."], key, {})
         else:
-            return {node.key: node.value} if node.value is not None else {
-                node.key: {}}  # Return an empty dictionary if value is None
+            return self.traverse_subtree(node, key, {})
+
+    def traverse_subtree(self, node, key, _json_obj) -> dict | None:
+        if node.value is not None:
+            return {key: node.value}
+        else:
+            concat_json = {}
+            if node.key == ".":  # if node has children
+                for child_key, child_node in node.children.items():
+                    temp_json = self.traverse_subtree(child_node, child_key, _json_obj)
+                    concat_json = dict(ChainMap(temp_json, concat_json))
+                if "." in key:
+                    key = key.replace(".", "")
+                    _json_obj = dict(ChainMap({key: concat_json}, _json_obj))
+                else:
+                    _json_obj = dict(ChainMap(concat_json, _json_obj))
+            else:
+                for child_key, child_node in node.children.items():
+                    temp_json = self.traverse_subtree(child_node, key + child_key, _json_obj)
+                    concat_json = dict(ChainMap(temp_json, concat_json))
+                if len(concat_json.items()) > 1 and len(node.children.items()) == 0:
+                    _json_obj = dict(ChainMap({key: concat_json}, _json_obj))
+                else:
+                    _json_obj = dict(ChainMap(concat_json, _json_obj))
+            return _json_obj
+
+    def delete(self, key) -> str | None:
+        node = self.root
+        for char in key:
+            if char not in node.children:
+                return None
+            node = node.children[char]
+        if "." in node.children:
+            del node.children["."]
+            return "OK"
+        else:
+            return None
