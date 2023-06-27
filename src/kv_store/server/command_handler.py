@@ -1,10 +1,14 @@
 import json
 import socket
 import random
+import ssl
 
+from src.configurations import IniConfig
 from src.kv_store.my_io.utils import send_message, receive_message
 from src.kv_store.server.message_handler import get_key
 from src.kv_store.server.server_json import ServerJSON, ServerJSONEncoder
+
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 def search_top_lvl_key(current_server_id, server_list, _request, query_handler) -> bool:
@@ -37,6 +41,14 @@ def search_top_lvl_key(current_server_id, server_list, _request, query_handler) 
                 try:
                     # Create a socket and connect to the server
                     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                    # Create an SSL context
+                    context = ssl.create_default_context(cafile=raft_config.get_property('SSL', 'ssl_cert_file'))
+                    context.check_hostname = True
+                    context.verify_mode = ssl.CERT_REQUIRED
+
+                    # Wrap the client socket with SSL
+                    client_socket = context.wrap_socket(client_socket, server_hostname=ip)
                     client_socket.connect((ip, port))
 
                     # Send the request to the server
@@ -87,6 +99,14 @@ def search(current_server_id, server_list, _request, query_handler) -> str:
                 try:
                     # Create a socket and connect to the server
                     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                    # Create an SSL context
+                    context = ssl.create_default_context(cafile=raft_config.get_property('SSL', 'ssl_cert_file'))
+                    context.check_hostname = True
+                    context.verify_mode = ssl.CERT_REQUIRED
+
+                    # Wrap the client socket with SSL
+                    client_socket = context.wrap_socket(client_socket, server_hostname=ip)
                     client_socket.connect((ip, port))
 
                     # Send the request to the server
