@@ -77,7 +77,7 @@ class KVServer:
     def handle_client(self, client_socket):
         while True:
             request = receive_message(client_socket)
-            logger.info(f"Received request: {request}")
+            logger.info(f"Received request: '{request}'")
             if request is None or request == "exit":
                 break
 

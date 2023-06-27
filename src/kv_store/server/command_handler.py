@@ -65,7 +65,7 @@ def search_top_lvl_key(current_server_id, server_list, _request, query_handler) 
                     print(str(e))
                 finally:
                     if client_socket:
-                        client_socket.close()
+                        # client_socket.close()
                         if response is not None and response != "NOT FOUND":
                             return True
                         break
@@ -123,7 +123,7 @@ def search(current_server_id, server_list, _request, query_handler) -> str:
                     print(str(e))
                 finally:
                     if client_socket:
-                        client_socket.close()
+                        # client_socket.close()
                         if response is not None and response != "NOT FOUND":
                             return response
                         break

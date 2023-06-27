@@ -43,7 +43,7 @@ class ExternalClient:
             if message.lower() == 'exit':
                 self.disconnect()
                 break
-            logger.info(formatted_message)
+            logger.info(f"Send to KV_Server: '{formatted_message}'")
             response = send_request_opened_connection(formatted_message, self.client_socket)
             logger.info(response)
 
