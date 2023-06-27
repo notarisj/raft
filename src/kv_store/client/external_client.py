@@ -9,7 +9,7 @@ from src.kv_store.my_io.utils import send_request_opened_connection
 from src.kv_store.server.server_json import ServerJSON, ServerJSONEncoder
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
 
 
 class ExternalClient:

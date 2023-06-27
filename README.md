@@ -26,7 +26,7 @@ You can start the server using the [run_server.sh](src/raft_node/deploy/bash/run
 directory path and optional arguments for configuration. If no parameters are provided,
 the script will use the default configuration from the [config.ini](src/raft_node/deploy/config.ini) 
 file. Note that if you want to test it in the same machine, you need to change the ports
-in [raft_servers.json](src/raft_node/deploy/raft_servers.json) and pass `--mongo_collection_name` 
+in [servers.json](src/raft_node/deploy/servers.json) and pass `--mongo_collection_name` 
 for each node.
 
 The usage is as follows:

@@ -26,6 +26,7 @@ def send_message(message, conn):
         conn.sendall(message.encode())
     except (BrokenPipeError, AttributeError):
         logger.info("Error sending message. Please ensure you are connected to the server.")
+        raise ConnectionError
 
 
 def receive_message(conn) -> Optional[str]:

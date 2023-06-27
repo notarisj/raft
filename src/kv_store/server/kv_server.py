@@ -4,7 +4,7 @@ import random
 import threading
 from json import JSONDecodeError
 
-from src.configurations import IniConfig
+from src.configurations import IniConfig, JsonConfig
 from src.kv_store.my_io.utils import receive_message, send_message
 from src.kv_store.server.command_handler import search_top_lvl_key, search
 from src.kv_store.server.message_handler import *
@@ -19,18 +19,18 @@ from src.raft_node.api_helper import api_post_request
 
 logger = MyLogger()
 raft_config = IniConfig('src/raft_node/deploy/config.ini')
+servers = JsonConfig('src/raft_node/deploy/servers.json')
 
 
 class KVServer:
-    def __init__(self, _replication_factor, _kv_server_host, _kv_server_port, _raft_server_host,
-                 _raft_server_port, _id, _server_list_file):
+    def __init__(self, _replication_factor, _id, _server_list_file):
         self.replication_factor = _replication_factor
         self.node_id = _id
-        self.kv_server_host = _kv_server_host
-        self.kv_server_port = _kv_server_port
+        self.kv_server_host = servers.get_property(str(self.node_id))['host']
+        self.kv_server_port = servers.get_property(str(self.node_id))['kv_port']
         self.kv_server_socket = None
-        self.raft_server_host = _raft_server_host
-        self.raft_server_port = _raft_server_port
+        self.raft_server_host = servers.get_property(str(self.node_id))['host']
+        self.raft_server_port = servers.get_property(str(self.node_id))['raft_port']
         # self.api_requester = APIRequester(_raft_server_host, _raft_server_port)
         self.server_list = get_servers_from_file(_server_list_file)
         self.server_ids = [server[2] for server in self.server_list]
@@ -85,7 +85,7 @@ class KVServer:
                 if is_client_request(request):
                     self.client_request_handler(client_socket, request)
                 elif is_raft_request(request):
-                    self.raft_request_handler(client_socket, request)
+                    self.raft_request_handler(request)
                 elif is_kv_server_request(request):
                     self.server_request_handler(client_socket, request)
                 else:
@@ -111,16 +111,16 @@ class KVServer:
                 # stage 1 --> DELETE FIRST
                 # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="DELETE", _rep_ids=shuffled_rep_ids)
                 raft_obj = RaftJSON("RAFT", ["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
-                raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
+                # raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
                 # self.api_requester.post_append_entry(raft_request)
-                api_post_request(f"http://0.0.0.0:{self.raft_server_port}/append_entries", raft_request)
+                api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
 
                 # stage 2 --> PUT after deletion
                 # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="PUT", _rep_ids=shuffled_rep_ids)
                 raft_obj = RaftJSON("RAFT", [server_instance.commands], shuffled_rep_ids)
-                raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
+                # raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
                 # self.api_requester.post_append_entry(raft_request)
-                api_post_request(f"http://0.0.0.0:{self.raft_server_port}/append_entries", raft_request)
+                api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
 
                 response = "Top level key \"" + server_instance.get_command_key() + "\" already exists. Send deletion message and then insert."
                 send_message(response, client_socket)
@@ -131,9 +131,9 @@ class KVServer:
                 # data['rep_ids'] = shuffled_rep_ids
                 # request = json.dumps(data)
                 raft_obj = RaftJSON("RAFT", [server_instance.commands], shuffled_rep_ids)
-                raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
+                # raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
                 # self.api_requester.post_append_entry(raft_request)
-                api_post_request(f"http://0.0.0.0:{self.raft_server_port}/append_entries", raft_request)
+                api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
                 response = "Send insertion message for command \"{}\"".format(get_msg_command(request))
                 send_message(response, client_socket)
         elif command_type == 'DELETE':
@@ -142,9 +142,9 @@ class KVServer:
                 # key exists so DELETE directly
                 # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="DELETE", _rep_ids=shuffled_rep_ids)
                 raft_obj = RaftJSON("RAFT", ["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
-                raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
+                # raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
                 # self.api_requester.post_append_entry(raft_request)
-                api_post_request(f"http://0.0.0.0:{self.raft_server_port}/append_entries", raft_request)
+                api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
                 response = "Send deletion message for top level key \"{}\"".format(get_key(request))
                 send_message(response, client_socket)
             else:
@@ -159,12 +159,12 @@ class KVServer:
             response = "\"{}\" is invalid command from user".format(command_type)
             send_message(response, client_socket)
 
-    def raft_request_handler(self, client_socket, request):
-        send_message("OK - Received {} bytes".format(len(request)), client_socket)
+    def raft_request_handler(self, request):
+        # send_message("OK - Received {} bytes".format(len(request)), client_socket)
 
         decoded_raft = json.loads(request)
         raft_request_instance = RaftJSON.from_json(decoded_raft)
-        requests_list = raft_request_instance.get_commands()
+        requests_list = raft_request_instance.commands
 
         if not check_id_exist(request, self.node_id):
             logger.info("Node ID {} not found in request. Ignore it.".format(self.node_id))

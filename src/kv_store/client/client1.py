@@ -1,4 +1,4 @@
-from src.kv_store.client.external_client import ExternalClient
+from src.kv_store.client import ExternalClient
 
 # Example usage
 if __name__ == '__main__':

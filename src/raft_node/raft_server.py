@@ -1,4 +1,5 @@
 import concurrent.futures
+import json
 import random
 import threading
 import time
@@ -211,11 +212,12 @@ class RaftServer:
         # the following index has been at least replicated by majority of the nodes
         return min(top_servers.values())
 
-    def append_entries_to_leader(self, commands):
+    def append_entries_to_leader(self, _append_entries):
+        # commands = _append_entries.get("commands", [])
         if self.state != RaftState.LEADER:
             return False
-        for command in commands:
-            self.log.append_entry(self.current_term, command)
+        # for command in commands:
+        self.log.append_entry(self.current_term, json.dumps(_append_entries))
         return True
 
     def reset_election_timeout(self):
@@ -271,7 +273,7 @@ class RaftServer:
         # print all the input arguments
         # print("term: ", term)
         # print("leader_id: ", leader_id)
-        print("prev_log_index: ", prev_log_index)
+        # print("prev_log_index: ", prev_log_index)
         # print("prev_log_term: ", prev_log_term)
         # print("commands: ", entries)
         # print("leader_commit: ", leader_commit)

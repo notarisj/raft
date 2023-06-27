@@ -74,7 +74,7 @@ def search_top_lvl_key(current_server_id, server_list, _request, query_handler) 
 
 def search(current_server_id, server_list, _request, query_handler) -> str:
     _request.sender = "KV_SERVER"
-
+    print(_request.to_json())
     # check if the key is in the current server
     response = query_handler.execute(_request)
     if response != "NOT FOUND" and response is not None:
