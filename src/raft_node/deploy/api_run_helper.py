@@ -170,9 +170,9 @@ class RaftServerApp:
         self.server = RaftServer(self.raft_server_id, self.servers,
                                  self.database_uri, self.database_name, self.collection_name)
 
-        self.kv_server = KVServer(_id=self.raft_server_id, _replication_factor=2,
-                                  _server_list_file='/Users/notaris/git/raft/src/kv_store/resources/serverFile.txt')
-        threading.Thread(target=self.kv_server.start).start()
+        # self.kv_server = KVServer(_id=self.raft_server_id, _replication_factor=2,
+        #                           _server_list_file='/Users/notaris/git/raft/src/kv_store/resources/serverFile.txt')
+        # threading.Thread(target=self.kv_server.start).start()
 
         app = self.create_app()
         uvicorn.run(app, host=self.uvicorn_host, port=int(self.uvicorn_port),

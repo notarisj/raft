@@ -1,3 +1,4 @@
+import json
 import socket
 import ssl
 import random
@@ -6,42 +7,40 @@ from json import JSONDecodeError
 from typing import List, Any
 
 from src.configurations import IniConfig, JsonConfig
-from src.kv_store.my_io.utils import receive_message, send_message
+from src.kv_store.my_io.utils import receive_message, send_message, connect_to_server
+from src.kv_store.server.message_helper import request_sender_type, get_key, check_id_exist
 from src.kv_store.server.command_handler import search_top_lvl_key, search
-from src.kv_store.server.message_helper import *
-from src.kv_store.server.message_helper import get_key
 from src.kv_store.server.query_handler import RequestHandler
-from src.kv_store.my_io.read_file import get_servers_from_file
 from src.kv_store.server.raft_json import RaftJSON
 from src.kv_store.server.server_json import ServerJSON
 from src.logger import MyLogger
 from src.raft_node.api_helper import api_post_request
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
-servers = JsonConfig('src/raft_node/deploy/servers.json')
+raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
+servers = JsonConfig('/Users/notaris/git/raft/src/raft_node/deploy/servers.json')
 
 
 class KVServer:
-    def __init__(self, _replication_factor: int, _id: int, _server_list_file: str) -> None:
+    def __init__(self, _replication_factor: int, _id: int) -> None:
         """
         Initialize a KVServer instance.
 
         Args:
             _replication_factor (int): Replication factor.
             _id (str): Server ID.
-            _server_list_file (str): Path to the server list file.
         """
         self.replication_factor = _replication_factor
         self.node_id = _id
         self.kv_server_host = servers.get_property(str(self.node_id))['host']
         self.kv_server_port = servers.get_property(str(self.node_id))['kv_port']
         self.kv_server_socket = None
-        self.raft_server_host = servers.get_property(str(self.node_id))['host']
-        self.raft_server_port = servers.get_property(str(self.node_id))['raft_port']
-        self.server_list = get_servers_from_file(_server_list_file)
-        self.server_ids = [server[2] for server in self.server_list]
+        self.api_server_host = servers.get_property(str(self.node_id))['host']
+        self.api_server_port = servers.get_property(str(self.node_id))['api_port']
         self.query_handler = RequestHandler()
+        self.client_handlers = {}
+        self.client_handlers_status = {}
+        self.refresh_client_handlers()
 
     def start(self) -> None:
         """
@@ -58,6 +57,38 @@ class KVServer:
             client_socket, client_address = self.kv_server_socket.accept()
             logger.info(f"New connection from: {client_address}")
             threading.Thread(target=self.handle_client, args=(client_socket,)).start()
+
+    def refresh_client_handlers(self) -> None:
+        """
+        Refresh the client handlers.
+
+        This method refreshes the client handlers by connecting to every server in the server list.
+        """
+        for _server_id, info in servers.config.items():
+            server_id = int(_server_id)
+            if int(server_id) != self.node_id:
+                try:
+                    self.client_handlers[server_id] = connect_to_server(info['host'], info['kv_port'],
+                                                                        raft_config.get_property('SSL',
+                                                                                                 'ssl_cert_file'))
+                    self.client_handlers_status[server_id] = False \
+                        if self.client_handlers[server_id] is None else True
+                except ConnectionRefusedError:
+                    logger.info(f"Connection refused by {server_id}")
+
+    def refresh_client_handlers_if_needed(self) -> None:
+        """
+        Check if all servers are connected.
+
+        This method checks if all servers are connected by checking the client handlers status.
+        """
+        for _server_id, info in servers.config.items():
+            server_id = int(_server_id)
+            if server_id != self.node_id and not self.client_handlers_status[server_id]:
+                self.client_handlers[server_id] = connect_to_server(info['host'], info['kv_port'],
+                                                                    raft_config.get_property('SSL', 'ssl_cert_file'))
+                self.client_handlers_status[server_id] = False \
+                    if self.client_handlers[server_id] is None else True
 
     def _server_socket_bind(self) -> None:
         """
@@ -162,8 +193,10 @@ class KVServer:
         command_type = server_instance.get_command_type()
 
         if command_type == 'PUT':
-            if search_top_lvl_key(current_server_id=self.node_id, server_list=self.server_list,
-                                  _request=request, query_handler=self.query_handler):
+            self.refresh_client_handlers_if_needed()
+            if search_top_lvl_key(current_server_id=self.node_id, server_list=servers.config,
+                                  _request=request, query_handler=self.query_handler,
+                                  client_handlers=self.client_handlers):
                 # stage 1 --> DELETE FIRST
                 try:
                     self.send_to_raft(["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
@@ -180,7 +213,9 @@ class KVServer:
                     send_message(f"Failed to send request to Raft {e}", client_socket)
                     return
 
-                response = "Top level key \"" + server_instance.get_command_key() + "\" already exists. Send deletion message and then insert."
+                response = "Top level key \"" + server_instance.get_command_key() + "\" already exists. " \
+                                                                                    "Send deletion message and then " \
+                                                                                    "insert."
                 send_message(response, client_socket)
             else:
                 # do not exist so PUT directly
@@ -193,8 +228,10 @@ class KVServer:
                 response = "Send insertion message for command \"{}\"".format(json.loads(request)['commands'])
                 send_message(response, client_socket)
         elif command_type == 'DELETE':
-            if search_top_lvl_key(current_server_id=self.node_id, server_list=self.server_list,
-                                  _request=request, query_handler=self.query_handler):
+            self.refresh_client_handlers_if_needed()
+            if search_top_lvl_key(current_server_id=self.node_id, server_list=servers.config,
+                                  _request=request, query_handler=self.query_handler,
+                                  client_handlers=self.client_handlers):
                 # key exists so DELETE directly
                 try:
                     self.send_to_raft(["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
@@ -205,12 +242,15 @@ class KVServer:
                 response = "Send deletion message for top level key \"{}\"".format(get_key(request))
                 send_message(response, client_socket)
             else:
+                pass
                 # key does not exist so send error message
-                response = " Top level key \"{}\" not found to delete it".format(get_key(request))
-                send_message(response, client_socket)
+                # response = " Top level key \"{}\" not found to delete it".format(get_key(request))
+                # send_message(response, client_socket)
         elif command_type == 'SEARCH':
-            search(current_server_id=self.node_id, server_list=self.server_list, _request=server_instance,
-                   query_handler=self.query_handler)
+            self.refresh_client_handlers_if_needed()
+            response = search(current_server_id=self.node_id, server_list=servers.config, _request=server_instance,
+                              query_handler=self.query_handler, client_handlers=self.client_handlers)
+            send_message(response, client_socket)
         else:
             # not known command type
             response = "\"{}\" is invalid command from user".format(command_type)
@@ -226,7 +266,7 @@ class KVServer:
         """
         # TODO: catch the exception and send back to client.
         raft_obj = RaftJSON("RAFT", commands, shuffled_rep_ids)
-        api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
+        api_post_request(f"https://{self.api_server_host}:{self.api_server_port}/append_entries", raft_obj.to_json())
 
     def raft_request_handler(self, request: str) -> None:
         """
@@ -307,4 +347,5 @@ class KVServer:
         Returns:
             list: A random list of replication IDs.
         """
-        return random.sample(self.server_ids, min(self.replication_factor, len(self.server_list)))
+        server_ids = [server_id for server_id in servers.config.keys() if server_id != self.node_id]
+        return random.sample(server_ids, min(self.replication_factor, len(servers.config.keys())))

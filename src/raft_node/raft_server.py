@@ -65,6 +65,7 @@ class RaftServer:
         self.set_next_index()
         self.follower_append_index = {}
         self.is_running = False
+        self.lock = threading.Lock()
 
     def __str__(self):
         return f"Server(id={self.server_id}, state={self.state.name}, " \
@@ -158,7 +159,6 @@ class RaftServer:
             # print('prev_log_term', prev_log_term)
             # print('entries', entries)
             # print('self.commit_index', self.commit_index)
-            self.commit_leader_entries()
             response = self.clients[_server_id].call(
                 'append_entries', self.current_term, self.server_id, prev_log_index,
                 prev_log_term, entries, self.commit_index
@@ -183,16 +183,18 @@ class RaftServer:
             logger.error(f"An error occurred: {e}")
 
     def commit_leader_entries(self):
-        new_commit_index = self.calculate_committed_index()
-        self.log.commit_entries(self.commit_index, new_commit_index)
-        self.commit_index = new_commit_index
+        with self.lock:
+            new_commit_index = self.calculate_committed_index()
+            print('new_commit_index', new_commit_index)
+            print('self.commit_index', self.commit_index)
+            self.log.commit_entries(self.server_id, self.commit_index, new_commit_index)
+            self.commit_index = new_commit_index
 
     def send_append_entries_to_server_multicast(self):
         logger.info(f"Starting append entries multicast.")
-        futures = {self.heartbeat_executor.submit(
-            self.send_append_entries,
-            _server_id)
-            for _server_id in self.raft_servers.keys() if _server_id != self.server_id}
+        self.commit_leader_entries()
+        futures = {self.heartbeat_executor.submit(self.send_append_entries, _server_id)
+                   for _server_id in self.raft_servers.keys() if _server_id != self.server_id}
         for future in concurrent.futures.as_completed(futures):
             future.result()
         logger.info(f"Append entries multicast finished.")
@@ -350,7 +352,7 @@ class RaftServer:
         # print("leader_commit: ", leader_commit)
         # print("self.commit_index: ", self.commit_index)
         if leader_commit > self.commit_index:
-            self.log.commit_entries(self.commit_index, leader_commit)
+            self.log.commit_entries(self.server_id, self.commit_index, leader_commit)
             self.commit_index = min(leader_commit, self.log.get_last_index())
             # self.log.commit_all_entries_after(self.commit_index)
 

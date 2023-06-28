@@ -22,7 +22,7 @@ class RequestHandler:
         """
         self.trie = Trie()
 
-    def execute(self, query: 'ServerJSON' | 'RaftJSON') -> str | None:
+    def execute(self, query: 'ServerJSON' or 'RaftJSON') -> str | None:
         """
         Executes the given query.
 
@@ -57,18 +57,18 @@ class RequestHandler:
         Returns:
             str or None: The result of the PUT request, or None if an error occurs.
         """
-        splitted_data = query.split(": ", 1)
+        split_data = query.split(": ", 1)
 
-        if self.trie.search(splitted_data[0]) is None:
+        if self.trie.search(split_data[0]) is None:
             try:
                 query = "{{{}}}".format(query)
                 query = json.loads(query)
                 self.trie.insert(query)
             except IndexError:
-                self.trie.delete(splitted_data[0])
+                self.trie.delete(split_data[0])
                 logger.info("Error while indexing data of \"" + query + "\". "
                                                                         "Data don't have the right format.")
-                logger.info("Server will not index \"" + splitted_data[0] + "\".")
+                logger.info("Server will not index \"" + split_data[0] + "\".")
                 return None
             return "OK"
         else:
