@@ -11,8 +11,8 @@ from src.kv_store.my_io import send_message
 from src.logger import MyLogger
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
-servers = JsonConfig('src/raft_node/deploy/servers.json').get_all_properties()
+raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
+servers = JsonConfig('/Users/notaris/git/raft/src/raft_node/deploy/servers.json').get_all_properties()
 
 
 class LogEntry:
@@ -92,7 +92,7 @@ class Log:
             return 0
         return self.entries[-1].term
 
-    def commit_entries(self, commit_index, new_commit_index):
+    def commit_entries(self, server_id, commit_index, new_commit_index):
         print(f"Committing entries from {commit_index} to {new_commit_index}")
         for entry in self.entries[commit_index:new_commit_index]:
             print('inside commit entries')
@@ -101,7 +101,7 @@ class Log:
             # Send entry to state machine
             try:
                 print('apply to state machine')
-                self.append_to_state_machine(entry.command)
+                self.append_to_state_machine(server_id, entry.command)
             except ConnectionError as e:
                 logger.error(f"ConnectionError: {e}")
 
@@ -131,13 +131,10 @@ class Log:
         else:
             return False
 
-    def append_to_state_machine(self, _append_entry):
-        # print(1)
-        for client_socket in self.client_sockets.values():
-            # print(1)
-            print(_append_entry)
-            print(client_socket)
-            send_message(_append_entry, client_socket)
+    def append_to_state_machine(self, server_id, _append_entry):
+        print('server_id', server_id)
+        print('_append_entry, _append_entry')
+        send_message(_append_entry, self.client_sockets[str(server_id)])
 
     def connect(self):
 

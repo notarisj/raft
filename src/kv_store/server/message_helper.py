@@ -115,6 +115,6 @@ def check_id_exist(request: str, _id: int) -> bool:
     try:
         msg = json.loads(request)
         replication_nodes = msg.get("rep_ids", [])
-        return _id in replication_nodes
+        return str(_id) in replication_nodes
     except json.JSONDecodeError as e:
         raise e

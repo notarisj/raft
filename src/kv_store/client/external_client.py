@@ -5,7 +5,7 @@ import ssl
 
 from src.configurations import IniConfig
 from src.logger import MyLogger
-from src.kv_store.my_io.utils import send_request_opened_connection
+# from src.kv_store.my_io.utils import send_request_opened_connection
 from src.kv_store.server.server_json import ServerJSON, ServerJSONEncoder
 
 logger = MyLogger()
@@ -82,8 +82,8 @@ class ExternalClient:
                 self.disconnect()
                 break
             logger.info(f"Send to KV_Server: '{formatted_message}'")
-            response = send_request_opened_connection(formatted_message, self.client_socket)
-            logger.info(response)
+            # response = send_request_opened_connection(formatted_message, self.client_socket)
+            # logger.info(response)
 
     def disconnect(self) -> None:
         """

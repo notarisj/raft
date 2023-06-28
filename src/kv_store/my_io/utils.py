@@ -1,3 +1,5 @@
+import socket
+import ssl
 import sys
 import struct
 from typing import Optional, Any
@@ -59,16 +61,35 @@ def receive_message(conn: Any) -> Optional[str]:
         return None
 
 
-def send_request_opened_connection(request: str, conn: Any) -> str:
-    """
-    Sends a request to a specified raft_node address and receives the response.
+def connect_to_server(host, port, certificate_path):
+    try:
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    Args:
-        request (str): The request to be sent.
-        conn: The connection to the server.
+        # Create an SSL context
+        context = ssl.create_default_context(cafile=certificate_path)
+        context.check_hostname = True
+        context.verify_mode = ssl.CERT_REQUIRED
 
-    Returns:
-        The response received from the KV-server.
-    """
-    send_message(request, conn)
-    return receive_message(conn)
+        # Wrap the client socket with SSL
+        client_socket = context.wrap_socket(client_socket, server_hostname=host)
+
+        client_socket.connect((host, port))
+        print(f"Connected to {host}:{port}")
+        return client_socket
+    except ConnectionRefusedError:
+        print(f"Failed to connect to {host}:{port}. Please ensure the server is running.")
+        return None
+
+# def send_request_opened_connection(request, conn) -> str:
+#     """
+#     Sends a request to a specified raft_node address and receives the response.
+#
+#     Args:
+#         request (str): The request to be sent.
+#         conn: The connection to the server.
+#
+#     Returns:
+#         The response received from the KV-server.
+#     """
+#     send_message(request, conn)
+#     return receive_message(conn)
