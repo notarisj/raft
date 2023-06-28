@@ -118,11 +118,11 @@ class KVServer:
                 break
 
             try:
-                if is_client_request(request):
+                if request_sender_type(request, "CLIENT"):
                     self.client_request_handler(client_socket, request)
-                elif is_raft_request(request):
+                elif request_sender_type(request, "RAFT"):
                     self.raft_request_handler(request)
-                elif is_kv_server_request(request):
+                elif request_sender_type(request, "KV_SERVER"):
                     self.server_request_handler(client_socket, request)
                 else:
                     self.wrong_sender_handler(client_socket, request)
@@ -165,42 +165,43 @@ class KVServer:
             if search_top_lvl_key(current_server_id=self.node_id, server_list=self.server_list,
                                   _request=request, query_handler=self.query_handler):
                 # stage 1 --> DELETE FIRST
-                # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="DELETE", _rep_ids=shuffled_rep_ids)
-                raft_obj = RaftJSON("RAFT", ["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
-                # raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
-                # self.api_requester.post_append_entry(raft_request)
-                api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
+                try:
+                    self.send_to_raft(["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
+                except Exception as e:
+                    logger.error(f"Failed to send request to Raft: {e}")
+                    send_message(f"Failed to send request to Raft {e}", client_socket)
+                    return
 
                 # stage 2 --> PUT after deletion
-                # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="PUT", _rep_ids=shuffled_rep_ids)
-                raft_obj = RaftJSON("RAFT", [server_instance.commands], shuffled_rep_ids)
-                # raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
-                # self.api_requester.post_append_entry(raft_request)
-                api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
+                try:
+                    self.send_to_raft([server_instance.commands], shuffled_rep_ids)
+                except Exception as e:
+                    logger.error(f"Failed to send request to Raft: {e}")
+                    send_message(f"Failed to send request to Raft {e}", client_socket)
+                    return
 
                 response = "Top level key \"" + server_instance.get_command_key() + "\" already exists. Send deletion message and then insert."
                 send_message(response, client_socket)
             else:
                 # do not exist so PUT directly
-                # data = json.loads(request)
-                # data['sender'] = "RAFT"
-                # data['rep_ids'] = shuffled_rep_ids
-                # request = json.dumps(data)
-                raft_obj = RaftJSON("RAFT", [server_instance.commands], shuffled_rep_ids)
-                # raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
-                # self.api_requester.post_append_entry(raft_request)
-                api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
-                response = "Send insertion message for command \"{}\"".format(get_msg_command(request))
+                try:
+                    self.send_to_raft([server_instance.commands], shuffled_rep_ids)
+                except Exception as e:
+                    logger.error(f"Failed to send request to Raft: {e}")
+                    send_message(f"Failed to send request to Raft {e}", client_socket)
+                    return
+                response = "Send insertion message for command \"{}\"".format(json.loads(request)['commands'])
                 send_message(response, client_socket)
         elif command_type == 'DELETE':
             if search_top_lvl_key(current_server_id=self.node_id, server_list=self.server_list,
                                   _request=request, query_handler=self.query_handler):
                 # key exists so DELETE directly
-                # request = format_to_send_over_raft(request, _sender="RAFT", _command_type="DELETE", _rep_ids=shuffled_rep_ids)
-                raft_obj = RaftJSON("RAFT", ["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
-                # raft_request = json.dumps(raft_obj, cls=RaftJSONEncoder)
-                # self.api_requester.post_append_entry(raft_request)
-                api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
+                try:
+                    self.send_to_raft(["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
+                except Exception as e:
+                    logger.error(f"Failed to send request to Raft: {e}")
+                    send_message(f"Failed to send request to Raft {e}", client_socket)
+                    return
                 response = "Send deletion message for top level key \"{}\"".format(get_key(request))
                 send_message(response, client_socket)
             else:
@@ -215,8 +216,18 @@ class KVServer:
             response = "\"{}\" is invalid command from user".format(command_type)
             send_message(response, client_socket)
 
-    def raft_request_handler(self, request):
-        # send_message("OK - Received {} bytes".format(len(request)), client_socket)
+    def send_to_raft(self, commands: List[str], shuffled_rep_ids: List[int]) -> None:
+        """
+        Sends a payload to the Raft server for processing.
+
+        Args:
+           commands (List[str]): The commands to send, represented as a list of strings.
+           shuffled_rep_ids (List[int]): The shuffled list of replica IDs to determine the order of processing.
+        """
+        # TODO: catch the exception and send back to client.
+        raft_obj = RaftJSON("RAFT", commands, shuffled_rep_ids)
+        api_post_request(f"https://127.0.0.1:{self.raft_server_port}/append_entries", raft_obj.to_json())
+
     def raft_request_handler(self, request: str) -> None:
         """
         Handle a request from the Raft server.
@@ -241,6 +252,10 @@ class KVServer:
                     self.query_handler.execute(temp_request)
                 elif command_type == 'DELETE':
                     self.query_handler.execute(temp_request)
+                elif command_type == 'UPDATE':
+                    # TODO: implement update of servers
+                    # a new node is added in the raft, the servers.json file is updated
+                    pass
                 else:
                     response = "\"{}\" is invalid command from a RaftServer".format(command_type)
                     logger.error(response)
