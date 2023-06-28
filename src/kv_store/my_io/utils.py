@@ -1,13 +1,13 @@
 import sys
 import struct
-from typing import Optional
+from typing import Optional, Any
 
 from src.logger import MyLogger
 
 logger = MyLogger()
 
 
-def send_message(message, conn):
+def send_message(message: str, conn: Any) -> None:
     """
     Sends a message over the established connection.
 
@@ -29,7 +29,7 @@ def send_message(message, conn):
         raise ConnectionError
 
 
-def receive_message(conn) -> Optional[str]:
+def receive_message(conn: Any) -> Optional[str]:
     """
     Receives a message from the connection.
 
@@ -53,14 +53,13 @@ def receive_message(conn) -> Optional[str]:
             message_chunks.append(chunk)
             remaining_size -= len(chunk)
         message = b''.join(message_chunks).decode()
-        # logger.log_info("[+] Message received successfully")
         return message
     except (ConnectionResetError, AttributeError):
         logger.info("Connection lost. Disconnected from the server.")
         return None
 
 
-def send_request_opened_connection(request, conn) -> str:
+def send_request_opened_connection(request: str, conn: Any) -> str:
     """
     Sends a request to a specified raft_node address and receives the response.
 

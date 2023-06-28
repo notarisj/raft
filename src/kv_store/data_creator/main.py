@@ -6,6 +6,11 @@ from create_values import CreateValues
 
 
 if __name__ == "__main__":
+    """
+    Entry point of the DataCreation program.
+    Generates syntactically correct data to be loaded into a key-value database.
+    """
+
     print(
         "Welcome to DataCreation! This program generates syntactically correct data that will be loaded to a key "
         "value database.")

@@ -5,13 +5,29 @@ import ssl
 
 from src.configurations import IniConfig
 from src.kv_store.my_io.utils import send_message, receive_message
-from src.kv_store.server.message_handler import get_key
+from src.kv_store.server import RequestHandler
+from src.kv_store.server.message_helper import get_key
 from src.kv_store.server.server_json import ServerJSON, ServerJSONEncoder
 
 raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
-def search_top_lvl_key(current_server_id, server_list, _request, query_handler) -> bool:
+def search_top_lvl_key(current_server_id: int, server_list: list, _request: str, query_handler: 'RequestHandler') -> bool:
+    """
+    Search for a top-level key in the server list.
+
+    This method searches for a top-level key in the server list by sending requests to other servers in the list.
+    It checks if the key exists in any of the servers. If it finds it at a server, it returns True.
+
+    Args:
+        current_server_id (int): The ID of the current server.
+        server_list (list): The list of servers to search.
+        _request (str): The request containing the key to search.
+        query_handler: The query handler object.
+
+    Returns:
+        bool: True if the key exists in any of the servers, False otherwise.
+    """
     key = get_key(_request)
     server_obj = ServerJSON("KV_SERVER", "SEARCH {}".format(key))
     _request = json.dumps(server_obj, cls=ServerJSONEncoder)
@@ -72,7 +88,23 @@ def search_top_lvl_key(current_server_id, server_list, _request, query_handler) 
     return False
 
 
-def search(current_server_id, server_list, _request, query_handler) -> str:
+def search(current_server_id: int, server_list: list, _request: 'ServerJSON', query_handler: 'RequestHandler') -> str:
+    """
+    Search for a key in the server list.
+
+    This method searches for a value in the server list by sending requests to other servers in the list.
+    It checks if the value exists in any of the servers and returns the corresponding value. It uses SSL
+    to communicate with the servers.
+
+    Args:
+        current_server_id (int): The ID of the current server.
+        server_list (list): The list of servers to search.
+        _request (str): The request containing the key to search.
+        query_handler: The query handler object.
+
+    Returns:
+        str: The value corresponding to the key if it exists in any of the servers, "NOT FOUND" otherwise.
+    """
     _request.sender = "KV_SERVER"
     print(_request.to_json())
     # check if the key is in the current server

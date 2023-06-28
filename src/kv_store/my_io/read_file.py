@@ -2,6 +2,20 @@ from typing import Dict, List
 
 
 def get_data_from_file(file_path: str) -> Dict[str, str]:
+    """
+    Reads data from a file and returns it as a dictionary.
+
+    Args:
+        file_path: The path of the file to read.
+
+    Returns:
+        A dictionary containing the data read from the file, where each line in the file is treated as a key-value pair.
+
+    Raises:
+        FileNotFoundError: If the file is not found.
+        IOError: If there is an error while reading the file.
+        ValueError: If there is an invalid line format in the file.
+    """
     data_map = {}
 
     try:
@@ -23,6 +37,22 @@ def get_data_from_file(file_path: str) -> Dict[str, str]:
 
 
 def get_servers_from_file(file_path: str) -> list[list[str]]:
+    """
+    Reads server information from a file and returns it as a list of server lists.
+    The format of each line in the file should be: <ip>, <port>, <value>
+
+    Args:
+        file_path: The path of the file to read.
+
+    Returns:
+        A list of server lists, where each server list contains server information in
+        the format [ip, port, value].
+
+    Raises:
+        FileNotFoundError: If the file is not found.
+        IOError: If there is an error while reading the file.
+        ValueError: If there is an invalid line format in the file.
+    """
     servers_list = []
 
     try:
@@ -49,6 +79,19 @@ def get_servers_from_file(file_path: str) -> list[list[str]]:
 
 
 def read_data_to_index_from_file(file_path: str) -> List[str]:
+    """
+    Reads data from a file and returns it as a list of strings.
+
+    Args:
+        file_path: The path of the file to read.
+
+    Returns:
+        A list of strings, where each string represents a line of data read from the file.
+
+    Raises:
+        FileNotFoundError: If the file is not found.
+        IOError: If there is an error while reading the file.
+    """
     data = []
 
     try:

@@ -5,6 +5,9 @@ from src.kv_store.cli.cli_commands import *
 
 
 def _exit():
+    """
+    Exits the KVStore client.
+    """
     print("Exiting KVStore client. Bye!")
     sys.exit(0)
 
@@ -21,7 +24,14 @@ class ClientCli:
         self.api_helper = None
         self.is_connected = False
 
-    def process_user_input(self, user_input):
+    @staticmethod
+    def process_user_input(user_input: str) -> None:
+        """
+        Processes the user input and executes the corresponding command.
+
+        Args:
+            user_input (str): The user input to process.
+        """
         # only allow login and exit commands if self.is_connected is False
         # allowed_commands = ["login", "exit", "clear", "help"]
         # if not self.is_connected:
@@ -41,7 +51,10 @@ class ClientCli:
         func = switcher.get(user_input, lambda: print("Unknown command:", user_input))
         func()
 
-    def run(self):
+    def run(self) -> None:
+        """
+        Runs the KVStore client.
+        """
         while True:
             try:
                 if not self.is_connected:
