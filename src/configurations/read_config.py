@@ -45,12 +45,6 @@ class IniConfig:
     def save(self):
         """
         Saves the INI configuration to a file.
-
-        Args:
-            ini_file (str): The path to save the INI configuration.
-
-        Returns:
-            None
         """
         with open(self.path, 'w') as f:
             self.config.write(f)
@@ -95,12 +89,6 @@ class JsonConfig:
     def save(self):
         """
         Saves the JSON configuration to a file.
-
-        Args:
-            json_file (str): The path to save the JSON configuration.
-
-        Returns:
-            None
         """
         with open(self.path, 'w') as f:
             json.dump(self.config, f, indent=2)

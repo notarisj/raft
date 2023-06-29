@@ -1,8 +1,7 @@
 import threading
 import unittest
 
-from rpc_server import RPCServer
-from rpc_client import RPCClient
+from src.rpc import RPCServer, RPCClient
 
 
 # Server-side code

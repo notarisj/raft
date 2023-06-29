@@ -128,21 +128,3 @@ class Log:
 
     def append_to_state_machine(self, _append_entry):
         self.kv_store_rpc_client.call('raft_request', _append_entry)
-
-    # def connect(self):
-    #     try:
-    #         # Create a TCP/IP socket
-    #         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #
-    #         # Create an SSL context
-    #         context = ssl.create_default_context(cafile=raft_config.get_property('SSL', 'ssl_cert_file'))
-    #         context.check_hostname = True
-    #         context.verify_mode = ssl.CERT_REQUIRED
-    #
-    #         info = servers[str(self.server_id)]
-    #         self.kv_store_socket = context.wrap_socket(client_socket, server_hostname=info['host'])
-    #         # Wrap the client socket with SSL
-    #         self.kv_store_socket.connect((info['host'], info['kv_port']))
-    #         logger.info(f"Connected to {info['host']}:{info['kv_port']}")
-    #     except ConnectionRefusedError:
-    #         logger.error("Failed to connect. Please ensure the server is running.")

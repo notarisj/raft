@@ -38,10 +38,8 @@ class RaftServer:
         self.start = time.time()
         self.log = Log(database_uri, database_name, collection_name, self.server_id)
         if self.log.is_empty():
-            # print("commit index is 0")
             self.commit_index = 0
         else:
-            # print("self.log.get_last_commit_index()", self.log.get_last_commit_index())
             self.commit_index = self.log.get_last_commit_index()
         self.election_in_progress = False
 

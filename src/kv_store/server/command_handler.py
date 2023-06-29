@@ -87,6 +87,3 @@ def search(current_server_id: int, server_list: dict, _request: 'ServerJSON', qu
             if response is not None and response != "NOT FOUND":
                 return response
     return "NOT FOUND"
-
-
-
