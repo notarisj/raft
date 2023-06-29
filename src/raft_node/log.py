@@ -5,8 +5,8 @@ from src.logger import MyLogger
 from src.rpc import RPCClient
 
 logger = MyLogger()
-raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
-servers = JsonConfig('/Users/notaris/git/raft/src/raft_node/deploy/servers.json').get_all_properties()
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
+servers = JsonConfig('src/raft_node/deploy/servers.json').get_all_properties()
 
 
 class LogEntry:

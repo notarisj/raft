@@ -14,8 +14,8 @@ from src.raft_node.api_helper import api_post_request
 from src.rpc import RPCServer, RPCClient
 
 logger = MyLogger()
-raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
-servers = JsonConfig('/Users/notaris/git/raft/src/raft_node/deploy/servers.json')
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
+servers = JsonConfig('src/raft_node/deploy/servers.json')
 
 
 class KVServer:

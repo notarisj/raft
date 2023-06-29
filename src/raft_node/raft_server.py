@@ -14,7 +14,7 @@ from src.rpc.rpc_client import RPCClient
 from src.rpc.rpc_server import RPCServer
 
 logger = MyLogger()
-raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 class RaftState(Enum):

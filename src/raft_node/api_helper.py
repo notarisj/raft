@@ -23,7 +23,7 @@ from src.configurations import IniConfig
         print('Error:', str(e))
 """
 
-raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 def get_server_state(host, port, username, password):

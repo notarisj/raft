@@ -20,7 +20,7 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
 
-    raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
+    raft_config = IniConfig('src/raft_node/deploy/config.ini')
     raft_servers_config = JsonConfig('src/raft_node/deploy/servers.json').config
 
     server_id = args.server_id if args.server_id is not None else \

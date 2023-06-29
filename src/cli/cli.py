@@ -9,7 +9,7 @@ from src.cli.edit_json_file import edit_json_file
 from src.configurations import IniConfig
 from src.raft_node.api_helper import ApiHelper, get_server_state
 
-raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 def _exit():

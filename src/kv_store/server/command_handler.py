@@ -5,7 +5,7 @@ from src.kv_store.server.query_handler import RequestHandler
 from src.kv_store.server.message_helper import get_key
 from src.kv_store.server.server_json import ServerJSON, ServerJSONEncoder
 
-raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
 def search_top_lvl_key(current_server_id: int, server_list: dict, _request: str,
