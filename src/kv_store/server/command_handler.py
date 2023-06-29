@@ -1,14 +1,11 @@
 import json
-import socket
-import ssl
 
 from src.configurations import IniConfig
-from src.kv_store.my_io.utils import send_message, receive_message
 from src.kv_store.server.query_handler import RequestHandler
 from src.kv_store.server.message_helper import get_key
 from src.kv_store.server.server_json import ServerJSON, ServerJSONEncoder
 
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
 
 
 def search_top_lvl_key(current_server_id: int, server_list: dict, _request: str,
@@ -39,38 +36,14 @@ def search_top_lvl_key(current_server_id: int, server_list: dict, _request: str,
     # Shuffle the server list to have a random order
     # random.shuffle(server_list)
 
-    for _server_id in server_list.keys():
-        server_id = int(_server_id)
-        if server_id != current_server_id:
-            for i in range(3):
-
-                client_socket = client_handlers[server_id]
-                response = None
-                try:
-                    # Send the request to the server
-                    send_message(_request, client_socket)
-
-                    # Receive and process the response
-                    response = receive_message(client_socket)
-                    if response:
-                        print(f"Response from server with id: {server_id}")
-                        print(response)
-
-                except ssl.SSLError as e:
-                    print(f"SSL error occurred while connecting to server with id: {server_id}")
-                    print(str(e))
-                except socket.error as e:
-                    print(f"Socket error occurred while connecting to server with id: {server_id}")
-                    print(str(e))
-                except Exception as e:
-                    print(f"Error occurred while connecting to server with id: {server_id}")
-                    print(str(e))
-
-                finally:
-                    if client_socket:
-                        if response is not None and response != "NOT FOUND":
-                            return True
-                        break
+    for server_id in server_list.keys():
+        if int(server_id) != current_server_id:
+            response = client_handlers[server_id].call('kv_request', _request)
+            if response:
+                print(f"Response from server with id: {server_id}")
+                print(response)
+            if response is not None and response != "NOT FOUND":
+                return True
     return False
 
 
@@ -105,43 +78,14 @@ def search(current_server_id: int, server_list: dict, _request: 'ServerJSON', qu
     # Shuffle the server list to have a random order
     # random.shuffle(server_list)
 
-    for _server_id in server_list.keys():
-        server_id = int(_server_id)
-        if server_id != current_server_id:
-
-            for i in range(3):
-
-                client_socket = None
-                response = None
-                try:
-                    # Create a socket and connect to the server
-                    client_socket = client_handlers[server_id]
-
-                    # Send the request to the server
-                    send_message(dump_request, client_socket)
-
-                    # Receive and process the response
-                    response = receive_message(client_socket)
-                    if response:
-                        print(f"Response from server with id: {server_id}")
-                        print(response)
-
-                except ssl.SSLError as e:
-                    print(f"SSL error occurred while connecting to server with id: {server_id}")
-                    print(str(e))
-                except socket.error as e:
-                    print(f"Socket error occurred while connecting to server with id: {server_id}")
-                    print(str(e))
-                except Exception as e:
-                    print(f"Error occurred while connecting to server with id: {server_id}")
-                    print(str(e))
-
-                finally:
-                    if client_socket:
-                        if response is not None and response != "NOT FOUND":
-                            return response
-                        break
-
+    for server_id in server_list.keys():
+        if int(server_id) != current_server_id:
+            response = client_handlers[server_id].call('kv_request', dump_request)
+            if response:
+                print(f"Response from server with id: {server_id}")
+                print(response)
+            if response is not None and response != "NOT FOUND":
+                return response
     return "NOT FOUND"
 
 

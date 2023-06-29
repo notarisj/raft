@@ -14,7 +14,7 @@ from src.rpc.rpc_client import RPCClient
 from src.rpc.rpc_server import RPCServer
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
 
 
 class RaftState(Enum):
@@ -36,7 +36,7 @@ class RaftServer:
         self.max_val_for_timeout = float(raft_config.get_property('raft', 'max_val_for_timeout'))
         self.election_timeout = random.uniform(self.min_val_for_timeout, self.max_val_for_timeout)
         self.start = time.time()
-        self.log = Log(database_uri, database_name, collection_name)
+        self.log = Log(database_uri, database_name, collection_name, self.server_id)
         if self.log.is_empty():
             # print("commit index is 0")
             self.commit_index = 0
@@ -187,7 +187,7 @@ class RaftServer:
             new_commit_index = self.calculate_committed_index()
             print('new_commit_index', new_commit_index)
             print('self.commit_index', self.commit_index)
-            self.log.commit_entries(self.server_id, self.commit_index, new_commit_index)
+            self.log.commit_entries(self.commit_index, new_commit_index)
             self.commit_index = new_commit_index
 
     def send_append_entries_to_server_multicast(self):
@@ -352,7 +352,7 @@ class RaftServer:
         # print("leader_commit: ", leader_commit)
         # print("self.commit_index: ", self.commit_index)
         if leader_commit > self.commit_index:
-            self.log.commit_entries(self.server_id, self.commit_index, leader_commit)
+            self.log.commit_entries(self.commit_index, leader_commit)
             self.commit_index = min(leader_commit, self.log.get_last_index())
             # self.log.commit_all_entries_after(self.commit_index)
 

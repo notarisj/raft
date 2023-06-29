@@ -6,7 +6,6 @@ import subprocess
 from prompt_toolkit.completion import WordCompleter
 
 from src.configurations import IniConfig
-from src.kv_store.my_io import send_message, receive_message
 from src.kv_store.server import ServerJSON, ServerJSONEncoder
 
 basic_commands = WordCompleter(["PUT", "SEARCH", "DELETE", "clear", "connect", "exit", "help"])
@@ -22,22 +21,19 @@ def show_wellcome_screen():
     print("=================================================================")
 
 
-def send_command(command: str, client_socket, sync=False):
+def send_command(command: str, rpc_client):
     """
     Sends the command to the server.
 
     Args:
         command (str): The command to send.
-        client_socket (socket): The client socket.
-        sync: If true it waits for the response
+        rpc_client: The client socket.
 
     Raises:
         ValueError: If the command is invalid.
     """
     print(f"Sending command: {message_formatter(command)}")
-    send_message(message_formatter(command), client_socket)
-    if sync:
-        print(receive_message(client_socket))
+    print(rpc_client.call('client_request', message_formatter(command)))
 
 
 def message_formatter(message: str) -> str:
