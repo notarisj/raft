@@ -1,5 +1,6 @@
 import json
 import socket
+import ssl
 
 from src.configurations import IniConfig
 from src.kv_store.my_io.utils import send_message, receive_message
@@ -55,9 +56,16 @@ def search_top_lvl_key(current_server_id: int, server_list: dict, _request: str,
                         print(f"Response from server with id: {server_id}")
                         print(response)
 
-                except socket.error as e:
-                    print(f"Error connecting to server with id: {server_id}")
+                except ssl.SSLError as e:
+                    print(f"SSL error occurred while connecting to server with id: {server_id}")
                     print(str(e))
+                except socket.error as e:
+                    print(f"Socket error occurred while connecting to server with id: {server_id}")
+                    print(str(e))
+                except Exception as e:
+                    print(f"Error occurred while connecting to server with id: {server_id}")
+                    print(str(e))
+
                 finally:
                     if client_socket:
                         if response is not None and response != "NOT FOUND":
@@ -118,12 +126,23 @@ def search(current_server_id: int, server_list: dict, _request: 'ServerJSON', qu
                         print(f"Response from server with id: {server_id}")
                         print(response)
 
-                except socket.error as e:
-                    print(f"Error connecting to server with id: {server_id}")
+                except ssl.SSLError as e:
+                    print(f"SSL error occurred while connecting to server with id: {server_id}")
                     print(str(e))
+                except socket.error as e:
+                    print(f"Socket error occurred while connecting to server with id: {server_id}")
+                    print(str(e))
+                except Exception as e:
+                    print(f"Error occurred while connecting to server with id: {server_id}")
+                    print(str(e))
+
                 finally:
                     if client_socket:
                         if response is not None and response != "NOT FOUND":
                             return response
                         break
+
     return "NOT FOUND"
+
+
+
