@@ -32,7 +32,6 @@ def send_command(command: str, rpc_client):
     Raises:
         ValueError: If the command is invalid.
     """
-    print(f"Sending command: {message_formatter(command)}")
     print(rpc_client.call('client_request', message_formatter(command)))
 
 
