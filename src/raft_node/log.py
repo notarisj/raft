@@ -1,5 +1,13 @@
 from pymongo import MongoClient
 
+from src.configurations import IniConfig, JsonConfig
+from src.logger import MyLogger
+from src.rpc import RPCClient
+
+logger = MyLogger()
+raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
+servers = JsonConfig('/Users/notaris/git/raft/src/raft_node/deploy/servers.json').get_all_properties()
+
 
 class LogEntry:
     def __init__(self, index, term, command, is_committed=False):
@@ -26,7 +34,12 @@ class LogEntry:
 
 
 class Log:
-    def __init__(self, database_uri, database_name, collection_name):
+    def __init__(self, database_uri, database_name, collection_name, server_id):
+        self.server_id = server_id
+        self.kv_server_host = servers[str(self.server_id)]['host']
+        self.kv_server_port = servers[str(self.server_id)]['kv_port']
+        self.kv_store_rpc_client = RPCClient(host=self.kv_server_host, port=self.kv_server_port)
+
         self.client = MongoClient(database_uri)
         self.db = self.client[database_name]
         self.collection = self.db[collection_name]
@@ -80,9 +93,12 @@ class Log:
             print('inside commit entries')
             entry.is_committed = True
             self.collection.update_one({'index': entry.index}, {'$set': entry.to_dict()})
-
-    # def get_last_commit_index(self):
-    #     return self.collection.count_documents({'is_committed': True})
+            # Send entry to state machine
+            try:
+                print('apply to state machine')
+                self.append_to_state_machine(entry.command)
+            except ConnectionError as e:
+                logger.error(f"ConnectionError: {e}")
 
     def get_last_commit_index(self):
         for i in range(len(self.entries) - 1, -1, -1):
@@ -109,3 +125,24 @@ class Log:
             return True
         else:
             return False
+
+    def append_to_state_machine(self, _append_entry):
+        self.kv_store_rpc_client.call('raft_request', _append_entry)
+
+    # def connect(self):
+    #     try:
+    #         # Create a TCP/IP socket
+    #         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #
+    #         # Create an SSL context
+    #         context = ssl.create_default_context(cafile=raft_config.get_property('SSL', 'ssl_cert_file'))
+    #         context.check_hostname = True
+    #         context.verify_mode = ssl.CERT_REQUIRED
+    #
+    #         info = servers[str(self.server_id)]
+    #         self.kv_store_socket = context.wrap_socket(client_socket, server_hostname=info['host'])
+    #         # Wrap the client socket with SSL
+    #         self.kv_store_socket.connect((info['host'], info['kv_port']))
+    #         logger.info(f"Connected to {info['host']}:{info['kv_port']}")
+    #     except ConnectionRefusedError:
+    #         logger.error("Failed to connect. Please ensure the server is running.")

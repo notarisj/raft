@@ -1,4 +1,5 @@
 import concurrent.futures
+import json
 import random
 import threading
 import time
@@ -13,7 +14,7 @@ from src.rpc.rpc_client import RPCClient
 from src.rpc.rpc_server import RPCServer
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
 
 
 class RaftState(Enum):
@@ -35,7 +36,7 @@ class RaftServer:
         self.max_val_for_timeout = float(raft_config.get_property('raft', 'max_val_for_timeout'))
         self.election_timeout = random.uniform(self.min_val_for_timeout, self.max_val_for_timeout)
         self.start = time.time()
-        self.log = Log(database_uri, database_name, collection_name)
+        self.log = Log(database_uri, database_name, collection_name, self.server_id)
         if self.log.is_empty():
             # print("commit index is 0")
             self.commit_index = 0
@@ -64,6 +65,7 @@ class RaftServer:
         self.set_next_index()
         self.follower_append_index = {}
         self.is_running = False
+        self.lock = threading.Lock()
 
     def __str__(self):
         return f"Server(id={self.server_id}, state={self.state.name}, " \
@@ -157,7 +159,6 @@ class RaftServer:
             # print('prev_log_term', prev_log_term)
             # print('entries', entries)
             # print('self.commit_index', self.commit_index)
-            self.commit_leader_entries()
             response = self.clients[_server_id].call(
                 'append_entries', self.current_term, self.server_id, prev_log_index,
                 prev_log_term, entries, self.commit_index
@@ -182,16 +183,18 @@ class RaftServer:
             logger.error(f"An error occurred: {e}")
 
     def commit_leader_entries(self):
-        new_commit_index = self.calculate_committed_index()
-        self.log.commit_entries(self.commit_index, new_commit_index)
-        self.commit_index = new_commit_index
+        with self.lock:
+            new_commit_index = self.calculate_committed_index()
+            print('new_commit_index', new_commit_index)
+            print('self.commit_index', self.commit_index)
+            self.log.commit_entries(self.commit_index, new_commit_index)
+            self.commit_index = new_commit_index
 
     def send_append_entries_to_server_multicast(self):
         logger.info(f"Starting append entries multicast.")
-        futures = {self.heartbeat_executor.submit(
-            self.send_append_entries,
-            _server_id)
-            for _server_id in self.raft_servers.keys() if _server_id != self.server_id}
+        self.commit_leader_entries()
+        futures = {self.heartbeat_executor.submit(self.send_append_entries, _server_id)
+                   for _server_id in self.raft_servers.keys() if _server_id != self.server_id}
         for future in concurrent.futures.as_completed(futures):
             future.result()
         logger.info(f"Append entries multicast finished.")
@@ -211,11 +214,12 @@ class RaftServer:
         # the following index has been at least replicated by majority of the nodes
         return min(top_servers.values())
 
-    def append_entries_to_leader(self, commands):
+    def append_entries_to_leader(self, _append_entries):
+        # commands = _append_entries.get("commands", [])
         if self.state != RaftState.LEADER:
             return False
-        for command in commands:
-            self.log.append_entry(self.current_term, command)
+        # for command in commands:
+        self.log.append_entry(self.current_term, json.dumps(_append_entries))
         return True
 
     def reset_election_timeout(self):
@@ -271,7 +275,7 @@ class RaftServer:
         # print all the input arguments
         # print("term: ", term)
         # print("leader_id: ", leader_id)
-        print("prev_log_index: ", prev_log_index)
+        # print("prev_log_index: ", prev_log_index)
         # print("prev_log_term: ", prev_log_term)
         # print("commands: ", entries)
         # print("leader_commit: ", leader_commit)

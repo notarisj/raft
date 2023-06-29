@@ -1,8 +1,16 @@
 from collections import ChainMap
+from typing import Any
 
 
 class TrieNode:
-    def __init__(self, key, value=None):
+    def __init__(self, key: str, value=None):
+        """
+        Initialize a TrieNode object.
+
+        Args:
+            key (str): The key associated with the TrieNode.
+            value (Any, optional): The value associated with the TrieNode. Defaults to None.
+        """
         self.key = key
         self.value = value
         self.children = {}
@@ -10,9 +18,19 @@ class TrieNode:
 
 class Trie:
     def __init__(self):
+        """
+        Initialize a Trie object.
+        """
         self.root = TrieNode("")
 
-    def build_trie(self, key, value):
+    def build_trie(self, key: str, value: Any = None):
+        """
+        Build a trie based on the provided key and value.
+
+        Args:
+            key (str): The key for the trie node.
+            value (Any, optional): The value for the trie node. Defaults to None.
+        """
         node = self.root
         for char in key:
             if char not in node.children:
@@ -20,7 +38,14 @@ class Trie:
             node = node.children[char]
         node.value = value
 
-    def insert(self, _json_obj, prefix="") -> None:
+    def insert(self, _json_obj: dict, prefix: str = "") -> None:
+        """
+        Insert a JSON object into the trie.
+
+        Args:
+            _json_obj (dict): The JSON object to insert.
+            prefix (str, optional): The prefix for the JSON object keys. Defaults to "".
+        """
         if isinstance(_json_obj, dict):
             if not _json_obj:  # Empty dictionary case
                 self.build_trie(prefix, {})
@@ -31,7 +56,16 @@ class Trie:
         else:
             self.build_trie(prefix, _json_obj)
 
-    def search(self, key) -> dict | None:
+    def search(self, key: str) -> dict | None:
+        """
+        Search for a key in the trie and return the subtree of the key as JSON object.
+
+        Args:
+            key (str): The key to search for.
+
+        Returns:
+            dict | None: The JSON object associated with the key, or None if the key is not found.
+        """
         node = self.root
         for char in key:
             if char not in node.children:
@@ -42,7 +76,19 @@ class Trie:
         else:
             return self.traverse_subtree(node, key, {})
 
-    def traverse_subtree(self, node, key, _json_obj) -> dict | None:
+    def traverse_subtree(self, node: 'TrieNode', key: str, _json_obj: dict) -> dict | None:
+        """
+        Traverse the subtree starting from the given node (last node of the string for search method)
+        and construct the JSON object.
+
+        Args:
+            node (TrieNode): The starting node of the subtree.
+            key (str): The key associated with the subtree.
+            _json_obj (dict): The JSON object being constructed.
+
+        Returns:
+            dict | None: The constructed JSON object, or None if the subtree is empty.
+        """
         if node.value is not None:
             return {key: node.value}
         else:
@@ -66,7 +112,16 @@ class Trie:
                     _json_obj = dict(ChainMap(concat_json, _json_obj))
             return _json_obj
 
-    def delete(self, key) -> str | None:
+    def delete(self, key: str) -> str | None:
+        """
+        Delete a key from the trie. Find the key and delete all the subtree
+
+        Args:
+            key (str): The key to delete.
+
+        Returns:
+            str | None: "OK" if the key is successfully deleted, or None if the key is not found.
+        """
         node = self.root
         for char in key:
             if char not in node.children:

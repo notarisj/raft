@@ -6,7 +6,7 @@ from src.configurations import IniConfig
 from src.logger import MyLogger
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('/Users/notaris/git/raft/src/raft_node/deploy/config.ini')
 
 
 class RPCClient:

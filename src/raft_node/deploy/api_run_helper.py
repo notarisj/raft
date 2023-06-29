@@ -1,10 +1,12 @@
 import concurrent.futures
+import threading
 
 import uvicorn
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.responses import RedirectResponse
 
 from src.configurations import JsonConfig
+from src.kv_store.server import KVServer
 from src.raft_node.api_helper import api_post_request
 from src.raft_node.raft_server import RaftServer, RaftState
 from fastapi import FastAPI, Depends, HTTPException, status, Request
@@ -57,6 +59,7 @@ class RaftServerApp:
 
     def __init__(self, raft_server_id, uvicorn_host, uvicorn_port, database_uri, database_name, collection_name,
                  ssl_cert_file, ssl_key_file):
+        self.kv_server = None
         self.server = None
         self.raft_server_id = raft_server_id
         self.uvicorn_host = uvicorn_host
@@ -64,7 +67,7 @@ class RaftServerApp:
         self.database_uri = database_uri
         self.database_name = database_name
         self.collection_name = collection_name
-        self.raft_config = JsonConfig('src/raft_node/deploy/raft_servers.json')
+        self.raft_config = JsonConfig('src/raft_node/deploy/servers.json')
         self.servers, self.api_servers = split_dictionary(self.raft_config.config)
         self.server_executor = concurrent.futures.ThreadPoolExecutor()
         self.ssl_cert_file = ssl_cert_file
@@ -85,12 +88,12 @@ class RaftServerApp:
         @app.post("/append_entries")
         def append_entries(_append_entries: dict, _: str = Depends(get_current_username)):
             if self.server.server_id != self.server.leader_id:
-                api_post_request(f"http://0.0.0.0:{self.api_servers[self.server.leader_id]['port']}/append_entries",
+                api_post_request(f"https://127.0.0.1:{self.api_servers[self.server.leader_id]['port']}/append_entries",
                                  _append_entries)
                 return {"message": f"Forwarded to leader server {self.server.leader_id}"}
             else:
-                commands = _append_entries.get("commands", [])
-                self.server.append_entries_to_leader(commands)
+                # commands = _append_entries.get("commands", [])
+                self.server.append_entries_to_leader(_append_entries)
                 return {"message": "Log entries appended"}
 
         @app.get("/get_log")
@@ -166,6 +169,11 @@ class RaftServerApp:
     def start(self):
         self.server = RaftServer(self.raft_server_id, self.servers,
                                  self.database_uri, self.database_name, self.collection_name)
+
+        # self.kv_server = KVServer(_id=self.raft_server_id, _replication_factor=2,
+        #                           _server_list_file='/Users/notaris/git/raft/src/kv_store/resources/serverFile.txt')
+        # threading.Thread(target=self.kv_server.start).start()
+
         app = self.create_app()
         uvicorn.run(app, host=self.uvicorn_host, port=int(self.uvicorn_port),
                     ssl_keyfile=self.ssl_key_file, ssl_certfile=self.ssl_cert_file)
