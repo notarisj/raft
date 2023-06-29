@@ -1,12 +1,10 @@
 import concurrent.futures
-import threading
 
 import uvicorn
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.responses import RedirectResponse
 
 from src.configurations import JsonConfig
-from src.kv_store.server import KVServer
 from src.raft_node.api_helper import api_post_request
 from src.raft_node.raft_server import RaftServer, RaftState
 from fastapi import FastAPI, Depends, HTTPException, status, Request
@@ -111,7 +109,8 @@ class RaftServerApp:
             entry = {
                 'host': server['host'],
                 'raft_port': server['raft_port'],
-                'api_port': server['api_port']
+                'api_port': server['api_port'],
+                'kv_port': server['kv_port']
             }
             self.raft_config.config[server['id']] = entry
             self.raft_config.save()
@@ -124,7 +123,8 @@ class RaftServerApp:
             entry = {
                 'host': server['host'],
                 'raft_port': server['raft_port'],
-                'api_port': server['api_port']
+                'api_port': server['api_port'],
+                'kv_port': server['kv_port']
             }
             self.raft_config.config[server['id']] = entry
             self.raft_config.save()
@@ -167,12 +167,8 @@ class RaftServerApp:
         return app
 
     def start(self):
-        self.server = RaftServer(self.raft_server_id, self.servers,
-                                 self.database_uri, self.database_name, self.collection_name)
-
-        # self.kv_server = KVServer(_id=self.raft_server_id, _replication_factor=2,
-        #                           _server_list_file='/Users/notaris/git/raft/src/kv_store/resources/serverFile.txt')
-        # threading.Thread(target=self.kv_server.start).start()
+        self.server = RaftServer(self.raft_server_id, self.servers, self.database_uri,
+                                 self.database_name, self.collection_name)
 
         app = self.create_app()
         uvicorn.run(app, host=self.uvicorn_host, port=int(self.uvicorn_port),
