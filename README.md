@@ -21,7 +21,7 @@ pip install dist/raft*.tar.gz
 
 ## Usage
 
-### Running the Application
+### Running Raft Application
 You can start the server using the [run_server.sh](src/raft_node/deploy/bash/run_server.sh) bash script. This script takes in a 
 directory path and optional arguments for configuration. If no parameters are provided,
 the script will use the default configuration from the [config.ini](src/raft_node/deploy/config.ini) 
@@ -59,6 +59,14 @@ Options:
 
 Please refer to the [run_server.sh](src/raft_node/deploy/bash/run_server.sh) script for 
 more details.
+
+### Running Key Value Store Application
+
+Example usage
+
+```bash
+./src/kv_store/deploy/run_server.sh . --server_id 1 --replication_factor 2
+```
 
 ## Generate SSL certificate for th API
 ```bash

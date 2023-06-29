@@ -95,6 +95,7 @@ class KVServer:
     #                 if self.client_handlers[server_id] is None else True
 
     def client_request_rpc(self, request: str) -> str:
+        logger.info(f"Received client request: {request}")
         """
         Handle a request from a client.
 
@@ -152,6 +153,7 @@ class KVServer:
                     return f"Failed to send request to Raft: {e}"
                 response = f"server id {self.server_id}: Send insertion message for " \
                            f"command {json.loads(request)['commands']}"
+                logger.info(f"Response: {response}")
                 return response
         elif command_type == 'DELETE':
             # self.refresh_client_handlers_if_needed()
@@ -165,19 +167,23 @@ class KVServer:
                     logger.error(f"Failed to send request to Raft: {e}")
                     return f"Failed to send request to Raft: {e}"
                 response = "Send deletion message for top level key \"{}\"".format(get_key(request))
+                logger.info(f"Response: {response}")
                 return response
             else:
                 # key does not exist so send error message
                 response = f"Top level key {get_key(request)} not found to delete it"
+                logger.info(f"Response: {response}")
                 return response
         elif command_type == 'SEARCH':
             # self.refresh_client_handlers_if_needed()
             response = search(current_server_id=self.server_id, server_list=servers.config, _request=server_instance,
                               query_handler=self.query_handler, client_handlers=self.client_handlers)
+            logger.info(f"Response: {response}")
             return response
         else:
             # not known command type
             response = f"{command_type} is invalid command from user"
+            logger.info(f"Response: {response}")
             return response
 
     def send_to_raft(self, commands: List[str], shuffled_rep_ids: List[int]) -> None:
@@ -192,7 +198,8 @@ class KVServer:
         raft_obj = RaftJSON("RAFT", commands, shuffled_rep_ids)
         api_post_request(f"https://{self.api_server_host}:{self.api_server_port}/append_entries", raft_obj.to_json())
 
-    def raft_request_rpc(self, request: str) -> None:
+    def raft_request_rpc(self, request: str) -> str:
+        logger.info(f"Received raft request: {request}")
         """
         Handle a request from the Raft server.
 
@@ -213,9 +220,13 @@ class KVServer:
                 temp_request = ServerJSON("RAFT", request)
                 command_type = temp_request.get_command_type()
                 if command_type == 'PUT':
-                    self.query_handler.execute(temp_request)
+                    response = self.query_handler.execute(temp_request)
+                    logger.info(f"Response: {response}")
+                    return response
                 elif command_type == 'DELETE':
-                    self.query_handler.execute(temp_request)
+                    response = self.query_handler.execute(temp_request)
+                    logger.info(f"Response: {response}")
+                    return response
                 elif command_type == 'UPDATE':
                     # TODO: implement update of servers
                     # a new node is added in the raft, the servers.json file is updated
@@ -223,8 +234,10 @@ class KVServer:
                 else:
                     response = "\"{}\" is invalid command from a RaftServer".format(command_type)
                     logger.error(response)
+                    return response
 
     def kv_request_rpc(self, request: str) -> str:
+        logger.info(f"Received kv server request: {request}")
         """
         Handle a request from another KVServer.
 
@@ -241,10 +254,12 @@ class KVServer:
         command_type = server_instance.get_command_type()
         if command_type == 'SEARCH':
             answer = self.query_handler.execute(server_instance)
+            logger.info(f"Response: {answer}")
             return answer
         else:
             # not known command type from KVServer
             response = f"{command_type} is invalid command from a KVServer"
+            logger.info(f"Response: {response}")
             return response
 
     def replication_ids(self) -> List[int]:
