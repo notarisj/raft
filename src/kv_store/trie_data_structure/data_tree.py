@@ -112,23 +112,34 @@ class Trie:
                     _json_obj = dict(ChainMap(concat_json, _json_obj))
             return _json_obj
 
-    def delete(self, key: str) -> str | None:
+    def delete(self, key: str, node: 'TrieNode' = None) -> bool:
         """
-        Delete a key from the trie. Find the key and delete all the subtree
+        Delete a key from the trie. Find the last character of the key and delete all the subtree.
+        If parent node of the key has no other child except key, delete the key node too (recursively).
 
         Args:
             key (str): The key to delete.
+            node (TrieNode): The starting node of the subtree. Defaults to None.
 
         Returns:
-            str | None: "OK" if the key is successfully deleted, or None if the key is not found.
+            bool: True if the parent node should delete the node.children[char] where char is
+            first letter of key at every level.
         """
-        node = self.root
-        for char in key:
-            if char not in node.children:
-                return None
-            node = node.children[char]
-        if "." in node.children:
+        if node is None:
+            node = self.root
+
+        if len(key) == 0 and node.children["."]:
             del node.children["."]
-            return "OK"
-        else:
-            return None
+            return len(node.children) == 0
+
+        char = key[0]
+
+        if char not in node.children:
+            return False
+
+        delete_node = self.delete(key[1:], node.children[char])
+
+        if delete_node:
+            del node.children[char]
+
+        return len(node.children) == 0
