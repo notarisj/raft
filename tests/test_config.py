@@ -3,7 +3,7 @@ import json
 import os
 import tempfile
 
-from src.configurations import IniConfig, JsonConfig
+from src.configuration_reader import IniConfig, JsonConfig
 
 
 class TestIniConfig(unittest.TestCase):

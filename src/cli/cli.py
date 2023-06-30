@@ -5,10 +5,10 @@ from prompt_toolkit import PromptSession
 
 from src.cli.cli_commands import *
 from src.cli.edit_json_file import edit_json_file
-from src.configurations import IniConfig
+from src.configuration_reader import IniConfig
 from src.raft_node.api_helper import ApiHelper
 
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/configurations/config.ini')
 
 
 def _exit():

@@ -1,12 +1,12 @@
 from pymongo import MongoClient
 
-from src.configurations import IniConfig, JsonConfig
+from src.configuration_reader import IniConfig, JsonConfig
 from src.logger import MyLogger
 from src.rpc import RPCClient
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
-servers = JsonConfig('src/raft_node/deploy/servers.json').get_all_properties()
+raft_config = IniConfig('src/configurations/config.ini')
+servers = JsonConfig('src/configurations/servers.json').get_all_properties()
 
 
 class LogEntry:

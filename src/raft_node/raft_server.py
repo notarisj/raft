@@ -7,14 +7,14 @@ import math
 
 from enum import Enum
 
-from src.configurations import IniConfig
+from src.configuration_reader import IniConfig
 from src.logger import MyLogger
 from src.raft_node.log import Log
 from src.rpc.rpc_client import RPCClient
 from src.rpc.rpc_server import RPCServer
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/configurations/config.ini')
 
 
 class RaftState(Enum):

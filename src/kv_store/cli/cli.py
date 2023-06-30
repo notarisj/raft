@@ -5,7 +5,7 @@ from prompt_toolkit import PromptSession
 from src.kv_store.cli.cli_commands import *
 from src.rpc import RPCClient
 
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/configurations/config.ini')
 
 
 def _exit():

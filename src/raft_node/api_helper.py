@@ -4,7 +4,7 @@ import json
 from requests import RequestException
 from requests.auth import HTTPBasicAuth
 
-from src.configurations import IniConfig
+from src.configuration_reader import IniConfig
 
 """
     Example usage
@@ -23,7 +23,7 @@ from src.configurations import IniConfig
         print('Error:', str(e))
 """
 
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/configurations/config.ini')
 
 
 def get_server_state(host, port, username, password):

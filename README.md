@@ -22,31 +22,34 @@ pip install dist/raft*.tar.gz
 ## Usage
 
 ### Running Raft Application
-You can start the server using the [run_server.sh](src/raft_node/deploy/bash/run_server.sh) bash script. This script takes in a 
+You can start the server using the [run_server.sh](help_scripts/run_raft_server.sh) bash script. This script takes in a 
 directory path and optional arguments for configuration. If no parameters are provided,
-the script will use the default configuration from the [config.ini](src/raft_node/deploy/config.ini) 
+the script will use the default configuration from the [config.ini](src/configurations/config.ini) 
 file. Note that if you want to test it in the same machine, you need to change the ports
-in [servers.json](src/raft_node/deploy/servers.json) and pass `--mongo_collection_name` 
+in [servers.json](src/configurations/servers.json) and pass `--mongo_collection_name` 
 for each node.
 
 The usage is as follows:
 
 Install mongodb (if not installed)
 ```bash
-./src/raft_node/deploy/bash/install_mongodb.sh
+./help_scripts/install_mongodb.sh
 ```
 
-Start the server:
+#### Start the server:
 ```bash
-./src/raft_node/deploy/bash/run_server.sh <directory_path> [options]
+./help_scripts/run_raft_server.sh <directory_path> [options]
 ```
 
-Example usage:
+The `directory_path` is the path to the directory of the project. You can use `.` if 
+you are in the root directory of the project as follows:
+
+#### Example usage:
 ```bash
-./src/raft_node/deploy/bash/run_server.sh . --server_id 1 --mongo_collection_name raft1
+./help_scripts/run_raft_server.sh . --server_id 1 --mongo_collection_name raft1
 ```
 
-Options:
+#### Options:
 
 - `--server_id <server_id>`
 - `--uvicorn_host <uvicorn_host>`
@@ -57,15 +60,37 @@ Options:
 - `--mongo_collection_name <mongo_collection_name>`
 
 
-Please refer to the [run_server.sh](src/raft_node/deploy/bash/run_server.sh) script for 
+Please refer to the [run_server.sh](help_scripts/run_raft_server.sh) script for 
 more details.
 
 ### Running Key Value Store Application
 
-Example usage
+#### Start the server
+```bash
+./help_scripts/run_kv_server.sh <directory_path> [options]
+```
+
+#### Example usage
 
 ```bash
-./src/kv_store/deploy/run_server.sh . --server_id 1 --replication_factor 2
+./help_scripts/run_kv_server.sh . --server_id 1 --replication_factor 2
+```
+
+#### Options:
+
+- `--server_id <server_id>`
+- `--replication_factor <replication_factor>`
+
+### Running the command line interfaces
+
+#### Raft CLI
+```bash
+./help_scripts/run_raft_cli.sh <directory_path>
+```
+
+#### Key Value Store CLI
+```bash
+./help_scripts/run_kv_cli.sh <directory_path>
 ```
 
 ## Generate SSL certificate for th API

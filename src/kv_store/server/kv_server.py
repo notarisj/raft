@@ -3,7 +3,7 @@ import random
 import threading
 from typing import List
 
-from src.configurations import IniConfig, JsonConfig
+from src.configuration_reader import IniConfig, JsonConfig
 from src.kv_store.server.message_helper import get_key, check_id_exist
 from src.kv_store.server.command_handler import search_top_lvl_key, search
 from src.kv_store.server.query_handler import RequestHandler
@@ -14,8 +14,8 @@ from src.raft_node.api_helper import api_post_request
 from src.rpc import RPCServer, RPCClient
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
-servers = JsonConfig('src/raft_node/deploy/servers.json')
+raft_config = IniConfig('src/configurations/config.ini')
+servers = JsonConfig('src/configurations/servers.json')
 
 
 class KVServer:

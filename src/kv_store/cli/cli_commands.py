@@ -5,11 +5,11 @@ import subprocess
 
 from prompt_toolkit.completion import WordCompleter
 
-from src.configurations import IniConfig
+from src.configuration_reader import IniConfig
 from src.kv_store.server import ServerJSON, ServerJSONEncoder
 
 basic_commands = WordCompleter(["PUT", "SEARCH", "DELETE", "clear", "login", "exit", "help"])
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/configurations/config.ini')
 
 
 def show_wellcome_screen():

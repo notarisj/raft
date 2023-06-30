@@ -1,5 +1,5 @@
 import argparse
-from src.configurations.read_config import IniConfig, JsonConfig
+from src.configuration_reader.read_config import IniConfig, JsonConfig
 from src.raft_node.deploy.api_run_helper import RaftServerApp
 
 
@@ -20,8 +20,8 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
 
-    raft_config = IniConfig('src/raft_node/deploy/config.ini')
-    raft_servers_config = JsonConfig('src/raft_node/deploy/servers.json').config
+    raft_config = IniConfig('src/configurations/config.ini')
+    raft_servers_config = JsonConfig('src/configurations/servers.json').config
 
     server_id = args.server_id if args.server_id is not None else \
         raft_config.get_property('raft', 'server_id')

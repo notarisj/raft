@@ -4,7 +4,7 @@ import uvicorn
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.responses import RedirectResponse
 
-from src.configurations import JsonConfig
+from src.configuration_reader import JsonConfig
 from src.raft_node.api_helper import api_post_request
 from src.raft_node.raft_server import RaftServer, RaftState
 from fastapi import FastAPI, Depends, HTTPException, status, Request
@@ -65,7 +65,7 @@ class RaftServerApp:
         self.database_uri = database_uri
         self.database_name = database_name
         self.collection_name = collection_name
-        self.raft_config = JsonConfig('src/raft_node/deploy/servers.json')
+        self.raft_config = JsonConfig('src/configurations/servers.json')
         self.servers, self.api_servers = split_dictionary(self.raft_config.config)
         self.server_executor = concurrent.futures.ThreadPoolExecutor()
         self.ssl_cert_file = ssl_cert_file

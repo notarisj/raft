@@ -2,11 +2,11 @@
 import ssl
 import xmlrpc.client
 
-from src.configurations import IniConfig
+from src.configuration_reader import IniConfig
 from src.logger import MyLogger
 
 logger = MyLogger()
-raft_config = IniConfig('src/raft_node/deploy/config.ini')
+raft_config = IniConfig('src/configurations/config.ini')
 
 
 class RPCClient:
