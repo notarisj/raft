@@ -21,15 +21,19 @@ pip install dist/raft*.tar.gz
 
 ## Usage
 
-### Running Raft Application
-You can start the server using the [run_server.sh](help_scripts/run_raft_server.sh) bash script. This script takes in a 
-directory path and optional arguments for configuration. If no parameters are provided,
-the script will use the default configuration from the [config.ini](src/configurations/config.ini) 
-file. Note that if you want to test it in the same machine, you need to change the ports
-in [servers.json](src/configurations/servers.json) and pass `--mongo_collection_name` 
-for each node.
+### Update configuration file
 
-The usage is as follows:
+Before running the application, you need to update the [config.ini](src/configurations/config.ini) file. You may 
+generate a certificate and key (see command bellow), or use the ones provided, and also update the paths for the 
+properties `ssl_cert_file` and `ssl_key_file` in the configuration file. You can also change the API credentials 
+and MongoDB settings here.
+
+### Running Raft Application
+You can start the server using the [run_server.sh](help_scripts/run_raft_server.sh) bash script. This script takes some 
+optional arguments for configuration. If no parameters are provided,
+the script will use the default configuration from the [config.ini](src/configurations/config.ini) 
+and [servers.json](src/configurations/servers.json) file. Note that if you want to test it in the same machine, you 
+need to pass `--server_id` and `--mongo_collection_name` arguments for each node as seen in the example usage bellow.
 
 Install mongodb (if not installed)
 ```bash
@@ -38,7 +42,7 @@ Install mongodb (if not installed)
 
 #### Start the server:
 ```bash
-./help_scripts/run_raft_server.sh <directory_path> [options]
+./help_scripts/run_raft_server.sh [options]
 ```
 
 The `directory_path` is the path to the directory of the project. You can use `.` if 
@@ -46,7 +50,7 @@ you are in the root directory of the project as follows:
 
 #### Example usage:
 ```bash
-./help_scripts/run_raft_server.sh . --server_id 1 --mongo_collection_name raft1
+./help_scripts/run_raft_server.sh --server_id 1 --mongo_collection_name raft1
 ```
 
 #### Options:
@@ -67,13 +71,13 @@ more details.
 
 #### Start the server
 ```bash
-./help_scripts/run_kv_server.sh <directory_path> [options]
+./help_scripts/run_kv_server.sh [options]
 ```
 
 #### Example usage
 
 ```bash
-./help_scripts/run_kv_server.sh . --server_id 1 --replication_factor 2
+./help_scripts/run_kv_server.sh --server_id 1 --replication_factor 2
 ```
 
 #### Options:
@@ -83,14 +87,26 @@ more details.
 
 ### Running the command line interfaces
 
+With the raft and key value store servers running, you can use the command line interfaces to start the cluster and 
+start interacting with the store.
+
 #### Raft CLI
 ```bash
-./help_scripts/run_raft_cli.sh <directory_path>
+./help_scripts/run_raft_cli.sh
 ```
+For more information see [Raft CLI](src/raft_node/cli/README.md)
 
 #### Key Value Store CLI
 ```bash
-./help_scripts/run_kv_cli.sh <directory_path>
+./help_scripts/run_kv_cli.sh
+```
+For more information see [Key Value Store CLI](src/kv_store/cli/README.md)
+
+## Running tests
+
+To run the tests execute the following command:
+```bash
+./help_scripts/run_tests.sh
 ```
 
 ## Generate SSL certificate for th API
