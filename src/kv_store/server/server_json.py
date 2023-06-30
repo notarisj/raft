@@ -6,19 +6,16 @@ class ServerJSON:
     Represents a JSON object used for communication between the server and clients.
 
     Attributes:
-        sender (str): The sender of the command.
         commands (str): The commands to be executed.
     """
 
-    def __init__(self, sender: str, commands: str):
+    def __init__(self, commands: str):
         """
         Initializes a ServerJSON object.
 
         Args:
-            sender (str): The sender of the command.
             commands (str): The commands to be executed.
         """
-        self.sender = sender
         self.commands = commands
 
     def get_command_type(self) -> str:
@@ -71,7 +68,6 @@ class ServerJSON:
             The ServerJSON object in JSON format.
         """
         return {
-            "sender": self.sender,
             "commands": self.commands
         }
 

@@ -115,7 +115,7 @@ class KVServer:
         Args:
             request (str): Request received from the client.
         """
-        shuffled_rep_ids = self.replication_ids()
+        shuffled_rep_ids = self.replication_ids_shuffled()
 
         decoded_json = json.loads(request)
         server_instance = ServerJSON.from_json(decoded_json)
@@ -128,7 +128,8 @@ class KVServer:
                                   client_handlers=self.client_handlers):
                 # stage 1 --> DELETE FIRST
                 try:
-                    self.send_to_raft(["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
+                    self.send_to_raft(["DELETE " + server_instance.get_command_value()],
+                                      self.all_replication_ids_for_deletion())
                 except Exception as e:
                     logger.error(f"Failed to send request to Raft: {e}")
                     return f"Failed to send request to Raft: {e}"
@@ -162,7 +163,8 @@ class KVServer:
                                   client_handlers=self.client_handlers):
                 # key exists so DELETE directly
                 try:
-                    self.send_to_raft(["DELETE " + server_instance.get_command_value()], shuffled_rep_ids)
+                    self.send_to_raft(["DELETE " + server_instance.get_command_value()],
+                                      self.all_replication_ids_for_deletion())
                 except Exception as e:
                     logger.error(f"Failed to send request to Raft: {e}")
                     return f"Failed to send request to Raft: {e}"
@@ -195,7 +197,7 @@ class KVServer:
            shuffled_rep_ids (List[int]): The shuffled list of replica IDs to determine the order of processing.
         """
         # TODO: catch the exception and send back to client.
-        raft_obj = RaftJSON("RAFT", commands, shuffled_rep_ids)
+        raft_obj = RaftJSON(commands, shuffled_rep_ids)
         api_post_request(f"https://{self.api_server_host}:{self.api_server_port}/append_entries", raft_obj.to_json())
 
     def raft_request_rpc(self, request: str) -> str:
@@ -213,11 +215,17 @@ class KVServer:
         raft_request_instance = RaftJSON.from_json(decoded_raft)
         requests_list = raft_request_instance.commands
 
+        temp_request = ServerJSON(requests_list[0])
+        if temp_request.get_command_type() == 'READ_CONFIG':
+            response = self.read_config_update_client_handlers(temp_request.get_command_value())
+            logger.info(f"Response: {response}")
+            return response
+
         if not check_id_exist(request, self.server_id):
             logger.info("Node ID {} not found in request. Ignore it.".format(self.server_id))
         else:
             for request in requests_list:
-                temp_request = ServerJSON("RAFT", request)
+                temp_request = ServerJSON(request)
                 command_type = temp_request.get_command_type()
                 if command_type == 'PUT':
                     response = self.query_handler.execute(temp_request)
@@ -227,10 +235,6 @@ class KVServer:
                     response = self.query_handler.execute(temp_request)
                     logger.info(f"Response: {response}")
                     return response
-                elif command_type == 'UPDATE':
-                    # TODO: implement update of servers
-                    # a new node is added in the raft, the servers.json file is updated
-                    pass
                 else:
                     response = "\"{}\" is invalid command from a RaftServer".format(command_type)
                     logger.error(response)
@@ -262,7 +266,26 @@ class KVServer:
             logger.info(f"Response: {response}")
             return response
 
-    def replication_ids(self) -> List[int]:
+    def read_config_update_client_handlers(self, request: str) -> str:
+        new_servers = JsonConfig('/home/giannis-pc/Desktop/raft/src/configurations/servers.json')
+        if request == "add_node":
+            added_nodes = []
+            for key in new_servers.config.keys():
+                if key not in servers.config.keys():
+                    added_nodes.append(new_servers.config[key])
+            for new_node in added_nodes:
+                self.client_handlers[new_node.key] = RPCClient(host=new_node['host'], port=new_node['kv_port'])
+        elif request == "delete_node":
+            deleted_nodes = []
+            for key in servers.config.keys():
+                if key not in new_servers.config.keys():
+                    deleted_nodes.append(key)
+            for deleted_node in deleted_nodes:
+                del self.client_handlers[deleted_node]
+        servers.config = new_servers.config
+        return "OK"
+
+    def replication_ids_shuffled(self) -> List[int]:
         """
         Get a random list of replication IDs.
 
@@ -273,3 +296,18 @@ class KVServer:
         """
         server_ids = [server_id for server_id in servers.config.keys() if server_id != self.server_id]
         return random.sample(server_ids, min(self.replication_factor, len(servers.config.keys())))
+
+    @staticmethod
+    def all_replication_ids_for_deletion() -> List[int]:
+        """
+        Get the list of Key-Value store IDs.
+
+        This method returns a list of replication IDs of all nodes. It is used to send
+        DELETE message to all nodes.
+
+        Returns:
+            list: A random list of all IDs.
+        """
+        server_ids = [server_id for server_id in servers.config.keys()]
+        random.shuffle(server_ids)
+        return server_ids

@@ -128,6 +128,6 @@ class NodeEditor:
         for key, rpc_client in self.kv_store_rpc_clients.items():
             print(f"Sending {action} to {key}")
             print(rpc_client)
-            payload = {"commands": [f"UPDATE {action}"],
+            payload = {"commands": [f"READ_CONFIG {action}"],
                        "rep_ids": []}
             rpc_client.call('raft_request', json.dumps(payload))

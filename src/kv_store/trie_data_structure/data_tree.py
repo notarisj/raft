@@ -56,7 +56,7 @@ class Trie:
         else:
             self.build_trie(prefix, _json_obj)
 
-    def search(self, key: str) -> dict | None:
+    def search(self, key: str) -> dict | None | str:
         """
         Search for a key in the trie and return the subtree of the key as JSON object.
 
@@ -73,8 +73,10 @@ class Trie:
             node = node.children[char]
         if "." in node.children:
             return self.traverse_subtree(node.children["."], key, {})
+        elif node.value is not None:
+            return node.value
         else:
-            return self.traverse_subtree(node, key, {})
+            return "NOT FOUND"
 
     def traverse_subtree(self, node: 'TrieNode', key: str, _json_obj: dict) -> dict | None:
         """

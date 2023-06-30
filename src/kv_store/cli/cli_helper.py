@@ -22,7 +22,7 @@ def message_formatter(self, message) -> str:
             return return_msg
 
     # message = self.escape_quotes(message)
-    server_obj = ServerJSON("CLIENT", message)
+    server_obj = ServerJSON(message)
     server_json = json.dumps(server_obj, cls=ServerJSONEncoder)
     return server_json
 

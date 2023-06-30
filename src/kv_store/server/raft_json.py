@@ -6,21 +6,18 @@ class RaftJSON:
     """
     Represents a JSON object for the messages send to Raft consensus algorithm.
     It consists of the:
-        - sender ("RAFT")
         - commands (array of commands)
         - replica IDs (servers that should execute the commands).
     """
 
-    def __init__(self, sender: str, commands: List[str], rep_ids: List[int]) -> None:
+    def __init__(self, commands: List[str], rep_ids: List[int]) -> None:
         """
         Initializes an instance of RaftJSON.
 
         Args:
-            sender: The sender of the JSON object.
             commands: The commands included in the JSON object.
             rep_ids: The IDs of the replicas associated with the JSON object.
         """
-        self.sender = sender
         self.commands = commands
         self.rep_ids = rep_ids
 
@@ -45,7 +42,6 @@ class RaftJSON:
             The JSON dictionary representation of the RaftJSON object.
         """
         return {
-            "sender": self.sender,
             "commands": self.commands,
             "rep_ids": self.rep_ids
         }

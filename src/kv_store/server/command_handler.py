@@ -27,7 +27,7 @@ def search_top_lvl_key(current_server_id: int, server_list: dict, _request: str,
         bool: True if the key exists in any of the servers, False otherwise.
     """
     key = get_key(_request)
-    server_obj = ServerJSON("KV_SERVER", "SEARCH {}".format(key))
+    server_obj = ServerJSON("SEARCH {}".format(key))
     _request = json.dumps(server_obj, cls=ServerJSONEncoder)
     response = query_handler.execute(server_obj)
     if response != "NOT FOUND" and response is not None:
@@ -66,7 +66,6 @@ def search(current_server_id: int, server_list: dict, _request: 'ServerJSON', qu
     Returns:
         str: The value corresponding to the key if it exists in any of the servers, "NOT FOUND" otherwise.
     """
-    _request.sender = "KV_SERVER"
     print(_request.to_json())
     # check if the key is in the current server
     response = query_handler.execute(_request)
