@@ -89,4 +89,3 @@ class ServerJSONEncoder(json.JSONEncoder):
         if isinstance(obj, ServerJSON):
             return obj.to_json()
         return super().default(obj)
-

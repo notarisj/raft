@@ -20,9 +20,7 @@ class RPCClient:
 
     def call(self, method, *args):
         try:
-            # print(f"Calling remote method '{method}' with arguments: {args}")
             result = getattr(self.server_proxy, method)(*args)
-            # print("Remote method call completed.")
             return result
         except Exception as e:
             logger.error(f"An error occurred while calling remote method '{method}': {str(e)}")

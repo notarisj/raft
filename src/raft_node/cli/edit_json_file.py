@@ -130,8 +130,7 @@ class NodeEditor:
 
         # Update kv store servers
         for key, rpc_client in self.kv_store_rpc_clients.items():
-            print(f"Sending {action} to {key}")
-            print(rpc_client)
+            print(f"Sending {action} to server {key}")
             _payload = {"command": action,
                         "payload": payload}
             rpc_client.call('update_raft_config', json.dumps(_payload))

@@ -45,8 +45,6 @@ class KVServer:
         # Create RPC clients for all other servers
 
         self.client_handlers = {}
-        # self.client_handlers_status = {}
-        # self.refresh_client_handlers()
         self.create_client_handlers()
 
     def run(self) -> None:
@@ -129,7 +127,7 @@ class KVServer:
                 response = f"server id {self.server_id}: Send insertion message for " \
                            f"command {json.loads(request)['commands']}"
                 logger.info(f"Response: {response}")
-                return response
+                return "KEY INSERTED"
         elif command_type == 'DELETE':
             # self.refresh_client_handlers_if_needed()
             if search_top_lvl_key(current_server_id=self.server_id, server_list=servers.config,
@@ -144,7 +142,7 @@ class KVServer:
                     return f"Failed to send request to Raft: {e}"
                 response = "Send deletion message for top level key \"{}\"".format(get_key(request))
                 logger.info(f"Response: {response}")
-                return response
+                return "KEY DELETED"
             else:
                 # key does not exist so send error message
                 response = f"Top level key {get_key(request)} not found to delete it"
@@ -209,6 +207,7 @@ class KVServer:
                     return response
 
     def update_raft_config(self, _request: str) -> str:
+        logger.info(f"Received raft config update request: {_request}")
         request = json.loads(_request)
         command = request['command']
         payload = request['payload']

@@ -6,12 +6,11 @@ from prompt_toolkit.completion import WordCompleter
 
 from src.raft_node.api_helper import get_server_state
 
-basic_commands = WordCompleter(["start_cl", "stop_cl", "get_state", "edit_config", "login", "exit", "help",
-                                "clear"])
+basic_commands = WordCompleter(["start_cl", "stop_cl", "get_state", "edit_config", "login", "exit", "help", "clear"])
 
 
 def show_wellcome_screen():
-    print("=================================================================")
+    print("\n=================================================================")
     print("==================== Raft CLI Manager (v1.0) ====================")
     print("=================================================================")
     print("\nYou must first login to the cluster. Type 'login' to continue.")
@@ -32,18 +31,18 @@ def start_cl(api_helper):
     response = api_helper.get_servers()
     for server_id, info in response['api_servers'].items():
         response = api_helper.start_stop_server(info['host'], info['port'], 'start_server')
-        if response:
-            print(f"Server {server_id} started successfully.")
+        if response is not None:
+            print(f"Server {server_id}: {response.json()}")
         else:
-            print(f"Server {server_id} failed to start.")
+            print(f"Server {server_id} failed to stop.")
 
 
 def stop_cl(api_helper):
     response = api_helper.get_servers()
     for server_id, info in response['api_servers'].items():
         response = api_helper.start_stop_server(info['host'], info['port'], 'stop_server')
-        if response:
-            print(f"Server {server_id} stopped successfully.")
+        if response is not None:
+            print(f"Server {server_id}: {response.json()}")
         else:
             print(f"Server {server_id} failed to stop.")
 
@@ -67,7 +66,7 @@ def get_cluster_state(api_helper):
                               state_response['state'], info['host'], info["port"]])
         else:
             table.append([server_id, '\033[31m\u25CF\033[0m offline', is_running,
-                          state_response['state'], info['host'], info["port"]])
+                          '-', info['host'], info["port"]])
 
     # Set align='left' for all columns
     align_options = ['center'] * len(headers)

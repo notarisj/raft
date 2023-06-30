@@ -74,11 +74,7 @@ class ApiHelper:
             password = self.password
         url = f'https://{host}:{port}/{action}'
         try:
-            response = api_post_request(url, {}, username, password)
-            if response is None:
-                return False
-            elif response.status_code == 200:
-                return True
+            return api_post_request(url, {}, username, password)
         except Exception as e:
             print('Error:', str(e))
 

@@ -56,11 +56,13 @@ class ClientCli:
         Args:
             user_input (str): The user input to process.
         """
+        if not user_input:
+            return
         # only allow to connect and exit commands if self.is_connected is False
         allowed_commands = ["login", "exit", "clear", "help"]
         if self.kv_store_rpc_client is None:
             if user_input not in allowed_commands:
-                print("You must first connect to the cluster. Type 'connect' to continue.")
+                print("You must first login to the cluster. Type 'login' to continue.")
                 return
         switcher = {
             "PUT": lambda: send_command(user_input, self.kv_store_rpc_client),
