@@ -1,245 +1,214 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-71 89 1199 923" width="1199" height="923">
-  <defs>
-    <font-face font-family="Helvetica Neue" font-size="16" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue"/>
-      </font-face-src>
-    </font-face>
-    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-9 -4 10 8" markerWidth="10" markerHeight="8" color="black">
-      <g>
-        <path d="M -8 0 L 0 3 L 0 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
-      </g>
-    </marker>
-    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
-      <g>
-        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
-      </g>
-    </marker>
-    <font-face font-family="Helvetica Neue" font-size="18" panose-1="2 0 8 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="975.0061" descent="-216.99524" font-weight="700">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue-Bold"/>
-      </font-face-src>
-    </font-face>
-  </defs>
-  <metadata> Produced by OmniGraffle 7.18.1\n2023-06-22 22:38:05 +0000</metadata>
-  <g id="Canvas_1" fill="none" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1">
-    <title>Canvas 1</title>
-    <rect fill="white" x="-71" y="89" width="1199" height="923"/>
-    <g id="Canvas_1_Layer_1">
-      <title>Layer 1</title>
-      <g id="Graphic_2">
-        <circle cx="355" cy="164.5" r="74.5001190436913" fill="#ccc"/>
-        <circle cx="355" cy="164.5" r="74.5001190436913" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
-        <text transform="translate(300.4 155.276)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="39.928" y="15">KV1</tspan>
-        </text>
-      </g>
-      <g id="Graphic_3">
-        <circle cx="703.7742" cy="164.5" r="74.5001190436913" fill="#ccc"/>
-        <circle cx="703.7742" cy="164.5" r="74.5001190436913" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
-        <text transform="translate(649.1742 155.276)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="39.928" y="15">KV2</tspan>
-        </text>
-      </g>
-      <g id="Graphic_4">
-        <circle cx="1052.5484" cy="164.5" r="74.5001190436912" fill="#ccc"/>
-        <circle cx="1052.5484" cy="164.5" r="74.5001190436912" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
-        <text transform="translate(997.9484 155.276)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="39.928" y="15">KV3</tspan>
-        </text>
-      </g>
-      <g id="Graphic_5">
-        <circle cx="355" cy="936.8464" r="74.5001190436913" fill="#ccc"/>
-        <circle cx="355" cy="936.8464" r="74.5001190436913" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
-        <text transform="translate(300.4 899.9504)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="39.928" y="15">KV4</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="3.3279985" y="33.448">(Determines in </tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="9.263998" y="51.895996">which nodes </tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="23.487998" y="70.34399">to insert)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_6">
-        <circle cx="703.7742" cy="936.8464" r="74.5001190436913" fill="#ccc"/>
-        <circle cx="703.7742" cy="936.8464" r="74.5001190436913" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
-        <text transform="translate(649.1742 927.6224)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="39.928" y="15">KV5</tspan>
-        </text>
-      </g>
-      <g id="Graphic_8">
-        <circle cx="355" cy="460" r="42.0000671118797" fill="#ccc"/>
-        <circle cx="355" cy="460" r="42.0000671118797" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(326.4 450.776)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="18.672" y="15">R1</tspan>
-        </text>
-      </g>
-      <g id="Graphic_9">
-        <circle cx="703.7742" cy="460" r="42.0000671118797" fill="#c0c0ff"/>
-        <circle cx="703.7742" cy="460" r="42.0000671118797" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(675.1742 441.552)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="18.672" y="15">R2</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="3.8560004" y="33.448">Leader</tspan>
-        </text>
-      </g>
-      <g id="Graphic_10">
-        <circle cx="1052.5484" cy="460" r="42.0000671118796" fill="#ccc"/>
-        <circle cx="1052.5484" cy="460" r="42.0000671118796" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(1023.9484 450.776)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="18.672" y="15">R3</tspan>
-        </text>
-      </g>
-      <g id="Graphic_11">
-        <circle cx="355" cy="632" r="42.0000671118797" fill="#ccc"/>
-        <circle cx="355" cy="632" r="42.0000671118797" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(326.4 622.776)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="18.672" y="15">R4</tspan>
-        </text>
-      </g>
-      <g id="Graphic_12">
-        <circle cx="703.7742" cy="632" r="42.0000671118797" fill="#ccc"/>
-        <circle cx="703.7742" cy="632" r="42.0000671118797" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(675.1742 622.776)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="18.672" y="15">R5</tspan>
-        </text>
-      </g>
-      <g id="Line_13">
-        <line x1="355" y1="248.90004" x2="355" y2="418" marker-start="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Line_14">
-        <line x1="703.7742" y1="248.90004" x2="703.7742" y2="418" marker-start="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Line_16">
-        <line x1="1052.5484" y1="248.90004" x2="1052.5484" y2="418" marker-start="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Line_17">
-        <line x1="703.7742" y1="674" x2="703.7742" y2="852.4464" marker-end="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Line_18">
-        <path d="M 391.1064 669.2036 C 410.1047 694.01075 429.5 730.12735 429.5 774.19355 C 429.5 812.1801 415.0873 848.2173 398.94046 876.6712" marker-start="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Graphic_20">
-        <path d="M 291.576 315.56122 L 418.424 315.56122 C 421.1854 315.56122 423.424 317.7998 423.424 320.56122 L 423.424 357.4572 C 423.424 360.21864 421.1854 362.4572 418.424 362.4572 L 291.576 362.4572 C 288.81458 362.4572 286.576 360.21864 286.576 357.4572 L 286.576 320.56122 C 286.576 317.7998 288.81458 315.56122 291.576 315.56122 Z" fill="white"/>
-        <path d="M 291.576 315.56122 L 418.424 315.56122 C 421.1854 315.56122 423.424 317.7998 423.424 320.56122 L 423.424 357.4572 C 423.424 360.21864 421.1854 362.4572 418.424 362.4572 L 291.576 362.4572 C 288.81458 362.4572 286.576 360.21864 286.576 357.4572 L 286.576 320.56122 C 286.576 317.7998 288.81458 315.56122 291.576 315.56122 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(291.576 320.56122)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="8881784e-19" y="15">PUT K1 IN KV 1,3</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="34.24" y="33.448">(Socket)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_23">
-        <path d="M 640.3502 316.44384 L 767.1982 316.44384 C 769.9596 316.44384 772.1982 318.6824 772.1982 321.44384 L 772.1982 358.33984 C 772.1982 361.10126 769.9596 363.33984 767.1982 363.33984 L 640.3502 363.33984 C 637.5888 363.33984 635.3502 361.10126 635.3502 358.33984 L 635.3502 321.44384 C 635.3502 318.6824 637.5888 316.44384 640.3502 316.44384 Z" fill="white"/>
-        <path d="M 640.3502 316.44384 L 767.1982 316.44384 C 769.9596 316.44384 772.1982 318.6824 772.1982 321.44384 L 772.1982 358.33984 C 772.1982 361.10126 769.9596 363.33984 767.1982 363.33984 L 640.3502 363.33984 C 637.5888 363.33984 635.3502 361.10126 635.3502 358.33984 L 635.3502 321.44384 C 635.3502 318.6824 637.5888 316.44384 640.3502 316.44384 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(640.3502 321.44384)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="8881784e-19" y="15">PUT K1 IN KV 1,3</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="34.24" y="33.448">(Socket)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_24">
-        <path d="M 989.1244 315.7189 L 1115.9724 315.7189 C 1118.7338 315.7189 1120.9724 317.9575 1120.9724 320.7189 L 1120.9724 357.6149 C 1120.9724 360.37634 1118.7338 362.6149 1115.9724 362.6149 L 989.1244 362.6149 C 986.363 362.6149 984.1244 360.37634 984.1244 357.6149 L 984.1244 320.7189 C 984.1244 317.9575 986.363 315.7189 989.1244 315.7189 Z" fill="white"/>
-        <path d="M 989.1244 315.7189 L 1115.9724 315.7189 C 1118.7338 315.7189 1120.9724 317.9575 1120.9724 320.7189 L 1120.9724 357.6149 C 1120.9724 360.37634 1118.7338 362.6149 1115.9724 362.6149 L 989.1244 362.6149 C 986.363 362.6149 984.1244 360.37634 984.1244 357.6149 L 984.1244 320.7189 C 984.1244 317.9575 986.363 315.7189 989.1244 315.7189 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(989.1244 320.7189)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="8881784e-19" y="15">PUT K1 IN KV 1,3</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="34.24" y="33.448">(Socket)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_25">
-        <path d="M 363.84534 749.3311 L 495.14134 749.3311 C 497.90276 749.3311 500.14134 751.5697 500.14134 754.3311 L 500.14134 791.2271 C 500.14134 793.9886 497.90276 796.2271 495.14134 796.2271 L 363.84534 796.2271 C 361.0839 796.2271 358.84534 793.9886 358.84534 791.2271 L 358.84534 754.3311 C 358.84534 751.5697 361.0839 749.3311 363.84534 749.3311 Z" fill="white"/>
-        <path d="M 363.84534 749.3311 L 495.14134 749.3311 C 497.90276 749.3311 500.14134 751.5697 500.14134 754.3311 L 500.14134 791.2271 C 500.14134 793.9886 497.90276 796.2271 495.14134 796.2271 L 363.84534 796.2271 C 361.0839 796.2271 358.84534 793.9886 358.84534 791.2271 L 358.84534 754.3311 C 358.84534 751.5697 361.0839 749.3311 363.84534 749.3311 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(363.84534 754.3311)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="2.224" y="15">PUT K1 IN KV 1,3 </tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="36.464" y="33.448">(Socket)</tspan>
-        </text>
-      </g>
-      <g id="Line_27">
-        <line x1="661.7742" y1="460" x2="406.9" y2="460" marker-end="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Line_28">
-        <line x1="745.7742" y1="460" x2="1000.6484" y2="460" marker-end="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Line_29">
-        <path d="M 656.5976 481.6591 C 616.0494 500.4308 555.12935 528.9958 497.2603 557.53425 C 449.7019 580.9879 414.9681 599.1154 391.7311 611.6105" marker-start="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Line_30">
-        <path d="M 732.5039 490.6372 C 750.8584 512.7986 771.2329 543.4302 771.2329 570.21 C 771.2329 588.0352 762.206 601.0876 750.7563 610.4738" marker-end="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Graphic_32">
-        <path d="M 476.2812 436.552 L 558.3612 436.552 C 561.1226 436.552 563.3612 438.7906 563.3612 441.552 L 563.3612 478.448 C 563.3612 481.2094 561.1226 483.448 558.3612 483.448 L 476.2812 483.448 C 473.51976 483.448 471.2812 481.2094 471.2812 478.448 L 471.2812 441.552 C 471.2812 438.7906 473.51976 436.552 476.2812 436.552 Z" fill="white"/>
-        <path d="M 476.2812 436.552 L 558.3612 436.552 C 561.1226 436.552 563.3612 438.7906 563.3612 441.552 L 563.3612 478.448 C 563.3612 481.2094 561.1226 483.448 558.3612 483.448 L 476.2812 483.448 C 473.51976 483.448 471.2812 481.2094 471.2812 478.448 L 471.2812 441.552 C 471.2812 438.7906 473.51976 436.552 476.2812 436.552 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(476.2812 441.552)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="8739676e-19" y="15">Write to log</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="20.456" y="33.448">(RPC)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_33">
-        <path d="M 815.9667 436.552 L 898.0467 436.552 C 900.8081 436.552 903.0467 438.7906 903.0467 441.552 L 903.0467 478.448 C 903.0467 481.2094 900.8081 483.448 898.0467 483.448 L 815.9667 483.448 C 813.2053 483.448 810.9667 481.2094 810.9667 478.448 L 810.9667 441.552 C 810.9667 438.7906 813.2053 436.552 815.9667 436.552 Z" fill="white"/>
-        <path d="M 815.9667 436.552 L 898.0467 436.552 C 900.8081 436.552 903.0467 438.7906 903.0467 441.552 L 903.0467 478.448 C 903.0467 481.2094 900.8081 483.448 898.0467 483.448 L 815.9667 483.448 C 813.2053 483.448 810.9667 481.2094 810.9667 478.448 L 810.9667 441.552 C 810.9667 438.7906 813.2053 436.552 815.9667 436.552 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(815.9667 441.552)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="8739676e-19" y="15">Write to log</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="20.456" y="33.448">(RPC)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_34">
-        <path d="M 479.992 516.9729 L 584.6 516.9729 C 587.3614 516.9729 589.6 519.2115 589.6 521.9729 L 589.6 558.8689 C 589.6 561.63034 587.3614 563.8689 584.6 563.8689 L 479.992 563.8689 C 477.2306 563.8689 474.992 561.63034 474.992 558.8689 L 474.992 521.9729 C 474.992 519.2115 477.2306 516.9729 479.992 516.9729 Z" fill="white"/>
-        <path d="M 479.992 516.9729 L 584.6 516.9729 C 587.3614 516.9729 589.6 519.2115 589.6 521.9729 L 589.6 558.8689 C 589.6 561.63034 587.3614 563.8689 584.6 563.8689 L 479.992 563.8689 C 477.2306 563.8689 474.992 561.63034 474.992 558.8689 L 474.992 521.9729 C 474.992 519.2115 477.2306 516.9729 479.992 516.9729 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(479.992 521.9729)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="781597e-19" y="15">Send to leader</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="31.72" y="33.448">(RPC)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_35">
-        <path d="M 727.0543 527.2252 L 809.1343 527.2252 C 811.8958 527.2252 814.1343 529.4638 814.1343 532.2252 L 814.1343 569.1212 C 814.1343 571.8826 811.8958 574.1212 809.1343 574.1212 L 727.0543 574.1212 C 724.2929 574.1212 722.0543 571.8826 722.0543 569.1212 L 722.0543 532.2252 C 722.0543 529.4638 724.2929 527.2252 727.0543 527.2252 Z" fill="white"/>
-        <path d="M 727.0543 527.2252 L 809.1343 527.2252 C 811.8958 527.2252 814.1343 529.4638 814.1343 532.2252 L 814.1343 569.1212 C 814.1343 571.8826 811.8958 574.1212 809.1343 574.1212 L 727.0543 574.1212 C 724.2929 574.1212 722.0543 571.8826 722.0543 569.1212 L 722.0543 532.2252 C 722.0543 529.4638 724.2929 527.2252 727.0543 527.2252 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(727.0543 532.2252)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="8739676e-19" y="15">Write to log</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="20.456" y="33.448">(RPC)</tspan>
-        </text>
-      </g>
-      <g id="Line_36">
-        <line x1="-46.23656" y1="936.8464" x2="270.59996" y2="936.8464" marker-end="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Graphic_37">
-        <path d="M -65.03552 913.3984 L 132.88448 913.3984 C 135.6459 913.3984 137.88448 915.637 137.88448 918.3984 L 137.88448 955.2944 C 137.88448 958.0558 135.6459 960.2944 132.88448 960.2944 L -65.03552 960.2944 C -67.79694 960.2944 -70.03552 958.0558 -70.03552 955.2944 L -70.03552 918.3984 C -70.03552 915.637 -67.79694 913.3984 -65.03552 913.3984 Z" fill="white"/>
-        <path d="M -65.03552 913.3984 L 132.88448 913.3984 C 135.6459 913.3984 137.88448 915.637 137.88448 918.3984 L 137.88448 955.2944 C 137.88448 958.0558 135.6459 960.2944 132.88448 960.2944 L -65.03552 960.2944 C -67.79694 960.2944 -70.03552 958.0558 -70.03552 955.2944 L -70.03552 918.3984 C -70.03552 915.637 -67.79694 913.3984 -65.03552 913.3984 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(-65.03552 918.3984)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="69.176" y="15">Request</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="33.448">(e.g. PUT KEY1 -&gt; VALUE1)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_38">
-        <text transform="translate(-41.639515 867.3464)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="18" font-weight="700" fill="black" x="3126388e-19" y="18">REPLICATION = 2</tspan>
-        </text>
-      </g>
-      <g id="Line_39">
-        <path d="M 688.7288 499.2239 C 673.3054 529.06685 643.3324 569.58375 587.2111 597.2603 C 527.336 626.788 454.75885 633.2864 406.85944 633.823" marker-end="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Graphic_40">
-        <path d="M 501.0361 591.43424 L 583.1161 591.43424 C 585.87754 591.43424 588.1161 593.6728 588.1161 596.43424 L 588.1161 633.3302 C 588.1161 636.09166 585.87754 638.3302 583.1161 638.3302 L 501.0361 638.3302 C 498.2747 638.3302 496.0361 636.09166 496.0361 633.3302 L 496.0361 596.43424 C 496.0361 593.6728 498.2747 591.43424 501.0361 591.43424 Z" fill="white"/>
-        <path d="M 501.0361 591.43424 L 583.1161 591.43424 C 585.87754 591.43424 588.1161 593.6728 588.1161 596.43424 L 588.1161 633.3302 C 588.1161 636.09166 585.87754 638.3302 583.1161 638.3302 L 501.0361 638.3302 C 498.2747 638.3302 496.0361 636.09166 496.0361 633.3302 L 496.0361 596.43424 C 496.0361 593.6728 498.2747 591.43424 501.0361 591.43424 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(501.0361 596.43424)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="8739676e-19" y="15">Write to log</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="20.456" y="33.448">(RPC)</tspan>
-        </text>
-      </g>
-      <g id="Line_41">
-        <path d="M 323.41785 659.6892 C 300.7525 683.7604 274.19355 722.5302 274.19355 772.043 C 274.19355 807.5742 287.87066 841.7639 303.9711 869.702" marker-end="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Graphic_42">
-        <path d="M 208.54611 748.9906 L 339.8421 748.9906 C 342.60354 748.9906 344.8421 751.2292 344.8421 753.9906 L 344.8421 790.8866 C 344.8421 793.648 342.60354 795.8866 339.8421 795.8866 L 208.54611 795.8866 C 205.7847 795.8866 203.54611 793.648 203.54611 790.8866 L 203.54611 753.9906 C 203.54611 751.2292 205.7847 748.9906 208.54611 748.9906 Z" fill="white"/>
-        <path d="M 208.54611 748.9906 L 339.8421 748.9906 C 342.60354 748.9906 344.8421 751.2292 344.8421 753.9906 L 344.8421 790.8866 C 344.8421 793.648 342.60354 795.8866 339.8421 795.8866 L 208.54611 795.8866 C 205.7847 795.8866 203.54611 793.648 203.54611 790.8866 L 203.54611 753.9906 C 203.54611 751.2292 205.7847 748.9906 208.54611 748.9906 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(208.54612 753.9906)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="2.224" y="15">PUT K1 IN KV 1,3 </tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="36.464" y="33.448">(Socket)</tspan>
-        </text>
-      </g>
-      <g id="Graphic_43">
-        <path d="M 640.3502 748.87 L 767.1982 748.87 C 769.9596 748.87 772.1982 751.1085 772.1982 753.87 L 772.1982 790.766 C 772.1982 793.5274 769.9596 795.766 767.1982 795.766 L 640.3502 795.766 C 637.5888 795.766 635.3502 793.5274 635.3502 790.766 L 635.3502 753.87 C 635.3502 751.1085 637.5888 748.87 640.3502 748.87 Z" fill="white"/>
-        <path d="M 640.3502 748.87 L 767.1982 748.87 C 769.9596 748.87 772.1982 751.1085 772.1982 753.87 L 772.1982 790.766 C 772.1982 793.5274 769.9596 795.766 767.1982 795.766 L 640.3502 795.766 C 637.5888 795.766 635.3502 793.5274 635.3502 790.766 L 635.3502 753.87 C 635.3502 751.1085 637.5888 748.87 640.3502 748.87 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(640.3502 753.87)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="8881784e-19" y="15">PUT K1 IN KV 1,3</tspan>
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="34.24" y="33.448">(Socket)</tspan>
-        </text>
-      </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1250px" height="973px" viewBox="0 0 1250 973" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" fill="#FFFFFF" x="0" y="0" width="1250" height="973"></rect>
+        <g id="Group-82" transform="translate(25.000000, 25.000000)">
+            <path d="M479.179365,21.8206354 C508.273545,50.9146158 508.273545,98.0853842 479.179365,127.179365 C450.085384,156.273545 402.914616,156.273545 373.820635,127.179365 C344.726455,98.0853842 344.726455,50.9146158 373.820635,21.8206354 C402.914616,-7.27354512 450.085384,-7.27354512 479.179365,21.8206354" id="Fill-1" fill="#CCCCCC"></path>
+            <path d="M479.179365,21.8206226 C508.273545,50.914606 508.273545,98.085379 479.179365,127.179362 C450.085384,156.273546 402.914616,156.273546 373.820635,127.179362 C344.726455,98.085379 344.726455,50.914606 373.820635,21.8206226 C402.914616,-7.27354085 450.085384,-7.27354085 479.179365,21.8206226" id="Stroke-3" stroke="#000000" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="KV1" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="412" y="76">KV1</tspan>
+            </text>
+            <path d="M829.179365,21.8206354 C858.273545,50.9146158 858.273545,98.0853842 829.179365,127.179365 C800.085384,156.273545 752.914616,156.273545 723.820635,127.179365 C694.726455,98.0853842 694.726455,50.9146158 723.820635,21.8206354 C752.914616,-7.27354512 800.085384,-7.27354512 829.179365,21.8206354" id="Fill-4" fill="#CCCCCC"></path>
+            <path d="M829.179365,21.8206226 C858.273545,50.914606 858.273545,98.085379 829.179365,127.179362 C800.085384,156.273546 752.914616,156.273546 723.820635,127.179362 C694.726455,98.085379 694.726455,50.914606 723.820635,21.8206226 C752.914616,-7.27354085 800.085384,-7.27354085 829.179365,21.8206226" id="Stroke-5" stroke="#000000" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="KV2" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="761" y="76">KV2</tspan>
+            </text>
+            <path d="M1178.1795,21.8206354 C1207.2735,50.9146158 1207.2735,98.0853842 1178.1795,127.179365 C1149.0855,156.273545 1101.9145,156.273545 1072.8205,127.179365 C1043.7265,98.0853842 1043.7265,50.9146158 1072.8205,21.8206354 C1101.9145,-7.27354512 1149.0855,-7.27354512 1178.1795,21.8206354" id="Fill-6" fill="#CCCCCC"></path>
+            <path d="M1178.17952,21.8206226 C1207.27349,50.914606 1207.27349,98.085379 1178.17952,127.179362 C1149.08555,156.273546 1101.9146,156.273546 1072.82063,127.179362 C1043.72646,98.085379 1043.72646,50.914606 1072.82063,21.8206226 C1101.9146,-7.27354085 1149.08555,-7.27354085 1178.17952,21.8206226" id="Stroke-7" stroke="#000000" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="KV3" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="1111" y="76">KV3</tspan>
+            </text>
+            <path d="M479.179365,795.820634 C508.273545,824.914673 508.273545,872.085359 479.179365,901.179378 C450.085384,930.273541 402.914616,930.273541 373.820635,901.179378 C344.726455,872.085359 344.726455,824.914673 373.820635,795.820634 C402.914616,766.726455 450.085384,766.726455 479.179365,795.820634" id="Fill-8" fill="#CCCCCC"></path>
+            <path d="M479.179365,795.820635 C508.273545,824.914716 508.273545,872.085384 479.179365,901.179365 C450.085384,930.273545 402.914616,930.273545 373.820635,901.179365 C344.726455,872.085384 344.726455,824.914716 373.820635,795.820635 C402.914616,766.726455 450.085384,766.726455 479.179365,795.820635" id="Stroke-9" stroke="#000000" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="KV4" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="412" y="823">KV4</tspan>
+            </text>
+            <text id="(Determines-in-" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="375" y="842">(Determines in </tspan>
+            </text>
+            <text id="which-nodes-" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="381" y="860">which nodes </tspan>
+            </text>
+            <text id="to-insert)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="395" y="879">to insert)</tspan>
+            </text>
+            <path d="M829.179365,795.820634 C858.273545,824.914673 858.273545,872.085359 829.179365,901.179378 C800.085384,930.273541 752.914616,930.273541 723.820635,901.179378 C694.726455,872.085359 694.726455,824.914673 723.820635,795.820634 C752.914616,766.726455 800.085384,766.726455 829.179365,795.820634" id="Fill-10" fill="#CCCCCC"></path>
+            <path d="M829.179365,795.820635 C858.273545,824.914716 858.273545,872.085384 829.179365,901.179365 C800.085384,930.273545 752.914616,930.273545 723.820635,901.179365 C694.726455,872.085384 694.726455,824.914716 723.820635,795.820635 C752.914616,766.726455 800.085384,766.726455 829.179365,795.820635" id="Stroke-11" stroke="#000000" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="KV5" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="761" y="851">KV5</tspan>
+            </text>
+            <path d="M455.6985,340.3015 C472.1005,356.7036 472.1005,383.2964 455.6985,399.6985 C439.2964,416.1005 412.7036,416.1005 396.3015,399.6985 C379.8995,383.2964 379.8995,356.7036 396.3015,340.3015 C412.7036,323.8995 439.2964,323.8995 455.6985,340.3015" id="Fill-12" fill="#CCCCCC"></path>
+            <path d="M455.6985,340.3015 C472.1005,356.7036 472.1005,383.2964 455.6985,399.6985 C439.2964,416.1005 412.7036,416.1005 396.3015,399.6985 C379.8995,383.2964 379.8995,356.7036 396.3015,340.3015 C412.7036,323.8995 439.2964,323.8995 455.6985,340.3015" id="Stroke-13" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="R1" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="416" y="373">R1</tspan>
+            </text>
+            <path d="M805.698432,340.3015 C822.100523,356.7036 822.100523,383.2964 805.698432,399.6985 C789.296442,416.1005 762.703558,416.1005 746.301568,399.6985 C729.899477,383.2964 729.899477,356.7036 746.301568,340.3015 C762.703558,323.8995 789.296442,323.8995 805.698432,340.3015" id="Fill-14" fill="#BFBFFF"></path>
+            <path d="M805.698432,340.3015 C822.100523,356.7036 822.100523,383.2964 805.698432,399.6985 C789.296442,416.1005 762.703558,416.1005 746.301568,399.6985 C729.899477,383.2964 729.899477,356.7036 746.301568,340.3015 C762.703558,323.8995 789.296442,323.8995 805.698432,340.3015" id="Stroke-15" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="R2" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="766" y="363">R2</tspan>
+            </text>
+            <text id="Leader" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="751" y="382">Leader</tspan>
+            </text>
+            <path d="M1155.6985,340.3015 C1172.1005,356.7036 1172.1005,383.2964 1155.6985,399.6985 C1139.2965,416.1005 1112.7035,416.1005 1096.3015,399.6985 C1079.8995,383.2964 1079.8995,356.7036 1096.3015,340.3015 C1112.7035,323.8995 1139.2965,323.8995 1155.6985,340.3015" id="Fill-16" fill="#CCCCCC"></path>
+            <path d="M1155.6985,340.3015 C1172.1005,356.7036 1172.1005,383.2964 1155.6985,399.6985 C1139.2965,416.1005 1112.7035,416.1005 1096.3015,399.6985 C1079.8995,383.2964 1079.8995,356.7036 1096.3015,340.3015 C1112.7035,323.8995 1139.2965,323.8995 1155.6985,340.3015" id="Stroke-17" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="R3" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="1116" y="373">R3</tspan>
+            </text>
+            <path d="M455.6985,513.3015 C472.1005,529.7036 472.1005,556.2964 455.6985,572.6985 C439.2964,589.1005 412.7036,589.1005 396.3015,572.6985 C379.8995,556.2964 379.8995,529.7036 396.3015,513.3015 C412.7036,496.8995 439.2964,496.8995 455.6985,513.3015" id="Fill-18" fill="#CCCCCC"></path>
+            <path d="M455.6985,513.3015 C472.1005,529.7036 472.1005,556.2964 455.6985,572.6985 C439.2964,589.1005 412.7036,589.1005 396.3015,572.6985 C379.8995,556.2964 379.8995,529.7036 396.3015,513.3015 C412.7036,496.8995 439.2964,496.8995 455.6985,513.3015" id="Stroke-19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="R4" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="416" y="545">R4</tspan>
+            </text>
+            <path d="M805.698432,513.3015 C822.100523,529.7036 822.100523,556.2964 805.698432,572.6985 C789.296442,589.1005 762.703558,589.1005 746.301568,572.6985 C729.899477,556.2964 729.899477,529.7036 746.301568,513.3015 C762.703558,496.8995 789.296442,496.8995 805.698432,513.3015" id="Fill-20" fill="#CCCCCC"></path>
+            <path d="M805.698432,513.3015 C822.100523,529.7036 822.100523,556.2964 805.698432,572.6985 C789.296442,589.1005 762.703558,589.1005 746.301568,572.6985 C729.899477,556.2964 729.899477,529.7036 746.301568,513.3015 C762.703558,496.8995 789.296442,496.8995 805.698432,513.3015" id="Stroke-21" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="R5" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="766" y="545">R5</tspan>
+            </text>
+            <line x1="426.5" y1="158" x2="426.5" y2="328" id="Stroke-22" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></line>
+            <polygon id="Fill-23" fill="#000000" points="426 151 423 159 429 159"></polygon>
+            <polygon id="Stroke-24" stroke="#000000" points="426 151 423 159 429 159"></polygon>
+            <line x1="776.5" y1="158" x2="776.5" y2="328" id="Stroke-25" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></line>
+            <polygon id="Fill-26" fill="#000000" points="776 151 773 159 779 159"></polygon>
+            <polygon id="Stroke-27" stroke="#000000" points="776 151 773 159 779 159"></polygon>
+            <line x1="1125.5" y1="158" x2="1125.5" y2="328" id="Stroke-28" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></line>
+            <polygon id="Fill-29" fill="#000000" points="1126 151 1123 159 1129 159"></polygon>
+            <polygon id="Stroke-30" stroke="#000000" points="1126 151 1123 159 1129 159"></polygon>
+            <line x1="776.5" y1="585" x2="776.5" y2="764" id="Stroke-31" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></line>
+            <polygon id="Fill-32" fill="#000000" points="776 772 779 764 773 764"></polygon>
+            <polygon id="Stroke-33" stroke="#000000" points="776 772 779 764 773 764"></polygon>
+            <path d="M462,580 C481.298365,604.87086 501,641.080142 501,685.259323 C501,723.343404 486.359662,759.473082 469.957834,788" id="Stroke-34" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <polygon id="Fill-35" fill="#000000" points="458 574 460.536685 582 465 578.30319"></polygon>
+            <polygon id="Stroke-36" stroke="#000000" points="458 574 460.536685 582 465 578.30319"></polygon>
+            <path d="M363.005554,226 L489.994446,226 C492.758914,226 495,228.243564 495,231.011088 L495,267.988912 C495,270.756436 492.758914,273 489.994446,273 L363.005554,273 C360.241086,273 358,270.756436 358,267.988912 L358,231.011088 C358,228.243564 360.241086,226 363.005554,226 Z" id="Fill-37" fill="#FFFFFF"></path>
+            <path d="M363.005554,226 L489.994446,226 C492.758914,226 495,228.243564 495,231.011088 L495,267.988912 C495,270.756436 492.758914,273 489.994446,273 L363.005554,273 C360.241086,273 358,270.756436 358,267.988912 L358,231.011088 C358,228.243564 360.241086,226 363.005554,226 Z" id="Stroke-38" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="PUT-K1-IN-KV-1,3" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="363" y="242">PUT K1 IN KV 1,3</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="406" y="260">(RPC)</tspan>
+            </text>
+            <path d="M713.005554,226 L839.994446,226 C842.758914,226 845,228.243564 845,231.011088 L845,267.988912 C845,270.756536 842.758914,273 839.994446,273 L713.005554,273 C710.241086,273 708,270.756536 708,267.988912 L708,231.011088 C708,228.243564 710.241086,226 713.005554,226 Z" id="Fill-39" fill="#FFFFFF"></path>
+            <path d="M713.005554,226 L839.994446,226 C842.758914,226 845,228.243564 845,231.011088 L845,267.988912 C845,270.756536 842.758914,273 839.994446,273 L713.005554,273 C710.241086,273 708,270.756536 708,267.988912 L708,231.011088 C708,228.243564 710.241086,226 713.005554,226 Z" id="Stroke-40" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="PUT-K1-IN-KV-1,3" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="713" y="243">PUT K1 IN KV 1,3</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="755" y="261">(RPC)</tspan>
+            </text>
+            <path d="M1062.00555,226 L1188.99445,226 C1191.75951,226 1194,228.243564 1194,231.011088 L1194,267.988912 C1194,270.756436 1191.75951,273 1188.99445,273 L1062.00555,273 C1059.24149,273 1057,270.756436 1057,267.988912 L1057,231.011088 C1057,228.243564 1059.24149,226 1062.00555,226 Z" id="Fill-41" fill="#FFFFFF"></path>
+            <path d="M1062.00557,226 L1188.99443,226 C1191.75951,226 1194,228.243564 1194,231.011088 L1194,267.988912 C1194,270.756436 1191.75951,273 1188.99443,273 L1062.00557,273 C1059.24109,273 1057,270.756436 1057,267.988912 L1057,231.011088 C1057,228.243564 1059.24109,226 1062.00557,226 Z" id="Stroke-42" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="PUT-K1-IN-KV-1,3" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="1062" y="242">PUT K1 IN KV 1,3</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="1105" y="261">(RPC)</tspan>
+            </text>
+            <path d="M435.024912,661 L566.975088,661 C569.750347,661 572,663.243564 572,666.011088 L572,702.988912 C572,705.756536 569.750347,708 566.975088,708 L435.024912,708 C432.249754,708 430,705.756536 430,702.988912 L430,666.011088 C430,663.243564 432.249754,661 435.024912,661 Z" id="Fill-43" fill="#FFFFFF"></path>
+            <path d="M435.024912,661 L566.975088,661 C569.750347,661 572,663.243564 572,666.011088 L572,702.988912 C572,705.756536 569.750347,708 566.975088,708 L435.024912,708 C432.249754,708 430,705.756536 430,702.988912 L430,666.011088 C430,663.243564 432.249754,661 435.024912,661 Z" id="Stroke-44" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="PUT-K1-IN-KV-1,3-" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="438" y="677">PUT K1 IN KV 1,3 </tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="480" y="695">(RPC)</tspan>
+            </text>
+            <line x1="734" y1="370.5" x2="478" y2="370.5" id="Stroke-45" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></line>
+            <polygon id="Fill-46" fill="#000000" points="470 370 478 373 478 367"></polygon>
+            <polygon id="Stroke-47" stroke="#000000" points="470 370 478 373 478 367"></polygon>
+            <line x1="818" y1="370.5" x2="1074" y2="370.5" id="Stroke-48" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></line>
+            <polygon id="Fill-49" fill="#000000" points="1082 370 1074 367 1074 373"></polygon>
+            <polygon id="Stroke-50" stroke="#000000" points="1082 370 1074 367 1074 373"></polygon>
+            <path d="M729,392 C688.278273,410.77872 627.097565,439.354403 568.980814,467.903476 C521.218887,491.365948 486.336443,509.500227 463,522" id="Stroke-51" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <polygon id="Fill-52" fill="#000000" points="736 389 727 389.625461 729.659417 395"></polygon>
+            <polygon id="Stroke-53" stroke="#000000" points="736 389 727 389.625461 729.659417 395"></polygon>
+            <path d="M805,401 C823.482933,423.191618 844,453.864984 844,480.681299 C844,498.530804 834.909936,511.601002 823.380118,521" id="Stroke-54" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <polygon id="Fill-55" fill="#000000" points="817 526 825 523.786004 821.591146 519"></polygon>
+            <polygon id="Stroke-56" stroke="#000000" points="817 526 825 523.786004 821.591146 519"></polygon>
+            <path d="M547.995656,347 L630.004344,347 C632.763345,347 635,349.243564 635,352.011088 L635,388.988912 C635,391.756436 632.763345,394 630.004344,394 L547.995656,394 C545.236655,394 543,391.756436 543,388.988912 L543,352.011088 C543,349.243564 545.236655,347 547.995656,347 Z" id="Fill-57" fill="#FFFFFF"></path>
+            <path d="M547.995656,347 L630.004344,347 C632.763345,347 635,349.243564 635,352.011088 L635,388.988912 C635,391.756436 632.763345,394 630.004344,394 L547.995656,394 C545.236655,394 543,391.756436 543,388.988912 L543,352.011088 C543,349.243564 545.236655,347 547.995656,347 Z" id="Stroke-58" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="Write-to-log" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" letter-spacing="-0.288" fill="#000000">
+                <tspan x="548" y="363">W</tspan>
+                <tspan x="562.24" y="363">rite to log</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="568" y="382">(RPC)</tspan>
+            </text>
+            <path d="M888.995656,347 L971.004344,347 C973.763345,347 976,349.243564 976,352.011088 L976,388.988912 C976,391.756436 973.763345,394 971.004344,394 L888.995656,394 C886.236655,394 884,391.756436 884,388.988912 L884,352.011088 C884,349.243564 886.236655,347 888.995656,347 Z" id="Fill-59" fill="#FFFFFF"></path>
+            <path d="M888.995656,347 L971.004344,347 C973.763345,347 976,349.243564 976,352.011088 L976,388.988912 C976,391.756436 973.763345,394 971.004344,394 L888.995656,394 C886.236655,394 884,391.756436 884,388.988912 L884,352.011088 C884,349.243564 886.236655,347 888.995656,347 Z" id="Stroke-60" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="Write-to-log" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" letter-spacing="-0.288" fill="#000000">
+                <tspan x="889" y="363">W</tspan>
+                <tspan x="903.24" y="363">rite to log</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="909" y="382">(RPC)</tspan>
+            </text>
+            <path d="M552.017102,428 L656.982898,428 C659.753743,428 662,430.243564 662,433.011088 L662,469.988912 C662,472.756436 659.753743,475 656.982898,475 L552.017102,475 C549.246257,475 547,472.756436 547,469.988912 L547,433.011088 C547,430.243564 549.246257,428 552.017102,428 Z" id="Fill-61" fill="#FFFFFF"></path>
+            <path d="M552.017102,428 L656.982898,428 C659.753743,428 662,430.243564 662,433.011088 L662,469.988912 C662,472.756436 659.753743,475 656.982898,475 L552.017102,475 C549.246257,475 547,472.756436 547,469.988912 L547,433.011088 C547,430.243564 549.246257,428 552.017102,428 Z" id="Stroke-62" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="Send-to-leader" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="552" y="444">Send to leader</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="583" y="462">(RPC)</tspan>
+            </text>
+            <path d="M799.995656,438 L882.004344,438 C884.763445,438 887,440.243564 887,443.011088 L887,479.988912 C887,482.756436 884.763445,485 882.004344,485 L799.995656,485 C797.236655,485 795,482.756436 795,479.988912 L795,443.011088 C795,440.243564 797.236655,438 799.995656,438 Z" id="Fill-63" fill="#FFFFFF"></path>
+            <path d="M799.995656,438 L882.004344,438 C884.763445,438 887,440.243564 887,443.011088 L887,479.988912 C887,482.756436 884.763445,485 882.004344,485 L799.995656,485 C797.236655,485 795,482.756436 795,479.988912 L795,443.011088 C795,440.243564 797.236655,438 799.995656,438 Z" id="Stroke-64" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="Write-to-log" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" letter-spacing="-0.288" fill="#000000">
+                <tspan x="800" y="454">W</tspan>
+                <tspan x="814.24" y="454">rite to log</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="820" y="473">(RPC)</tspan>
+            </text>
+            <line x1="24" y1="848.5" x2="342" y2="848.5" id="Stroke-65" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></line>
+            <polygon id="Fill-66" fill="#000000" points="350 849 342 846 342 852"></polygon>
+            <polygon id="Stroke-67" stroke="#000000" points="350 849 342 846 342 852"></polygon>
+            <path d="M5.02597129,825 L203.974029,825 C206.749772,825 209,827.243544 209,830.011088 L209,866.988912 C209,869.756456 206.749772,872 203.974029,872 L5.02597129,872 C2.25020385,872 0,869.756456 0,866.988912 L0,830.011088 C0,827.243544 2.25020385,825 5.02597129,825 Z" id="Fill-68" fill="#FFFFFF"></path>
+            <path d="M5.02597104,825 L203.974029,825 C206.749772,825 209,827.243564 209,830.011088 L209,866.988912 C209,869.756436 206.749772,872 203.974029,872 L5.02597104,872 C2.25020765,872 0,869.756436 0,866.988912 L0,830.011088 C0,827.243564 2.25020765,825 5.02597104,825 Z" id="Stroke-69" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="Request" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="74" y="842">Request</tspan>
+            </text>
+            <text id="(e.g.-PUT-KEY1--&gt;-VALUE1)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="5" y="860">(e.g. PUT KEY1 -&gt; </tspan>
+                <tspan x="140.248" y="860" letter-spacing="-0.736">V</tspan>
+                <tspan x="148.552" y="860">ALUE1)</tspan>
+            </text>
+            <text id="REPLICATION-=-2" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="18" font-weight="bold" fill="#000000">
+                <tspan x="29" y="793">REPLIC</tspan>
+                <tspan x="94.988" y="793" letter-spacing="-1.656">A</tspan>
+                <tspan x="104.006" y="793">TION = 2</tspan>
+            </text>
+            <path d="M761,410 C745.514736,439.931887 715.421512,480.569365 659.075105,508.328399 C598.959841,537.944046 526.091528,544.461802 478,545" id="Stroke-70" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <polygon id="Fill-71" fill="#000000" points="470 545.0241 478 548 477.98192 542"></polygon>
+            <polygon id="Stroke-72" stroke="#000000" points="470 545.0241 478 548 477.98192 542"></polygon>
+            <path d="M572.995656,502 L655.004344,502 C657.763345,502 660,504.243564 660,507.011088 L660,543.988912 C660,546.756536 657.763345,549 655.004344,549 L572.995656,549 C570.236655,549 568,546.756536 568,543.988912 L568,507.011088 C568,504.243564 570.236655,502 572.995656,502 Z" id="Fill-73" fill="#FFFFFF"></path>
+            <path d="M572.995656,502 L655.004344,502 C657.763345,502 660,504.243564 660,507.011088 L660,543.988912 C660,546.756536 657.763345,549 655.004344,549 L572.995656,549 C570.236655,549 568,546.756536 568,543.988912 L568,507.011088 C568,504.243564 570.236655,502 572.995656,502 Z" id="Stroke-74" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="Write-to-log" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" letter-spacing="-0.288" fill="#000000">
+                <tspan x="573" y="519">W</tspan>
+                <tspan x="587.24" y="519">rite to log</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="593" y="537">(RPC)</tspan>
+            </text>
+            <path d="M394,570 C371.437925,594.184351 345,633.136395 345,682.881938 C345,718.580158 358.61485,752.930572 374.641852,781" id="Stroke-75" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <polygon id="Fill-76" fill="#000000" points="379 788 377.39498 780 372 782.931224"></polygon>
+            <polygon id="Stroke-77" stroke="#000000" points="379 788 377.39498 780 372 782.931224"></polygon>
+            <path d="M279.024912,660 L410.975088,660 C413.750246,660 416,662.243564 416,665.011088 L416,701.988912 C416,704.756436 413.750246,707 410.975088,707 L279.024912,707 C276.249754,707 274,704.756436 274,701.988912 L274,665.011088 C274,662.243564 276.249754,660 279.024912,660 Z" id="Fill-78" fill="#FFFFFF"></path>
+            <path d="M279.024912,660 L410.975088,660 C413.750246,660 416,662.243564 416,665.011088 L416,701.988912 C416,704.756436 413.750246,707 410.975088,707 L279.024912,707 C276.249754,707 274,704.756436 274,701.988912 L274,665.011088 C274,662.243564 276.249754,660 279.024912,660 Z" id="Stroke-79" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="PUT-K1-IN-KV-1,3-" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="282" y="677">PUT K1 IN KV 1,3 </tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="325" y="695">(RPC)</tspan>
+            </text>
+            <path d="M713.005554,660 L839.994446,660 C842.758914,660 845,662.243464 845,665.011088 L845,701.988912 C845,704.756436 842.758914,707 839.994446,707 L713.005554,707 C710.241086,707 708,704.756436 708,701.988912 L708,665.011088 C708,662.243464 710.241086,660 713.005554,660 Z" id="Fill-80" fill="#FFFFFF"></path>
+            <path d="M713.005554,660 L839.994446,660 C842.758914,660 845,662.243464 845,665.011088 L845,701.988912 C845,704.756436 842.758914,707 839.994446,707 L713.005554,707 C710.241086,707 708,704.756436 708,701.988912 L708,665.011088 C708,662.243464 710.241086,660 713.005554,660 Z" id="Stroke-81" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <text id="PUT-K1-IN-KV-1,3" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="713" y="677">PUT K1 IN KV 1,3</tspan>
+            </text>
+            <text id="(RPC)" font-family="HelveticaNeue, Helvetica Neue" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="755" y="695">(RPC)</tspan>
+            </text>
+        </g>
     </g>
-  </g>
 </svg>
