@@ -15,7 +15,7 @@ cd "$1"
 export PYTHONPATH="${PYTHONPATH}:$1"
 
 # Store the command to be executed
-command="python3 src/cli/cli.py"
+command="python3 src/raft_node/cli/cli.py"
 
 # Execute the command
 eval "$command"

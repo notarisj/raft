@@ -3,8 +3,8 @@ import sys
 
 from prompt_toolkit import PromptSession
 
-from src.cli.cli_commands import *
-from src.cli.edit_json_file import edit_json_file
+from src.raft_node.cli.cli_commands import *
+from src.raft_node.cli.edit_json_file import edit_json_file
 from src.configuration_reader import IniConfig
 from src.raft_node.api_helper import ApiHelper
 
