@@ -57,7 +57,7 @@ class ClientCli:
             user_input (str): The user input to process.
         """
         # only allow to connect and exit commands if self.is_connected is False
-        allowed_commands = ["connect", "exit", "clear", "help"]
+        allowed_commands = ["login", "exit", "clear", "help"]
         if self.kv_store_rpc_client is None:
             if user_input not in allowed_commands:
                 print("You must first connect to the cluster. Type 'connect' to continue.")
@@ -67,7 +67,7 @@ class ClientCli:
             "SEARCH": lambda: send_command(user_input, self.kv_store_rpc_client),
             "DELETE": lambda: send_command(user_input, self.kv_store_rpc_client),
             "clear": lambda: print(execute_system_command(user_input)),
-            "connect": lambda: self._connect_to_server(),
+            "login": lambda: self._connect_to_server(),
             "exit": lambda: _exit(),
             "help": lambda: show_help(),
             "": lambda: None

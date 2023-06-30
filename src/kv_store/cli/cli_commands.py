@@ -8,7 +8,7 @@ from prompt_toolkit.completion import WordCompleter
 from src.configurations import IniConfig
 from src.kv_store.server import ServerJSON, ServerJSONEncoder
 
-basic_commands = WordCompleter(["PUT", "SEARCH", "DELETE", "clear", "connect", "exit", "help"])
+basic_commands = WordCompleter(["PUT", "SEARCH", "DELETE", "clear", "login", "exit", "help"])
 raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
 
