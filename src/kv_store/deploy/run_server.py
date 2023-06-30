@@ -14,7 +14,7 @@ if __name__ == "__main__":
     args = parse_arguments()
 
     raft_config = IniConfig('src/configurations/config.ini')
-    raft_servers_config = JsonConfig('src/configurations/servers.json').config
+    raft_servers_config = JsonConfig('src/configurations/servers.json').get_all_properties()
 
     server_id = args.server_id if args.server_id is not None else \
         raft_config.get_property('raft', 'server_id')
