@@ -9,7 +9,7 @@ from src.configuration_reader import IniConfig, JsonConfig
 class TestIniConfig(unittest.TestCase):
     def setUp(self):
         self.tmp_dir = tempfile.TemporaryDirectory()
-        self.ini_file = os.path.join(self.tmp_dir.name, 'test.ini')
+        self.ini_file = os.path.join(self.tmp_dir.name, 'new.ini')
 
         ini_content = """
         [Section1]
@@ -53,7 +53,7 @@ class TestIniConfig(unittest.TestCase):
 class TestJsonConfig(unittest.TestCase):
     def setUp(self):
         self.tmp_dir = tempfile.TemporaryDirectory()
-        self.json_file = os.path.join(self.tmp_dir.name, 'test.json')
+        self.json_file = os.path.join(self.tmp_dir.name, 'new.json')
 
         json_content = """
         {

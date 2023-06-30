@@ -9,7 +9,7 @@ class TestLog(unittest.TestCase):
         self.database_uri = 'mongodb://localhost:27017/'
         self.database_name = 'test_database'
         self.collection_name = 'test_collection'
-        self.log = Log(self.database_uri, self.database_name, self.collection_name)
+        self.log = Log(self.database_uri, self.database_name, self.collection_name, 1)
 
     def tearDown(self):
         client = MongoClient(self.database_uri)
