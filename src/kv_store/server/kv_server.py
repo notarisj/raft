@@ -40,6 +40,7 @@ class KVServer:
         self.rpc_server.register_function(self.client_request_rpc, 'client_request')
         self.rpc_server.register_function(self.kv_request_rpc, 'kv_request')
         self.rpc_server.register_function(self.raft_request_rpc, 'raft_request')
+        self.rpc_server.register_function(self.update_raft_config, 'update_raft_config')
 
         # Create RPC clients for all other servers
 
@@ -66,33 +67,6 @@ class KVServer:
         for server_id, server in servers.config.items():
             if int(server_id) != self.server_id:
                 self.client_handlers[server_id] = RPCClient(host=server['host'], port=server['kv_port'])
-
-    # def refresh_client_handlers(self) -> None:
-    #     """
-    #     Refresh the client handlers.
-    #
-    #     This method refreshes the client handlers by connecting to every server in the server list.
-    #     """
-    #     for server_id, server in servers.config.items():
-    #         if int(server_id) != self.server_id:
-    #             try:
-    #                 self.client_handlers[server_id] = RPCClient(host=server['host'], port=server['kv_port'])
-    #                 self.client_handlers_status[server_id] = False \
-    #                     if self.client_handlers[server_id] is None else True
-    #             except ConnectionRefusedError:
-    #                 logger.info(f"Connection refused by {server_id}")
-
-    # def refresh_client_handlers_if_needed(self) -> None:
-    #     """
-    #     Check if all servers are connected.
-    #
-    #     This method checks if all servers are connected by checking the client handlers status.
-    #     """
-    #     for server_id, server in servers.config.items():
-    #         if int(server_id) != self.server_id and not self.client_handlers_status[server_id]:
-    #             self.client_handlers[server_id] = RPCClient(host=server['host'], port=server['kv_port'])
-    #             self.client_handlers_status[server_id] = False \
-    #                 if self.client_handlers[server_id] is None else True
 
     def client_request_rpc(self, request: str) -> str:
         logger.info(f"Received client request: {request}")
@@ -215,12 +189,6 @@ class KVServer:
         raft_request_instance = RaftJSON.from_json(decoded_raft)
         requests_list = raft_request_instance.commands
 
-        temp_request = ServerJSON(requests_list[0])
-        if temp_request.get_command_type() == 'READ_CONFIG':
-            response = self.read_config_update_client_handlers(temp_request.get_command_value())
-            logger.info(f"Response: {response}")
-            return response
-
         if not check_id_exist(request, self.server_id):
             logger.info("Node ID {} not found in request. Ignore it.".format(self.server_id))
         else:
@@ -239,6 +207,21 @@ class KVServer:
                     response = "\"{}\" is invalid command from a RaftServer".format(command_type)
                     logger.error(response)
                     return response
+
+    def update_raft_config(self, _request: str) -> str:
+        request = json.loads(_request)
+        command = request['command']
+        payload = request['payload']
+
+        if command == "add_node":
+            self.client_handlers[payload['id']] = RPCClient(host=payload['host'], port=payload['kv_port'])
+        elif command == "delete_node":
+            del self.client_handlers[payload]
+        elif command == "update_node":
+            del self.client_handlers[payload['id']]
+            self.client_handlers[payload['id']] = RPCClient(host=payload['host'], port=payload['kv_port'])
+
+        return "OK"
 
     def kv_request_rpc(self, request: str) -> str:
         logger.info(f"Received kv server request: {request}")
@@ -265,25 +248,6 @@ class KVServer:
             response = f"{command_type} is invalid command from a KVServer"
             logger.info(f"Response: {response}")
             return response
-
-    def read_config_update_client_handlers(self, request: str) -> str:
-        new_servers = JsonConfig('/home/giannis-pc/Desktop/raft/src/configurations/servers.json')
-        if request == "add_node":
-            added_nodes = []
-            for key in new_servers.config.keys():
-                if key not in servers.config.keys():
-                    added_nodes.append(new_servers.config[key])
-            for new_node in added_nodes:
-                self.client_handlers[new_node.key] = RPCClient(host=new_node['host'], port=new_node['kv_port'])
-        elif request == "delete_node":
-            deleted_nodes = []
-            for key in servers.config.keys():
-                if key not in new_servers.config.keys():
-                    deleted_nodes.append(key)
-            for deleted_node in deleted_nodes:
-                del self.client_handlers[deleted_node]
-        servers.config = new_servers.config
-        return "OK"
 
     def replication_ids_shuffled(self) -> List[int]:
         """

@@ -123,11 +123,15 @@ class NodeEditor:
 
     def push_update(self, api_helper, payload, action):
         response = api_helper.get_servers()
+
+        # Update raft server
         for server_id, info in response['api_servers'].items():
             api_helper.node_actions(info['host'], info['port'], payload, action)
+
+        # Update kv store servers
         for key, rpc_client in self.kv_store_rpc_clients.items():
             print(f"Sending {action} to {key}")
             print(rpc_client)
-            payload = {"commands": [f"READ_CONFIG {action}"],
-                       "rep_ids": []}
-            rpc_client.call('raft_request', json.dumps(payload))
+            _payload = {"command": action,
+                        "payload": payload}
+            rpc_client.call('update_raft_config', json.dumps(_payload))
