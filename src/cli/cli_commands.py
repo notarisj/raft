@@ -1,13 +1,13 @@
 import argparse
 import subprocess
-import curses
-import datetime
+from tabulate import tabulate
 
 from prompt_toolkit.completion import WordCompleter
 
-basic_commands = WordCompleter(["status", "list", "add", "remove", "restart", "start",
-                                "stop", "start_cl", "stop_cl", "login", "exit", "help",
-                                "clear", "get_state", "edit_config"])
+from src.raft_node.api_helper import get_server_state
+
+basic_commands = WordCompleter(["start_cl", "stop_cl", "get_state", "edit_config", "login", "exit", "help",
+                                "clear"])
 
 
 def show_wellcome_screen():
@@ -28,27 +28,43 @@ def execute_command(command):
     return _output.decode().strip()
 
 
-def run_htop_mode(std_screen):
-    std_screen.timeout(100)
+def start_cl(api_helper):
+    response = api_helper.get_servers()
+    for server_id, info in response['api_servers'].items():
+        api_helper.start_stop_server(info['host'], info['port'], 'start_server')
 
-    while True:
-        std_screen.clear()
-        height, width = std_screen.getmaxyx()
-        std_screen.addstr(0, 0, f"HTOP Mode {datetime.datetime.now()}")
-        std_screen.addstr(1, 0, "------------------------------------------------------------------")
-        std_screen.addstr(2, 0, "Server 1 - [Leader]")
-        std_screen.addstr(3, 0, "Server 2 - [Follower]")
-        std_screen.addstr(4, 0, "Server 3 - [Follower]")
-        std_screen.addstr(5, 0, "Server 4 - [Follower]")
-        std_screen.addstr(6, 0, "Server 5 - [Follower]")
-        std_screen.addstr(7, 0, "------------------------------------------------------------------")
-        std_screen.addstr(height - 1, 0, "Press 'q' to exit HTOP mode.")
 
-        std_screen.refresh()
+def stop_cl(api_helper):
+    response = api_helper.get_servers()
+    for server_id, info in response['api_servers'].items():
+        api_helper.start_stop_server(info['host'], info['port'], 'stop_server')
 
-        key = std_screen.getch()
-        if key == ord('q'):
-            break
+
+def get_cluster_state(api_helper):
+    response = api_helper.get_servers()
+    headers = ["Node ID", "Status", "Running", "Role", "Host", "Port"]
+    table = []
+    for server_id, info in response['api_servers'].items():
+        state_response = get_server_state(info['host'], info['port'], 'admin', 'admin')
+        if state_response['status'] == 'ERROR':
+            is_running = 'not running'
+        else:
+            is_running = 'running' if state_response['is_running'] else 'not running'
+        if state_response['status'] == 'OK':
+            if server_id == state_response['leader_id']:
+                table.append([server_id, '\033[32m\u25CF\033[0m online', is_running,
+                              state_response['state'], info['host'], info["port"]])
+            else:
+                table.append([server_id, '\033[32m\u25CF\033[0m online', is_running,
+                              state_response['state'], info['host'], info["port"]])
+        else:
+            table.append([server_id, '\033[31m\u25CF\033[0m offline', is_running,
+                          state_response['state'], info['host'], info["port"]])
+
+    # Set align='left' for all columns
+    align_options = ['center'] * len(headers)
+    table_formatted = tabulate(table, headers, tablefmt="grid", colalign=align_options)
+    print(table_formatted)
 
 
 def show_help():
@@ -56,17 +72,13 @@ def show_help():
 
     # Define commands and their descriptions
     commands = {
-        'status': 'Displays the current status of the cluster',
-        'list': 'Shows all the nodes in the cluster',
-        'add': 'Adds a new node to the cluster',
-        'remove': 'Remove a node from the cluster (usage: remove <node_id>)',
-        'restart': 'Restart a node (usage: restart <node_id>)',
-        'start': 'Start a node (usage: start <node_id>)',
-        'stop': 'Stop a node (usage: stop <node_id>)',
         'start-cl': 'Start the cluster',
         'stop-cl': 'Stop the cluster',
+        'get_state': 'Get the state of the cluster',
+        'edit_config': 'Edit the configuration file. Add, remove and update nodes.',
         'login': 'Login to the cluster',
-        'exit': 'Exit the CLI'
+        'exit': 'Exit the CLI',
+        'clear': 'Clear the screen'
     }
 
     # Add commands as subparsers
@@ -76,7 +88,3 @@ def show_help():
         subparsers.add_parser(command, help=description)
 
     parser.print_help()
-
-
-def run_htop():
-    curses.wrapper(run_htop_mode)

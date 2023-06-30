@@ -2,12 +2,11 @@ import datetime
 import sys
 
 from prompt_toolkit import PromptSession
-from tabulate import tabulate
 
-from src.cli.cli_commands import run_htop, basic_commands, show_help, show_wellcome_screen, execute_command
+from src.cli.cli_commands import *
 from src.cli.edit_json_file import edit_json_file
 from src.configurations import IniConfig
-from src.raft_node.api_helper import ApiHelper, get_server_state
+from src.raft_node.api_helper import ApiHelper
 
 raft_config = IniConfig('src/raft_node/deploy/config.ini')
 
@@ -71,42 +70,6 @@ class RaftCli:
         self.port = None
         self.is_connected = False
 
-    def start_cl(self):
-        response = self.api_helper.get_servers()
-        for server_id, info in response['api_servers'].items():
-            self.api_helper.start_stop_server(info['host'], info['port'], 'start_server')
-
-    def stop_cl(self):
-        response = self.api_helper.get_servers()
-        for server_id, info in response['api_servers'].items():
-            self.api_helper.start_stop_server(info['host'], info['port'], 'stop_server')
-
-    def _get_state(self):
-        response = self.api_helper.get_servers()
-        headers = ["Node ID", "Status", "Running", "Role", "Host", "Port"]
-        table = []
-        for server_id, info in response['api_servers'].items():
-            state_response = get_server_state(info['host'], info['port'], 'admin', 'admin')
-            if state_response['status'] == 'ERROR':
-                is_running = 'not running'
-            else:
-                is_running = 'running' if state_response['is_running'] else 'not running'
-            if state_response['status'] == 'OK':
-                if server_id == state_response['leader_id']:
-                    table.append([server_id, '\033[32m\u25CF\033[0m online', is_running,
-                                  state_response['state'], info['host'], info["port"]])
-                else:
-                    table.append([server_id, '\033[32m\u25CF\033[0m online', is_running,
-                                  state_response['state'], info['host'], info["port"]])
-            else:
-                table.append([server_id, '\033[31m\u25CF\033[0m offline', is_running,
-                              state_response['state'], info['host'], info["port"]])
-
-        # Set align='left' for all columns
-        align_options = ['center'] * len(headers)
-        table_formatted = tabulate(table, headers, tablefmt="grid", colalign=align_options)
-        print(table_formatted)
-
     def process_user_input(self, user_input):
         # only allow login and exit commands if self.is_connected is False
         allowed_commands = ["login", "exit", "clear", "help"]
@@ -116,16 +79,14 @@ class RaftCli:
                 return
         switcher = {
             "time": lambda: print("Current time:", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-            "hello": lambda: print("Hello, World!"),
-            "status": run_htop,
             "login": self.login,
             "help": show_help,
             "clear": lambda: print(execute_command(user_input)),
             "exit": lambda: _exit(),
             "logout": self.logout,
-            "get_state": lambda: self._get_state(),
-            "start_cl": lambda: self.start_cl(),
-            "stop_cl": lambda: self.stop_cl(),
+            "get_state": lambda: get_cluster_state(self.api_helper),
+            "start_cl": lambda: start_cl(self.api_helper),
+            "stop_cl": lambda: stop_cl(self.api_helper),
             "edit_config": lambda: edit_json_file(raft_config.get_property('servers', 'raft_servers_path'),
                                                   self.api_helper),
             "": lambda: None
