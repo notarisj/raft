@@ -120,6 +120,7 @@ class RaftServer:
         self.voted_for = self.server_id
         self.start = time.time()
         self.election_timeout = random.uniform(self.min_val_for_timeout, self.max_val_for_timeout)
+        self.reset_election_timeout()
         self.start_election()
 
     def transition_to_leader(self, verbose=True):
@@ -225,6 +226,7 @@ class RaftServer:
         unreachable_nodes = 0
         total_servers = len(self.raft_servers)
 
+        # TODO: Send vote requests in parallel
         for _server_id in self.raft_servers.keys():
             if _server_id != self.server_id:
                 last_log_index = self.log.get_last_index()
