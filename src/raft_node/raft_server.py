@@ -29,7 +29,6 @@ class RaftServer:
         self.raft_servers = raft_servers
         self.hostname = raft_servers[server_id]['host']
         self.port = raft_servers[server_id]['port']
-        self.current_term = 0
         self.voted_for = None
         self.state = RaftState.FOLLOWER
         self.min_val_for_timeout = float(raft_config.get_property('raft', 'min_val_for_timeout'))
@@ -37,6 +36,7 @@ class RaftServer:
         self.election_timeout = random.uniform(self.min_val_for_timeout, self.max_val_for_timeout)
         self.start = time.time()
         self.log = Log(database_uri, database_name, collection_name, self.server_id)
+        self.current_term = self.log.get_last_term()
         if self.log.is_empty():
             self.commit_index = 0
         else:
