@@ -4,10 +4,12 @@ import uvicorn
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.responses import RedirectResponse
 
-from src.configuration_reader import JsonConfig
+from src.configuration_reader import JsonConfig, IniConfig
 from src.raft_node.api_helper import api_post_request
 from src.raft_node.raft_server import RaftServer, RaftState
 from fastapi import FastAPI, Depends, HTTPException, status, Request
+
+raft_config = IniConfig('src/configurations/config.ini')
 
 
 def split_dictionary(original_dict):
@@ -40,10 +42,8 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(HTTPBasic()
     Raises:
         HTTPException with status code 401 if the credentials are incorrect.
     """
-    # correct_username = ini_config.get_property('API', 'username')
-    # correct_password = ini_config.get_property('API', 'password')
-    correct_username = 'admin'
-    correct_password = 'admin'
+    correct_username = raft_config.get_property('API', 'username')
+    correct_password = raft_config.get_property('API', 'password')
     if credentials.username != correct_username or credentials.password != correct_password:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -133,10 +133,13 @@ class RaftServerApp:
 
         @app.post("/delete_node/{server_id}")
         async def read_protected_endpoint(server_id: int, _: str = Depends(get_current_username)):
+            if server_id == self.server.server_id:
+                self.server.is_running = False
+                self.server.rpc_server.stop()
             self.server.delete_node(int(server_id))
             del self.raft_config.config[str(server_id)]
             self.raft_config.save()
-            del self.api_servers[server_id]
+            del self.api_servers[int(server_id)]
             return {'status': 'OK'}
 
         @app.get("/get_servers")
@@ -153,12 +156,16 @@ class RaftServerApp:
 
         @app.post("/start_server")
         def get_state(_: str = Depends(get_current_username)):
+            if self.server.is_running:
+                return {"status": 'OK', "message": "Server already running"}
             self.server.is_running = True
             self.server_executor.submit(self.server.run)
             return {"status": 'OK'}
 
         @app.post("/stop_server")
         def get_state(_: str = Depends(get_current_username)):
+            if not self.server.is_running:
+                return {"status": 'OK', "message": "Server already stopped"}
             self.server.is_running = False
             self.server.state = RaftState.FOLLOWER
             self.server.rpc_server.stop()
