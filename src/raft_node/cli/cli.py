@@ -4,9 +4,9 @@ import sys
 from prompt_toolkit import PromptSession
 
 from src.raft_node.cli.cli_commands import *
-from src.raft_node.cli.edit_json_file import edit_json_file
 from src.configuration_reader import IniConfig
 from src.raft_node.api_helper import ApiHelper
+from src.raft_node.cli.edit_json_file import NodeEditor
 
 raft_config = IniConfig('src/configurations/config.ini')
 
@@ -27,6 +27,7 @@ class RaftCli:
         self.basic_commands = None
         self.api_helper = None
         self.is_connected = False
+        self.config_editor = NodeEditor()
 
     def login(self):
         login_true = False
@@ -87,8 +88,9 @@ class RaftCli:
             "get_state": lambda: get_cluster_state(self.api_helper),
             "start_cl": lambda: start_cl(self.api_helper),
             "stop_cl": lambda: stop_cl(self.api_helper),
-            "edit_config": lambda: edit_json_file(raft_config.get_property('servers', 'raft_servers_path'),
-                                                  self.api_helper),
+            "edit_config": lambda: self.config_editor.edit_json_file(
+                raft_config.get_property('servers', 'raft_servers_path'), self.api_helper
+            ),
             "": lambda: None
         }
 
