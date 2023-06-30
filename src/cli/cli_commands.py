@@ -31,13 +31,21 @@ def execute_command(command):
 def start_cl(api_helper):
     response = api_helper.get_servers()
     for server_id, info in response['api_servers'].items():
-        api_helper.start_stop_server(info['host'], info['port'], 'start_server')
+        response = api_helper.start_stop_server(info['host'], info['port'], 'start_server')
+        if response:
+            print(f"Server {server_id} started successfully.")
+        else:
+            print(f"Server {server_id} failed to start.")
 
 
 def stop_cl(api_helper):
     response = api_helper.get_servers()
     for server_id, info in response['api_servers'].items():
-        api_helper.start_stop_server(info['host'], info['port'], 'stop_server')
+        response = api_helper.start_stop_server(info['host'], info['port'], 'stop_server')
+        if response:
+            print(f"Server {server_id} stopped successfully.")
+        else:
+            print(f"Server {server_id} failed to stop.")
 
 
 def get_cluster_state(api_helper):
