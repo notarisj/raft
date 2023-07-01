@@ -15,11 +15,6 @@ Generate the distribution package (optional)
 python3 setup.py sdist
 ```
 
-Install (optional)
-```bash
-pip install dist/raft*.tar.gz
-```
-
 ## Usage
 
 ### Update configuration file
