@@ -15,6 +15,7 @@ Generate the distribution package (optional)
 python3 setup.py sdist
 ```
 
+Install (optional)
 ```bash
 pip install dist/raft*.tar.gz
 ```
@@ -109,7 +110,7 @@ To run the tests execute the following command:
 ./help_scripts/run_tests.sh
 ```
 
-## Generate SSL certificate for th API
+## Generate SSL certificate for the API
 ```bash
 openssl req -newkey rsa:2048 -nodes -keyout private_key.pem -x509 -days 365 -out certificate.pem -subj "/CN=localhost" -addext "subjectAltName = IP:127.0.0.1, DNS:localhost"
 ```
