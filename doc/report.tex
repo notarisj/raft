@@ -1,6 +1,6 @@
 \documentclass{article}
 \usepackage{booktabs}
-\usepackage[a4paper, left=1.5in, right=1.5in, top=1.5in, bottom=1.5in]{geometry}
+\usepackage[a4paper, left=1.5in, right=1.5in, top=2in, bottom=2in]{geometry}
 \usepackage{float}
 \usepackage{fancyhdr}
 \usepackage{amsmath}
@@ -99,7 +99,7 @@ The implementation consists of two primary components: the \texttt{RaftServer} a
 the \texttt{Log} class. Together, these components implement the Raft consensus 
 algorithm. The user interacts with the raft servers via an API from the cli. This report provides 
 a detailed overview of 
-how the Raft consensus algorithm is implemented in the provided code.
+how the Raft consensus algorithm is implemented.
 
 \subsection{Raft Server}
 
@@ -234,7 +234,7 @@ to key-value store, to raft and back to key-value store.
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{communication_diagram.pdf}
-  \caption{Communication Diagram. The \texttt{PUT} request comes from the user and is sent to raft node 4. The raft node will forward it to the leader and the leader will replicate it in all the nodes. When a node gets a entry from the leader it will write it to its log and sent it to key-value store when it gets committed.}
+  \caption{Communication Diagram. The \texttt{PUT} request comes from the user and is sent to raft node 4. The raft node will forward it to leader and the leader will replicate it in all the other nodes. When a node gets a entry from the leader it will write it to its log and sent it to key-value store when it gets committed.}
   \label{fig:communication}
 \end{figure}
 
@@ -248,7 +248,7 @@ Store, 4 RPC functions are registered to handle the communication from the user,
 and raft nodes. These functions are:
 
 \begin{enumerate}
-	\item \texttt{client\_request\_rpc} function is responsible for processing requests initiated by clients of the Key Value server. These requests typically involve \texttt{SEARCH} or \texttt{PUT} operations on the key-value store, and the function ensures that the operations are executed correctly and provide appropriate responses to the clients. The available commands are:
+	\item \texttt{client\_request\_rpc} function is responsible for processing requests initiated by clients of the Key Value server. These requests typically involve \texttt{PUT}, \texttt{DELETE} and \texttt{SEARCH} operations on the key-value store, and the function ensures that the operations are executed correctly and provide appropriate responses to the clients. The available commands are:
 		\begin{itemize}
     		\item \text{PUT}: store a key-value pair in the key-value store.
     		\item \text{DELETE}: delete a key-value pair from the key-value store.
@@ -259,12 +259,18 @@ and raft nodes. These functions are:
 
 	\item \texttt{raft\_request\_rpc} function is crucial for the integration of the Raft consensus algorithm. It facilitates communication between the Store and the its Raft node and handles requests related to the Raft protocol. This function plays a vital role in coordinating the consensus process.
 		
-		RaftJSON is used for this communication. It contains an extra field, which is a list of key-value server IDs, to indicate
-		on which servers of the key-value store the data-import commands should be executed. Also
-		the commands field is, unlike ServerJSON, an array of command strings.
+%		RaftJSON is used for this communication. It contains an extra field, which is a list of key-value server IDs, to indicate
+%		on which servers of the key-value store the data-import commands should be executed. Also
+%		the commands field is, unlike ServerJSON, an array of command strings.
 	\item \texttt{update\_raft\_config} function allows for dynamic updates to the Raft configuration. As the cluster may require changes in its membership, such as adding or removing nodes, this function ensures the Store reflects those changes.
 
 \end{enumerate}
+
+Both ServerJSON and RaftJSON messages are typically serialized into a suitable data format,
+such as JSON, before transmission over the network. This allows the messages to be easily
+parsed and reconstructed by the receiving party. The exchange of messages between the client,
+key-value server, and Raft server enables the coordination, synchronization, and fault tolerance
+mechanisms necessary for the reliable operation of the Key-Value Store application.
 
 \begin{lstlisting}[language=json, caption={RaftJSON},label={lst:RaftJSON}]
 {
@@ -275,35 +281,28 @@ and raft nodes. These functions are:
 }
 \end{lstlisting}
 
-Both ServerJSON and RaftJSON messages are typically serialized into a suitable data format,
-such as JSON, before transmission over the network. This allows the messages to be easily
-parsed and reconstructed by the receiving party. The exchange of messages between the client,
-key-value server, and Raft server enables the coordination, synchronization, and fault tolerance
-mechanisms necessary for the reliable operation of the Key-Value Store application.
-
 \subsubsection{Communication Schema}
 The communication schema and path between the client, key-value server, and Raft server in the
-Key-Value Store application can be summarized in the following steps:
+Key-Value Store application can be summarized in the following steps (see Figure~\ref{fig:communication} for a visual representation):
 \begin{itemize}
     \item \text{Client to Key-Value Server}: The client communicates with the Key-Value Server
-    by sending requests over a network connection. When a client wants to store or retrieve
+    by sending requests over the network connection. When a client wants to store or retrieve
     a key-value pair, it sends a request to the Key-Value Server. The request is a ServerJSON
     object. The Key-Value Server receives the request and processes it by executing the
     appropriate action based on sender and the command type (PUT, DELETE, SEARCH). If the
     command type is PUT or DELETE, that is, some change should be made to the data stored on
     the servers, the Key-Value server sends the message to Raft. Once the action is completed, 
     the Key-Value Server sends a response back to the client.
-    \item \text{Key-Value Server to Raft Server}: The Key-Value Server communicates with the
-    Raft Server for maintaining consistency and fault tolerance. When a Key-Value Server
+    \item \text{Key-Value Server to Raft Server}: When a Key-Value Server
     receives a client request that requires updates to the key-value data, it interacts with
     the Raft Server to ensure that the updates are replicated across the cluster of Key-Value
-    Servers. It sends append entries requests to the Raft API Server, which includes the updates
-    to the key-value data. The payload of the API call is a RaftServer object.
+    Servers. It sends append entries request to the Raft API Server, which includes the new entries
+    to be stored.
     \item \text{Raft Server to Key-Value Server}: The Raft Server communicates with the Key-Value
     Servers to maintain coordination and provide fault tolerance. The Raft Server receives the
-    payload from the append entries API call and replicate it to all Raft nodes. When a command
+    payload from the append entries API call and replicates it to all Raft nodes. When a command
     gets committed each raft server will send the message to its corresponding Key-Value Server 
-    to process it. The payload of the API call is a string of RaftJSON object as said previously.
+    to process it.
 \end{itemize}
 
 Overall, the communication between the client, key-value server, and Raft server in the Key-Value
@@ -314,9 +313,9 @@ ensures that the key-value servers are in sync. This communication schema enable
 scalable distributed key-value storage system.
 
 
-% \newpage
-% \bibliographystyle{unsrt}
-% \bibliography{bib}
+%\newpage
+%\bibliographystyle{unsrt}
+%\bibliography{bib.bib}
 
 \end{document}
 
