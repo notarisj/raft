@@ -114,10 +114,6 @@ To run the tests execute the following command:
 openssl req -newkey rsa:2048 -nodes -keyout private_key.pem -x509 -days 365 -out certificate.pem -subj "/CN=localhost" -addext "subjectAltName = IP:127.0.0.1, DNS:localhost"
 ```
 
-## Communication Diagram
-In the following diagram, the communication between the key value store and raft nodes is shown.
-<img src="./diagram/communication_diagram.svg" alt="Communications diagram" style="display: block; margin: 0 auto;" width="800">
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
