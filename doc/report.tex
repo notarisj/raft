@@ -184,21 +184,39 @@ the Log class are as follows:
 \end{enumerate}
 
 \section{Interacting with the Raft cluster}
-To interact with the Raft cluster, an API server is built on top of each Raft server to handle user requests. These requests are made from the command line tool that we built and are essential for the cluster to function properly. The API server provides a set of endpoints that allow users to perform various operations such as appending log entries, retrieving log information, adding or updating nodes, and starting or stopping the Raft cluster. 
+To interact with the Raft cluster, an API server is built on top of each Raft server to handle
+user requests. These requests are made from the command line tool that we built and are essential
+for the cluster to function properly. The API server provides a set of endpoints that allow users
+to perform various operations such as appending log entries, retrieving log information, adding or
+updating nodes, and starting or stopping the Raft cluster.
 
-By leveraging the API server, users can seamlessly interact with the Raft cluster and manage its configuration and state. Additionally, the API server implements basic authentication to ensure secure access to the cluster, requiring users to provide correct credentials before performing any operations. Overall, the API server plays a crucial role in enabling external communication with the Raft cluster and ensuring the proper functioning of the distributed consensus algorithm. The endpoints are described in more detail bellow.
+By leveraging the API server, users can seamlessly interact with the Raft cluster and manage its
+configuration and state. Additionally, the API server implements basic authentication to ensure
+secure access to the cluster, requiring users to provide correct credentials before performing any
+operations. Overall, the API server plays a crucial role in enabling external communication with
+the Raft cluster and ensuring the proper functioning of the distributed consensus algorithm. The
+endpoints are described in more detail bellow.
 
 \subsection{API Server Endpoints}
 
 \begin{enumerate}
-	\item \texttt{POST /append\_entries}: This endpoint receives the \texttt{append\_entries} request, which is used to replicate log entries across the Raft cluster. If the server receiving the request is not the leader, it forwards the request to the leader.
+	\item \texttt{POST /append\_entries}: This endpoint receives the \texttt{append\_entries}
+	request, which is used to replicate log entries across the Raft cluster. If the server receiving
+	the request is not the leader, it forwards the request to the leader.
 	\item \texttt{GET /get\_log}: This endpoint retrieves the log entries stored in the current server's log.
-	\item \texttt{GET /authenticate}: This endpoint serves as a protected endpoint that requires authentication. It can be used to verify the correctness of the provided credentials.
-	\item \texttt{POST /add\_node}: This endpoint adds a new node to the Raft cluster. It updates the server's configuration and saves it.
-	\item \texttt{POST /update\_node}: This endpoint updates the information of an existing node in the Raft cluster. It modifies the server's configuration and saves it.
-	\item \texttt{POST /delete\_node/{server\_id}}: This endpoint deletes a node from the Raft cluster based on the provided \texttt{server\_id}. If the deleted node is the current server, it stops the server.
-	\item \texttt{GET /get\_servers}: This endpoint retrieves information about the available API servers and Raft servers in the cluster.
-	\item \texttt{GET /get\_state}: This endpoint retrieves the current state of the Raft server, including the leader ID, running status, and state.
+	\item \texttt{GET /authenticate}: This endpoint serves as a protected endpoint that requires
+	authentication. It can be used to verify the correctness of the provided credentials.
+	\item \texttt{POST /add\_node}: This endpoint adds a new node to the Raft cluster. It updates the
+	server's configuration and saves it.
+	\item \texttt{POST /update\_node}: This endpoint updates the information of an existing node in the
+	Raft cluster. It modifies the server's configuration and saves it.
+	\item \texttt{POST /delete\_node/{server\_id}}: This endpoint deletes a node from the Raft cluster
+	based on the provided \texttt{server\_id}. If the deleted node is the current server, it stops the
+	server.
+	\item \texttt{GET /get\_servers}: This endpoint retrieves information about the available API servers
+	and Raft servers in the cluster.
+	\item \texttt{GET /get\_state}: This endpoint retrieves the current state of the Raft server, including
+	the leader ID, running status, and state.
 	\item \texttt{POST /start\_server}: This endpoint starts the Raft server if it is not already running.
 	\item \texttt{POST /stop\_server}: This endpoint stops the Raft server if it is running
 \end{enumerate}
@@ -234,7 +252,10 @@ to key-value store, to raft and back to key-value store.
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{communication_diagram.pdf}
-  \caption{Communication Diagram. The \texttt{PUT} request comes from the user and is sent to raft node 4. The raft node will forward it to leader and the leader will replicate it in all the other nodes. When a node gets a entry from the leader it will write it to its log and sent it to key-value store when it gets committed.}
+  \caption{Communication Diagram. The \texttt{PUT} request comes from the user and is sent to raft node 4.
+  The raft node will forward it to leader and the leader will replicate it in all the other nodes. When a
+  node gets a entry from the leader it will write it to its log and sent it to key-value store when it
+  gets committed.}
   \label{fig:communication}
 \end{figure}
 
@@ -248,21 +269,31 @@ Store, 4 RPC functions are registered to handle the communication from the user,
 and raft nodes. These functions are:
 
 \begin{enumerate}
-	\item \texttt{client\_request\_rpc} function is responsible for processing requests initiated by clients of the Key Value server. These requests typically involve \texttt{PUT}, \texttt{DELETE} and \texttt{SEARCH} operations on the key-value store, and the function ensures that the operations are executed correctly and provide appropriate responses to the clients. The available commands are:
+	\item \texttt{client\_request\_rpc} function is responsible for processing requests initiated by
+	clients of the Key Value server. These requests typically involve \texttt{PUT}, \texttt{DELETE} and
+	\texttt{SEARCH} operations on the key-value store, and the function ensures that the operations are
+	executed correctly and provide appropriate responses to the clients. The available commands are:
 		\begin{itemize}
     		\item \text{PUT}: store a key-value pair in the key-value store.
     		\item \text{DELETE}: delete a key-value pair from the key-value store.
     		\item \text{SEARCH}: retrieve a key-value pair that match the specific pattern 
     		that was given to the system
 		\end{itemize}
-	\item \texttt{kv\_request\_rpc} function handles requests related to the internal operations of the Key Value server. It may include tasks such as retrieving data from the key-value store, updating the store with new key-value pairs, etc.
+	\item \texttt{kv\_request\_rpc} function handles requests related to the internal operations of the Key
+	Value server. It may include tasks such as retrieving data from the key-value store, updating the store
+	with new key-value pairs, etc.
 
-	\item \texttt{raft\_request\_rpc} function is crucial for the integration of the Raft consensus algorithm. It facilitates communication between the Store and the its Raft node and handles requests related to the Raft protocol. This function plays a vital role in coordinating the consensus process.
+	\item \texttt{raft\_request\_rpc} function is crucial for the integration of the Raft consensus algorithm.
+	It facilitates communication between the Store and the its Raft node and handles requests related to the
+	Raft protocol. This function plays a vital role in coordinating the consensus process.
 		
-%		RaftJSON is used for this communication. It contains an extra field, which is a list of key-value server IDs, to indicate
-%		on which servers of the key-value store the data-import commands should be executed. Also
-%		the commands field is, unlike ServerJSON, an array of command strings.
-	\item \texttt{update\_raft\_config} function allows for dynamic updates to the Raft configuration. As the cluster may require changes in its membership, such as adding or removing nodes, this function ensures the Store reflects those changes.
+%     RaftJSON is used for this communication. It contains an extra field, which is a list of key-value server
+%     IDs, to indicate on which servers of the key-value store the data-import commands should be executed. Also
+%     the commands field is, unlike ServerJSON, an array of command strings.
+
+	\item \texttt{update\_raft\_config} function allows for dynamic updates to the Raft configuration. As the
+	cluster may require changes in its membership, such as adding or removing nodes, this function ensures the
+	Store reflects those changes.
 
 \end{enumerate}
 
@@ -283,7 +314,8 @@ mechanisms necessary for the reliable operation of the Key-Value Store applicati
 
 \subsubsection{Communication Schema}
 The communication schema and path between the client, key-value server, and Raft server in the
-Key-Value Store application can be summarized in the following steps (see Figure~\ref{fig:communication} for a visual representation):
+Key-Value Store application can be summarized in the following steps (see Figure~\ref{fig:communication} for
+a visual representation):
 \begin{itemize}
     \item \text{Client to Key-Value Server}: The client communicates with the Key-Value Server
     by sending requests over the network connection. When a client wants to store or retrieve
@@ -318,6 +350,3 @@ scalable distributed key-value storage system.
 %\bibliography{bib.bib}
 
 \end{document}
-
-
-
