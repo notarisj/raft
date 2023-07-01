@@ -61,18 +61,17 @@ class RequestHandler:
 
         if self.trie.search(split_data[0]) is None:
             try:
-                query = "{{{}}}".format(query)
+                query = f"{{{query}}}"
                 query = json.loads(query)
                 self.trie.insert(query)
             except IndexError:
                 self.trie.delete(split_data[0])
-                logger.info("Error while indexing data of \"" + query + "\". "
-                                                                        "Data don't have the right format.")
-                logger.info("Server will not index \"" + split_data[0] + "\".")
+                logger.info(f"Error while indexing data of \"{query}\". Data don't have the right format.")
+                logger.info(f"Server will not index \"{split_data[0]}\".")
                 return None
             return "OK"
         else:
-            return "Data \"" + query + "\" already exists."
+            return f"Data \"{query}\" already exists."
 
     def _execute_search_request(self, query: str) -> str | dict:
         """

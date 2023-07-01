@@ -47,9 +47,9 @@ class CreateValues:
         Returns:
             The generated line as a string.
         """
-        top_level_key = "{}{}".format(self.top_lvl_key_prefix, index + 1)
+        top_level_key = f"{self.top_lvl_key_prefix}{index + 1}"
         value = self.generate_value(self.parameters_controller.get_max_nesting_level())
-        line = '"{}": {}'.format(top_level_key, value)
+        line = f'"{top_level_key}": {value}'
         return line
 
     def generate_value(self, nesting_level: int) -> str:
@@ -71,7 +71,7 @@ class CreateValues:
             key_value_pair = self.generate_key_value_pair(new_key, nesting_level)
             value_list.append(key_value_pair)
         value = " , ".join(value_list)
-        return "{{ {} }}".format(value)
+        return f"{{ {value} }}"
 
     def generate_key_value_pair(self, key: str, nesting_level: int) -> str:
         """
@@ -86,21 +86,21 @@ class CreateValues:
         """
         if nesting_level > 0 and self.add_nested_value():
             nested_value = self.generate_value(nesting_level - 1)
-            return '"{}": {}'.format(key, nested_value)
+            return f'"{key}": {nested_value}'
         else:
             value_type = self.data_map.get(key)
             if value_type == "int":
-                return '"{}": {}'.format(key, random.randint(0, 100))
+                return f'"{key}": {random.randint(0, 100)}'
             elif value_type == "float":
-                return '"{}": {}'.format(key, random.uniform(0, 100))
+                return f'"{key}": {random.uniform(0, 100)}'
             elif value_type == "string":
                 max_length = self.parameters_controller.get_max_string_length()
                 random_string = "".join(random.choices("abcdefghijklmnopqrstuvwxyz", k=max_length))
-                return '"{}": "{}"'.format(key, random_string)
+                return f'"{key}": "{random_string}"'
             else:
-                logger.info("Warning: Invalid type '{}' for key '{}'. It should be 'int', 'float', or 'string'. "
-                            "Assuming 'int'.".format(value_type, key))
-                return '"{}": {}'.format(key, random.randint(0, 100))
+                logger.info(f"Warning: Invalid type '{value_type}' for key '{key}'. It should be 'int', 'float', "
+                            f"or 'string'. Assuming 'int'.")
+                return f'"{key}": {random.randint(0, 100)}'
 
     def add_nested_value(self) -> bool:
         """
@@ -149,5 +149,5 @@ class CreateValues:
                 file.write(data)
             logger.info("Successfully wrote to the file.")
         except IOError as e:
-            logger.info("Error: Failed to write to the file '{}'. {}".format(self.created_file_path, str(e)))
+            logger.info(f"Error: Failed to write to the file '{self.created_file_path}'. {str(e)}")
             exit(-1)

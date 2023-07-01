@@ -19,23 +19,28 @@ servers = JsonConfig('src/configurations/servers.json')
 
 
 class KVServer:
-    def __init__(self, _replication_factor: int, _id: int) -> None:
+    def __init__(self, _id: int, _replication_factor: int) -> None:
         """
         Initialize a KVServer instance.
 
         Args:
-            _replication_factor (int): Replication factor.
             _id (str): Server ID.
+            _replication_factor (int): Replication factor.
         """
-        self.replication_factor = _replication_factor
+
         self.server_id = _id
+        self.replication_factor = _replication_factor
+
+        # Get the host and port of the server and the API server
         self.kv_server_host = servers.get_property(str(self.server_id))['host']
         self.kv_server_port = servers.get_property(str(self.server_id))['kv_port']
-        self.kv_server_socket = None
         self.api_server_host = servers.get_property(str(self.server_id))['host']
         self.api_server_port = servers.get_property(str(self.server_id))['api_port']
+
+        # Create a RequestHandler instance to handle all queries
         self.query_handler = RequestHandler()
 
+        # Create RPC server and register functions
         self.rpc_server = RPCServer(host=self.kv_server_host, port=self.kv_server_port)
         self.rpc_server.register_function(self.client_request_rpc, 'client_request')
         self.rpc_server.register_function(self.kv_request_rpc, 'kv_request')
@@ -43,50 +48,49 @@ class KVServer:
         self.rpc_server.register_function(self.update_raft_config, 'update_raft_config')
 
         # Create RPC clients for all other servers
-
         self.client_handlers = {}
         self.create_client_handlers()
 
     def run(self) -> None:
         """
-        Start the KVServer.
-
-        This method binds the server socket and listens for incoming connections.
-        For each connection, a new thread is created to handle the every client.
+        Starts the RPC server of the key-value store.
         """
         threading.Thread(target=self.rpc_server.run).start()
 
     def create_client_handlers(self) -> None:
         """
-        Refresh the client handlers.
+        Create RPC clients for all other servers.
 
-        This method refreshes the client handlers by connecting to every server in the server list.
+        This method creates RPC clients for all other servers and stores them in the client_handlers dictionary.
         """
         for server_id, server in servers.config.items():
             if int(server_id) != self.server_id:
                 self.client_handlers[server_id] = RPCClient(host=server['host'], port=server['kv_port'])
 
     def client_request_rpc(self, request: str) -> str:
-        logger.info(f"Received client request: {request}")
         """
         Handle a request from a client.
 
         This method handles a request from a client by executing the appropriate
         action based on the command type. The appropriate commands are:
-            - PUT: Send SEARCH request to KV-servers for the top-level key to check
-                   if it already exists. If it exists send DELETE message over the Raft,
-                   and then send PUT message over the Raft. If not exists, just send PUT
-                   message over Raft.
-            - DELETE: Send SEARCH request to KV-servers for the top-level key to check
-                   if it already exists. If exists, send DELETE message over the Raft.
-                   Firstly send SEARCH to KV-servers to avoid sending messages over Raft
-                   for better performance and network usage.
-            - SEARCH: Send SEARCH request to KV-servers without passing the message over Raft
+
+        **PUT**: Send SEARCH request to KV-servers for the top-level key to check
+        if it already exists. If it exists send DELETE message over the Raft,
+        and then send PUT message over the Raft. If not exists, just send PUT
+        message over Raft.
+
+        **DELETE**: Send SEARCH request to KV-servers for the top-level key to check
+        if it already exists. If exists, send DELETE message over the Raft.
+        Firstly send SEARCH to KV-servers to avoid sending messages over Raft
+        for better performance and network usage.
+
+        **SEARCH**: Send SEARCH request to KV-servers without passing the message over Raft
 
 
         Args:
             request (str): Request received from the client.
         """
+        logger.info(f"Received client request: {request}")
         shuffled_rep_ids = self.replication_ids_shuffled()
 
         decoded_json = json.loads(request)
@@ -113,9 +117,8 @@ class KVServer:
                     logger.error(f"Failed to send request to Raft: {e}")
                     return f"Failed to send request to Raft: {e}"
 
-                response = "Top level key \"" + server_instance.get_command_key() + "\" already exists. " \
-                                                                                    "Send deletion message and then " \
-                                                                                    "insert."
+                response = f"Top level key \"{server_instance.get_command_key()}\" already exists. " \
+                           f"Send deletion message and then insert."
                 return response
             else:
                 # do not exist so PUT directly
@@ -140,7 +143,7 @@ class KVServer:
                 except Exception as e:
                     logger.error(f"Failed to send request to Raft: {e}")
                     return f"Failed to send request to Raft: {e}"
-                response = "Send deletion message for top level key \"{}\"".format(get_key(request))
+                response = f"Send deletion message for top level key \"{get_key(request)}\""
                 logger.info(f"Response: {response}")
                 return "KEY DELETED"
             else:
@@ -149,7 +152,6 @@ class KVServer:
                 logger.info(f"Response: {response}")
                 return response
         elif command_type == 'SEARCH':
-            # self.refresh_client_handlers_if_needed()
             response = search(current_server_id=self.server_id, server_list=servers.config, _request=server_instance,
                               query_handler=self.query_handler, client_handlers=self.client_handlers)
             logger.info(f"Response: {response}")
@@ -173,7 +175,6 @@ class KVServer:
         api_post_request(f"https://{self.api_server_host}:{self.api_server_port}/append_entries", raft_obj.to_json())
 
     def raft_request_rpc(self, request: str) -> str:
-        logger.info(f"Received raft request: {request}")
         """
         Handle a request from the Raft server.
 
@@ -183,12 +184,13 @@ class KVServer:
         Args:
             request (str): Request received from the Raft server.
         """
+        logger.info(f"Received raft request: {request}")
         decoded_raft = json.loads(request)
         raft_request_instance = RaftJSON.from_json(decoded_raft)
         requests_list = raft_request_instance.commands
 
         if not check_id_exist(request, self.server_id):
-            logger.info("Node ID {} not found in request. Ignore it.".format(self.server_id))
+            logger.info(f"Node ID {self.server_id} not found in request. Ignore it.")
         else:
             for request in requests_list:
                 temp_request = ServerJSON(request)
@@ -202,11 +204,21 @@ class KVServer:
                     logger.info(f"Response: {response}")
                     return response
                 else:
-                    response = "\"{}\" is invalid command from a RaftServer".format(command_type)
+                    response = f"\"{command_type}\" is invalid command from a RaftServer"
                     logger.error(response)
                     return response
 
     def update_raft_config(self, _request: str) -> str:
+        """
+        Update the Raft configuration. This method is called when a new node
+        is added to the cluster via the RPC call from the raft server.
+
+        Args:
+            _request (str): The request to update the Raft configuration.
+
+        Returns:
+            str: The response from the Raft server.
+        """
         logger.info(f"Received raft config update request: {_request}")
         request = json.loads(_request)
         command = request['command']
@@ -223,7 +235,6 @@ class KVServer:
         return "OK"
 
     def kv_request_rpc(self, request: str) -> str:
-        logger.info(f"Received kv server request: {request}")
         """
         Handle a request from another KVServer.
 
@@ -235,6 +246,7 @@ class KVServer:
         Args:
             request (str): Request received from the KVServer.
         """
+        logger.info(f"Received kv server request: {request}")
         decoded_json = json.loads(request)
         server_instance = ServerJSON.from_json(decoded_json)
         command_type = server_instance.get_command_type()

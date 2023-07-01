@@ -79,7 +79,7 @@ class RaftServer:
                     self.transition_to_candidate()
                     self.reset_election_timeout()
             elif self.state == RaftState.LEADER:
-                threading.Thread(target=self.send_append_entries_to_server_multicast).start()
+                threading.Thread(target=self.send_append_entries_to_servers_multicast).start()
                 self.reset_election_timeout()
             time.sleep(self.heartbeat_interval)
 
@@ -145,6 +145,12 @@ class RaftServer:
                            _server_id != self.server_id}
 
     def send_append_entries(self, _server_id):
+        # write detailed documentation
+        """
+        Send append entries to a single server. The entries to be sent in
+        each server are determined by the next_index
+        :param _server_id: id of the server to send append entries to
+        """
         entries = self.log.get_all_entries_from_index(self.next_index[_server_id])
         try:
             prev_log_index = self.next_index[_server_id] - 1
@@ -180,12 +186,13 @@ class RaftServer:
     def commit_leader_entries(self):
         with self.lock:
             new_commit_index = self.calculate_committed_index()
-            print('new_commit_index', new_commit_index)
-            print('self.commit_index', self.commit_index)
             self.log.commit_entries(self.commit_index, new_commit_index)
             self.commit_index = new_commit_index
 
-    def send_append_entries_to_server_multicast(self):
+    def send_append_entries_to_servers_multicast(self):
+        """
+        This method sends append entries to all servers in the cluster. It is called by the leader.
+        """
         logger.info(f"Starting append entries multicast.")
         self.commit_leader_entries()
         futures = {self.heartbeat_executor.submit(self.send_append_entries, _server_id)
@@ -196,6 +203,10 @@ class RaftServer:
         return
 
     def calculate_committed_index(self):
+        """
+        This method calculates the committed index for the leader.
+        :return: the committed index
+        """
         def get_top_servers(server_dict, x):
             sorted_servers = sorted(server_dict.items(), key=lambda item: item[1], reverse=True)
             return dict(sorted_servers[:x])
@@ -207,10 +218,14 @@ class RaftServer:
         return min(top_servers.values())
 
     def append_entries_to_leader(self, _append_entries):
-        # commands = _append_entries.get("commands", [])
+        """
+        This method is called when the leader receives an append entries
+        request from the client or another raft node.
+
+        :param _append_entries:
+        """
         if self.state != RaftState.LEADER:
             return False
-        # for command in commands:
         self.log.append_entry(self.current_term, json.dumps(_append_entries))
         return True
 
@@ -218,6 +233,10 @@ class RaftServer:
         self.start = time.time()
 
     def start_election(self):
+        """
+        This method is called when a node times out and starts an election.
+        It sends a vote request to all other nodes in the cluster.
+        """
         if self.election_in_progress:
             return
         self.election_in_progress = True
@@ -264,14 +283,25 @@ class RaftServer:
                     return
 
     def append_entries_rpc(self, term, leader_id, prev_log_index, prev_log_term, entries, leader_commit):
+        """
+        Invoked by leader to replicate log entries; also used as heartbeat.
 
-        logger.info(
-            f"Received append_entries from RaftNode {leader_id} to RaftNode {self.server_id} with entries {entries}")
+        Args:
+            term: leader's term
+            leader_id: so follower can redirect clients
+            prev_log_index: index of log entry immediately preceding new ones
+            prev_log_term: term of prev_log_index entry
+            entries: log entries to store (empty for heartbeat; may send more than one for efficiency)
+            leader_commit: leader's commit_index
+        """
+
+        logger.info(f"Received append_entries from RaftNode {leader_id} to "
+                    f"RaftNode {self.server_id} with entries {entries}")
         response = {'term': self.current_term, 'success': True, 'index': -1}
 
         if term < self.current_term:
-            logger.info(
-                f"Received outdated term, responding to RaftNode {leader_id} with current term {self.current_term}")
+            logger.info(f"Received outdated term, responding to RaftNode {leader_id} "
+                        f"with current term {self.current_term}")
             response['success'] = False
             return response
 
@@ -302,7 +332,6 @@ class RaftServer:
                 f"Previous log term: {prev_log_term}, "
                 f"Last log index: {self.log.get_last_index()}"
             )
-            # print("self.log.get_last_index(): ", self.log.get_last_index())
             response['index'] = self.log.get_last_index()
             response['success'] = False
             return response
@@ -335,6 +364,15 @@ class RaftServer:
         return response
 
     def request_vote_rpc(self, candidate_id, term, last_log_index, last_log_term):
+        """
+        Invoked by candidates to gather votes.
+
+        Args:
+            candidate_id: candidate requesting vote
+            term: candidate's term
+            last_log_index: index of candidate's last log entry
+            last_log_term: term of candidate's last log entry
+        """
         logger.info(f"RPC call received: request_vote for RaftNode {self.server_id}")
         response = {'term': self.current_term, 'vote_granted': False}
         if term < self.current_term:

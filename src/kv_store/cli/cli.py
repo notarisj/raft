@@ -27,6 +27,15 @@ class ClientCli:
         self.kv_store_rpc_client = None
 
     def connect(self):
+        """
+        Connects to the KVStore server.
+
+        Returns:
+            None
+
+        Raises:
+            ConnectionRefusedError: If the connection is refused.
+        """
         try:
 
             self.host = self.session.prompt("Hostname [127.0.0.1]: ", is_password=False)
@@ -41,6 +50,12 @@ class ClientCli:
             print(f"Failed to connect to {self.host}:{self.port}. Please ensure the server is running.")
 
     def _connect_to_server(self):
+        """
+        Connects to the KVStore server.
+
+        Returns:
+            None
+        """
         self.host = self.session.prompt("Hostname [127.0.0.1]: ", is_password=False)
         if not self.host:
             self.host = '127.0.0.1'

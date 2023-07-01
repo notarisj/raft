@@ -38,7 +38,7 @@ class ParametersController:
             ValueError: If the number of parameters is incorrect.
         """
         if len(args) != 11:
-            raise ValueError("Error: Incorrect number of parameters. Expected 10, got {}".format(len(args)))
+            raise ValueError(f"Error: Incorrect number of parameters. Expected 10, got {len(args)}")
         self.assign_parameters(args)
 
     def assign_parameters(self, args: List[str]) -> None:
@@ -66,10 +66,9 @@ class ParametersController:
                 elif flag == "-l":
                     self.max_string_length = int(value)
                 else:
-                    raise ValueError("Error: Invalid parameter flag: {}".format(flag))
+                    raise ValueError(f"Error: Invalid parameter flag: {flag}")
             except ValueError:
-                raise ValueError(
-                    "Error: Failed to convert value '{}' for parameter flag '{}' to an integer".format(value, flag))
+                raise ValueError(f"Error: Failed to convert value '{value}' for parameter flag '{flag}' to an integer")
 
     def get_key_file_path(self) -> str:
         """
@@ -109,17 +108,15 @@ class ParametersController:
 
     def set_max_key_num_of_value(self, new_size: int):
         """
-        Sets the maximum number of keys inside values.
-
-        If the new size is smaller than the current value, a warning message is logged.
+        Sets the maximum number of keys inside values. If the new size is
+        smaller than the current value, a warning message is logged.
 
         Args:
             new_size (int): The new maximum size.
-
         """
         if new_size < self.max_key_num_of_value:
-            logger.info("Warning: The max number of keys inside values must not be greater than the number of keys. "
-                        "Changing value from {} to {}".format(self.max_key_num_of_value, new_size))
+            logger.info(f"Warning: The max number of keys inside values must not be greater than the number of keys. "
+                        f"Changing value from {self.max_key_num_of_value} to {new_size}")
             self.max_key_num_of_value = new_size
 
     def get_max_string_length(self) -> int:

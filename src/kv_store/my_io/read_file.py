@@ -1,4 +1,7 @@
 from typing import Dict
+from src.logger import MyLogger
+
+logger = MyLogger()
 
 
 def get_data_from_file(file_path: str) -> Dict[str, str]:
@@ -24,13 +27,13 @@ def get_data_from_file(file_path: str) -> Dict[str, str]:
                 key, value = line.strip().split()
                 data_map[key] = value
     except FileNotFoundError as e:
-        print(f"Error: File not found: {file_path}")
+        logger.error(f"Error: File not found: {file_path}")
         raise e
     except IOError as e:
-        print(f"Error: Failed to read file: {file_path}")
+        logger.error(f"Error: Failed to read file: {file_path}")
         raise e
     except ValueError as e:
-        print(f"Error: Invalid line format in file: {file_path}")
+        logger.error(f"Error: Invalid line format in file: {file_path}")
         raise e
 
     return data_map

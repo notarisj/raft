@@ -23,6 +23,13 @@ class NodeEditor:
                                      for server_id, server in servers.config.items()}
 
     def edit_json_file(self, file_path, api_helper):
+        """
+        Interactive editor for the servers.json file
+
+        Args:
+            file_path (str): Path to the servers.json file
+            api_helper (ApiHelper): ApiHelper object for making API calls
+        """
         with open(file_path, 'r') as file:
             data = json.load(file)
 
@@ -122,6 +129,14 @@ class NodeEditor:
                 print("Invalid input. Please enter a valid operation.")
 
     def push_update(self, api_helper, payload, action):
+        """
+        Pushes an update to the raft servers and kv store servers
+
+        Args:
+            api_helper (ApiHelper): ApiHelper object for making API calls
+            payload (dict): Payload to send to the servers
+            action (str): Action to perform on the servers (add_node, update_node, delete_node)
+        """
         response = api_helper.get_servers()
 
         # Update raft server

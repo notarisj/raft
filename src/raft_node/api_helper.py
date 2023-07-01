@@ -27,6 +27,22 @@ raft_config = IniConfig('src/configurations/config.ini')
 
 
 def get_server_state(host, port, username, password):
+    """
+    Get the state of a server
+
+    Args:
+        host (str): Hostname of the server
+        port (str): Port of the server
+        username (str): Username for the API
+        password (str): Password for the API
+
+    Returns:
+        dict: JSON response from the API server
+
+    Raises:
+        RequestException: If the request to the API server fails
+        ValueError: If the JSON response from the API server is invalid
+    """
     url = f'https://{host}:{port}/get_state'
     try:
         response = api_get_request(url, username, password)
@@ -51,6 +67,9 @@ class ApiHelper:
         self.password = password
 
     def login(self):
+        """
+        Login to the API server
+        """
         response = self.make_api_get_request('authenticate')
         if response is None:
             return {'login': False, 'message': 'Error: Could not connect to API server'}
@@ -79,6 +98,23 @@ class ApiHelper:
             print('Error:', str(e))
 
     def node_actions(self, host, port, payload, action, username=None, password=None):
+        """
+        Perform an action on a node add_node, update_node, delete_node
+
+        Args:
+            host (str): Hostname of the server
+            port (str): Port of the server
+            payload (dict): Payload to send to the API server
+            action (str): Action to perform on the node
+            username (str): Username for the API (optional)
+            password (str): Password for the API (optional)
+
+        Returns:
+            bool: True if the request was successful, False otherwise
+
+        Raises:
+            Exception: If the request to the API server fails
+        """
         if username is None or password is None:
             username = self.username
             password = self.password
@@ -97,6 +133,21 @@ class ApiHelper:
             print('Error:', str(e))
 
     def make_api_post_request(self, endpoint, payload):
+        """
+        Wrapper for the api_post_request function to make a
+        POST request to the API server without having to specify
+        the username and password every time
+
+        Args:
+            endpoint (str): Endpoint to send the request to
+            payload (dict): Payload to send to the API server
+
+        Returns:
+            dict: JSON response from the API server
+
+        Raises:
+            Exception: If the request to the API server fails
+        """
         url = f'https://{self.host}:{self.port}/{endpoint}'
         try:
             return api_post_request(url, payload, self.username, self.password)
@@ -104,6 +155,20 @@ class ApiHelper:
             print('Error:', str(e))
 
     def make_api_get_request(self, endpoint):
+        """
+        Wrapper for the api_get_request function to make a
+        GET request to the API server without having to specify
+        the username and password every time
+
+        Args:
+            endpoint (str): Endpoint to send the request to
+
+        Returns:
+            dict: JSON response from the API server
+
+        Raises:
+            Exception: If the request to the API server fails
+        """
         url = f'https://{self.host}:{self.port}/{endpoint}'
         try:
             return api_get_request(url, self.username, self.password)
@@ -112,6 +177,21 @@ class ApiHelper:
 
 
 def api_post_request(url, payload, username='admin', password='admin'):
+    """
+    Make a POST request to the API server
+
+    Args:
+        url (str): URL to send the request to
+        payload (dict): Payload to send to the API server
+        username (str): Username for the API
+        password (str): Password for the API
+
+    Returns:
+        requests.Response: Response from the API server
+
+    Raises:
+        Exception: If the request to the API server fails
+    """
     # Convert the payload to JSON
     json_payload = json.dumps(payload)
 
@@ -136,6 +216,17 @@ def api_post_request(url, payload, username='admin', password='admin'):
 
 
 def api_get_request(url, username='admin', password='admin'):
+    """
+    Make a GET request to the API server
+
+    Args:
+        url (str): URL to send the request to
+        username (str): Username for the API
+        password (str): Password for the API
+
+    Returns:
+        requests.Response: Response from the API server
+    """
     # Set the headers to include basic authentication credentials
     headers = {}
 

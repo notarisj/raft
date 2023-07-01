@@ -2,8 +2,18 @@ import argparse
 from src.configuration_reader.read_config import IniConfig, JsonConfig
 from src.kv_store.server import KVServer
 
+"""
+This script is used to run a key-value server.
+"""
+
 
 def parse_arguments():
+    """
+    Parses the arguments passed to the script.
+
+    Returns:
+        The parsed arguments.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('--server_id', help='Server ID')
     parser.add_argument('--replication_factor', help='Replication factor')

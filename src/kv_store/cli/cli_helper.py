@@ -5,6 +5,15 @@ from src.kv_store.server import ServerJSON, ServerJSONEncoder
 
 
 def message_formatter(self, message) -> str:
+    """
+    Formats the message to be sent to the server.
+
+    Args:
+        message (str): The message to format.
+
+    Returns:
+        The formatted message.
+    """
     if message.lower() == 'exit':
         return message
 
@@ -28,6 +37,16 @@ def message_formatter(self, message) -> str:
 
 
 def put_format_checker(message) -> bool:
+    """
+    Checks if the PUT command is in the correct format.
+    The value of the put key must be a valid JSON.
+
+    Args:
+        message (str): The PUT command.
+
+    Returns:
+        True if the format is correct, False otherwise.
+    """
     value = message.split(": ", 1)[1]
     try:
         json.loads(value)
@@ -37,6 +56,15 @@ def put_format_checker(message) -> bool:
 
 
 def search_format_checker(message) -> bool:
+    """
+    Checks if the SEARCH command is in the correct format.
+
+    Args:
+        message (str): The SEARCH command.
+
+    Returns:
+        True if the format is correct, False otherwise.
+    """
     pattern = r'[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*'
     if re.match(pattern, message.split(" ", 1)[1]):
         return True
@@ -45,6 +73,15 @@ def search_format_checker(message) -> bool:
 
 
 def delete_format_checker(message) -> bool:
+    """
+    Checks if the DELETE command is in the correct format.
+
+    Args:
+        message (str): The DELETE command.
+
+    Returns:
+        True if the format is correct, False otherwise.
+    """
     pattern = r"^[a-zA-Z0-9]+$"
     if re.match(pattern, message.split(" ", 1)[1]):
         return True

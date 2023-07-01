@@ -13,6 +13,7 @@ def _get_caller_info():
 
 
 class MyLogger:
+
     def __init__(self, log_level=logging.DEBUG):
         self.log_level = log_level
         self.logger = self._configure_logger()

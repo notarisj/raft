@@ -23,7 +23,7 @@ def show_wellcome_screen():
 
 def send_command(command: str, rpc_client):
     """
-    Sends the command to the server.
+    Sends the command to the key-value server wit a RPC.
 
     Args:
         command (str): The command to send.

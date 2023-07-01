@@ -13,8 +13,9 @@ def search_top_lvl_key(current_server_id: int, server_list: dict, _request: str,
     """
     Search for a top-level key in the server list.
 
-    This method searches for a top-level key in the server list by sending requests to other servers in the list.
-    It checks if the key exists in any of the servers. If it finds it at a server, it returns True.
+    This method searches for a top-level key in the server list by sending requests
+    to other servers in the list. It checks if the key exists in any of the servers.
+    If it finds it at a server, it returns True.
 
     Args:
         current_server_id (int): The ID of the current server.
@@ -47,14 +48,14 @@ def search_top_lvl_key(current_server_id: int, server_list: dict, _request: str,
     return False
 
 
-def search(current_server_id: int, server_list: dict, _request: 'ServerJSON', query_handler: 'RequestHandler',
-           client_handlers: dict) -> str:
+def search(current_server_id: int, server_list: dict, _request: 'ServerJSON',
+           query_handler: 'RequestHandler', client_handlers: dict) -> str:
     """
     Search for a key in the server list.
 
-    This method searches for a value in the server list by sending requests to other servers in the list.
-    It checks if the value exists in any of the servers and returns the corresponding value. It uses SSL
-    to communicate with the servers.
+    This method searches for a value in the server list by sending requests to other
+    servers in the list. It checks if the value exists in any of the servers and returns
+    the corresponding value. It uses SSL to communicate with the servers.
 
     Args:
         current_server_id (int): The ID of the current server.
@@ -64,7 +65,8 @@ def search(current_server_id: int, server_list: dict, _request: 'ServerJSON', qu
         client_handlers (dict): The dictionary containing the client sockets for each server.
 
     Returns:
-        str: The value corresponding to the key if it exists in any of the servers, "NOT FOUND" otherwise.
+        str: The value corresponding to the key if it exists in any of the servers,
+             "NOT FOUND" otherwise.
     """
     print(_request.to_json())
     # check if the key is in the current server

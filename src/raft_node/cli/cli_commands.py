@@ -28,6 +28,12 @@ def execute_command(command):
 
 
 def start_cl(api_helper):
+    """
+    Starts the cluster by sending a start_server request to all raft nodes.
+
+    Args:
+        api_helper (ApiHelper): The ApiHelper instance to send requests to raft nodes.
+    """
     response = api_helper.get_servers()
     for server_id, info in response['api_servers'].items():
         response = api_helper.start_stop_server(info['host'], info['port'], 'start_server')
@@ -38,6 +44,12 @@ def start_cl(api_helper):
 
 
 def stop_cl(api_helper):
+    """
+    Stops the cluster by sending a stop_server request to all raft nodes.
+
+    Args:
+        api_helper (ApiHelper): The ApiHelper instance to send requests to raft nodes.
+    """
     response = api_helper.get_servers()
     for server_id, info in response['api_servers'].items():
         response = api_helper.start_stop_server(info['host'], info['port'], 'stop_server')
@@ -48,6 +60,12 @@ def stop_cl(api_helper):
 
 
 def get_cluster_state(api_helper):
+    """
+    Gets the state of the cluster by sending a get_servers request to all raft nodes.
+
+    Args:
+        api_helper (ApiHelper): The ApiHelper instance to send requests to raft nodes.
+    """
     response = api_helper.get_servers()
     headers = ["Node ID", "Status", "Running", "Role", "Host", "Port"]
     table = []
