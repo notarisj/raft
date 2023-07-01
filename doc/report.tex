@@ -204,6 +204,34 @@ scalable distributed key-value storage system.
 
 
 \section{RAFT consensus algorithm}
+The implementation consists of two primary components: the \texttt{RaftServer} and 
+the \texttt{Log} class. Together, these components implement the Raft consensus 
+algorithm. The user interacts with the raft servers via an API from the cli. This report provides a detailed overview of 
+how the Raft consensus algorithm is implemented in the provided code.
+
+\begin{enumerate}
+	\item \textbf{Raft Server Class:}
+	The \texttt{raft\_node} class represents an individual node in the Raft consensus algorithm. It encapsulates the logic for managing the node's state, participating in leader election, replicating log entries, and handling client requests. The key features of the \texttt{raft\_node} class are as follows:
+	\begin{enumerate}
+		\item Configuration: The \texttt{raft\_config} object, an instance of the IniConfig class, is used to store and access configuration parameters for the Raft node. These parameters include timeouts and election-related settings. Additionally, the servers object, an instance of the JsonConfig class, holds the details of all servers participating in the Raft cluster, such as their host addresses and ports.
+		\item RPC and Communication: The Raft node utilizes the RPCClient object to communicate with other nodes in the Raft cluster using remote procedure calls (RPCs). This enables the node to send and receive messages for leader election, log replication, and handling client requests.
+		\item State and State Transitions: The \texttt{raft\_node} class maintains various state variables, including the current node's role (leader, follower, or candidate), term, and voted-for candidate. The node transitions between different states based on internal events and external interactions with other nodes. The implementation includes methods for handling state transitions, such as \texttt{start\_election()}, \texttt{transition\_to\_follower()}, \texttt{transition\_to\_leader()}, \texttt{transition\\\_to\_candidate()} etc.
+		\item Leader Election: The Raft node participates in leader election by exchanging messages with other nodes in the cluster. It utilizes a randomized election timeout mechanism to trigger leader election if no heartbeat messages are received within the timeout duration. The \texttt{raft\_node} class includes \texttt{start\_election()} method for initiating leader election and handling vote responses and processing vote requests (\texttt{request\_vote\_rpc()}).
+		\item Log Replication: The \texttt{raft\_node} class implements the log replication mechanism to ensure consistency across all nodes in the cluster. It includes methods for appending new log entries to the log, replicating log entries to followers, and committing log entries once a majority of nodes have acknowledged them. The log replication is achieved through interactions with the Log class, which manages the log entries and interacts with a MongoDB database for persistence.
+		\item Append Entries Mechanism: The Raft consensus algorithm utilizes the append entries mechanism to replicate log entries across nodes in the cluster. The main \texttt{run} method is responsible for sending append entries RPCs to followers, updating their logs, and ensuring consistency. The method includes parameters such as the leader's term, leader ID, previous log index, previous log term, and a list of log entries to be replicated. Followers validate the received entries, append them to their logs, and respond with success or failure status (\texttt{append\_entries\_rpc()}).
+		\item Client Requests: The Raft node handles client requests by forwarding them to the leader node for processing via the API.
+	\end{enumerate}
+	\item \textbf{Log Class:}
+	The Log class is responsible for managing the log entries of the Raft node. It interacts with a MongoDB database to store and retrieve log entries efficiently. The key functionalities of the Log class are as follows:
+	\begin{enumerate}
+		\item Initialization and Database Connection: The Log class is initialized with the necessary parameters, including the database URI, database name, collection name, and server ID. It establishes a connection to the MongoDB database using the provided URI and initializes the collection for storing log entries.
+		\item Loading and Saving Entries: The \texttt{load\_entries()} method retrieves all log entries from the MongoDB collection and populates the entries list of the Log instance. The \texttt{save\_entry()} method is used to store a new log entry in the MongoDB collection.
+		\item Log Entry Management: The Log class provides methods to append new log entries (\texttt{append\_entry()}), retrieve a specific entry by index (\texttt{get\_entry()}), and retrieve the last index (\texttt{get\_last\_index()}) and term (\texttt{get\_last\_term()}) of the log. It also includes methods to mark an entry as committed (\texttt{commit\_entry()}), delete entries from the collection (\texttt{delete\_entry\_from\_collection()} and \texttt{delete\_entries\\\_after()}).
+		\item Committing Entries: The \texttt{commit\_entries()} method is responsible for marking log entries as committed within a specified range. It iterates over the entries in the given range, updates their \texttt{is\_committed} flag, and updates the corresponding documents in the MongoDB collection. Additionally, it invokes the \texttt{append\_to\_state\_machine()} method to apply the committed entries to the state machine.
+		\item Querying Log Entries: The \texttt{get\_all\_entries\_from\_index()} method returns all log entries from a specified index onwards. The \texttt{is\_empty()} method checks if the log is empty by examining the length of the entries list.
+		\item State Machine Interaction: The \texttt{append\_to\_state\_machine()} method invokes the \texttt{raft\_request} RPC on the key-value store server using the \texttt{kv\_store\_rpc\_client} object. This allows the log entry to be applied to the state machine for further processing.
+	\end{enumerate}
+\end{enumerate}
 
 
 \section{CLI}
