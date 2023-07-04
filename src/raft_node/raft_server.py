@@ -379,7 +379,10 @@ class RaftServer:
             logger.info(
                 f"Received outdated term, responding to RaftNode {candidate_id} with current term {self.current_term}")
             return response
-        if term >= self.current_term:
+
+        if term > self.current_term:
+            self.current_term = term
+            self.voted_for = None
             self.reset_election_timeout()
 
         if (self.voted_for is None or self.voted_for == candidate_id) and self.log.is_up_to_date(last_log_index,
