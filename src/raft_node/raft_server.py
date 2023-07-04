@@ -44,19 +44,17 @@ class RaftServer:
         self.election_in_progress = False
 
         # Create RPC server, register RPC functions and create RPC server thread
-        self.rpc_server = RPCServer(host=self.hostname, port=self.port)
-        self.rpc_server.register_function(self.append_entries_rpc, 'append_entries')
-        self.rpc_server.register_function(self.request_vote_rpc, 'request_vote')
-
+        self.rpc_server = None
         # Create RPC clients for all other servers
-        self.clients = {_server_id: RPCClient(host=server['host'], port=server['port'])
-                        for _server_id, server in raft_servers.items() if _server_id != server_id}
+        self.first_boot = True
+        # self.live_update = True if raft_config.get_property('RAFT', 'live_update') == 1 else False
+        self.clients = {}
         self.start = time.time()
         self.heartbeat_interval = float(raft_config.get_property('raft', 'heartbeat_interval'))
         self.leader_id = None
         # create thread pool for handling client requests in parallel
-        self.heartbeat_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
-        self.append_entries_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.clients))
+        self.heartbeat_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.raft_servers) - 1)
+        self.append_entries_executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self.raft_servers) - 1)
 
         # create leader next index for each follower
         self.next_index = {}
@@ -71,7 +69,15 @@ class RaftServer:
 
     def run(self):
         logger.info(f"Starting RaftNode with ID: {self.server_id}")
-        threading.Thread(target=self.rpc_server.run).start()
+
+        if self.first_boot:
+            self.rpc_server = RPCServer(host=self.hostname, port=self.port)
+            threading.Thread(target=self.rpc_server.run).start()
+            self.rpc_server.register_function(self.append_entries_rpc, 'append_entries')
+            self.rpc_server.register_function(self.request_vote_rpc, 'request_vote')
+            self.clients = {_server_id: RPCClient(host=server['host'], port=server['port'])
+                            for _server_id, server in self.raft_servers.items() if _server_id != self.server_id}
+            self.first_boot = False
         self.transition_to_follower()
         while self.is_running:
             if self.state == RaftState.FOLLOWER:

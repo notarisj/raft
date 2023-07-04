@@ -103,8 +103,8 @@ class RaftServerApp:
             return {'status': 'OK'}
 
         @app.post("/add_node")
-        async def read_protected_endpoint(server: dict, _: str = Depends(get_current_username)):
-            self.server.add_node(server['id'], server['host'], server['raft_port'])
+        async def _add_node(server: dict, _: str = Depends(get_current_username)):
+            self.server.add_node(int(server['id']), server['host'], server['raft_port'])
             entry = {
                 'host': server['host'],
                 'raft_port': server['raft_port'],
@@ -113,12 +113,12 @@ class RaftServerApp:
             }
             self.raft_config.config[server['id']] = entry
             self.raft_config.save()
-            self.api_servers[server['id']] = {'host': server['host'], 'port': server['api_port']}
+            self.api_servers[int(server['id'])] = {'host': server['host'], 'port': server['api_port']}
             return {'status': 'OK'}
 
         @app.post("/update_node")
-        async def read_protected_endpoint(server: dict, _: str = Depends(get_current_username)):
-            self.server.update_node(server['id'], server['host'], server['raft_port'])
+        async def _update_node(server: dict, _: str = Depends(get_current_username)):
+            self.server.update_node(int(server['id']), server['host'], server['raft_port'])
             entry = {
                 'host': server['host'],
                 'raft_port': server['raft_port'],
@@ -127,11 +127,11 @@ class RaftServerApp:
             }
             self.raft_config.config[server['id']] = entry
             self.raft_config.save()
-            self.api_servers[server['id']] = {'host': server['host'], 'port': server['api_port']}
+            self.api_servers[int(server['id'])] = {'host': server['host'], 'port': server['api_port']}
             return {'status': 'OK'}
 
         @app.post("/delete_node/{server_id}")
-        async def read_protected_endpoint(server_id: int, _: str = Depends(get_current_username)):
+        async def _delete_node(server_id: int, _: str = Depends(get_current_username)):
             if server_id == self.server.server_id:
                 self.server.is_running = False
                 self.server.rpc_server.stop()
@@ -167,7 +167,6 @@ class RaftServerApp:
                 return {"status": 'OK', "message": "Server already stopped"}
             self.server.is_running = False
             self.server.state = RaftState.FOLLOWER
-            self.server.rpc_server.stop()
             return {"status": 'OK'}
 
         return app
