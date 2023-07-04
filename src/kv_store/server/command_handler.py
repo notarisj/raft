@@ -83,7 +83,7 @@ def search(current_server_id: int, server_list: dict, _request: 'ServerJSON',
         if int(server_id) != current_server_id:
             response = client_handlers[server_id].call('kv_request', dump_request)
             if response:
-                logger.info(f"Response from server {server_id}: response")
+                logger.info(f"Response from server {server_id}: {response}")
             if response is not None and response != "NOT FOUND":
                 return response
     return "NOT FOUND"
