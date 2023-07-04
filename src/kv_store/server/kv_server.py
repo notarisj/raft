@@ -219,6 +219,10 @@ class KVServer:
         Returns:
             str: The response from the Raft server.
         """
+        global servers
+
+        servers = JsonConfig('src/configurations/servers.json')
+
         logger.info(f"Received raft config update request: {_request}")
         request = json.loads(_request)
         command = request['command']
