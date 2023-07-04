@@ -4,7 +4,9 @@ from src.configuration_reader import IniConfig
 from src.kv_store.server.query_handler import RequestHandler
 from src.kv_store.server.message_helper import get_key
 from src.kv_store.server.server_json import ServerJSON, ServerJSONEncoder
+from src.logger import MyLogger
 
+logger = MyLogger()
 raft_config = IniConfig('src/configurations/config.ini')
 
 
@@ -41,8 +43,7 @@ def search_top_lvl_key(current_server_id: int, server_list: dict, _request: str,
         if int(server_id) != current_server_id:
             response = client_handlers[server_id].call('kv_request', _request)
             if response:
-                print(f"Response from server with id: {server_id}")
-                print(response)
+                logger.info(f"Response from server {server_id}: {response}")
             if response is not None and response != "NOT FOUND":
                 return True
     return False
@@ -68,7 +69,6 @@ def search(current_server_id: int, server_list: dict, _request: 'ServerJSON',
         str: The value corresponding to the key if it exists in any of the servers,
              "NOT FOUND" otherwise.
     """
-    print(_request.to_json())
     # check if the key is in the current server
     response = query_handler.execute(_request)
     if response != "NOT FOUND" and response is not None:
@@ -83,8 +83,7 @@ def search(current_server_id: int, server_list: dict, _request: 'ServerJSON',
         if int(server_id) != current_server_id:
             response = client_handlers[server_id].call('kv_request', dump_request)
             if response:
-                print(f"Response from server with id: {server_id}")
-                print(response)
+                logger.info(f"Response from server {server_id}: response")
             if response is not None and response != "NOT FOUND":
                 return response
     return "NOT FOUND"

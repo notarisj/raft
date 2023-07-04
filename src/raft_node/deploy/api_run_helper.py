@@ -96,7 +96,6 @@ class RaftServerApp:
 
         @app.get("/get_log")
         def get_log(_: str = Depends(get_current_username)):
-            print(self.raft_config.get_all_properties())
             return self.server.log.entries
 
         @app.get("/authenticate")

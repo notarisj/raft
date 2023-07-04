@@ -80,7 +80,7 @@ class Log:
     def delete_entries_after(self, prev_log_index):
         self.entries = self.entries[:prev_log_index]
         result = self.collection.delete_many({'index': {'$gt': prev_log_index}})
-        print(f"Deleted {result.deleted_count} entries from collection.")
+        logger.info(f"Deleted {result.deleted_count} entries from collection.")
 
     def get_last_term(self):
         if len(self.entries) == 0:
@@ -88,14 +88,12 @@ class Log:
         return self.entries[-1].term
 
     def commit_entries(self, commit_index, new_commit_index):
-        print(f"Committing entries from {commit_index} to {new_commit_index}")
+        logger.info(f"Committing entries from {commit_index} to {new_commit_index}")
         for entry in self.entries[commit_index:new_commit_index]:
-            print('inside commit entries')
             entry.is_committed = True
             self.collection.update_one({'index': entry.index}, {'$set': entry.to_dict()})
             # Send entry to state machine
             try:
-                print('apply to state machine')
                 self.append_to_state_machine(entry.command)
             except ConnectionError as e:
                 logger.error(f"ConnectionError: {e}")
