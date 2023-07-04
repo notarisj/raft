@@ -269,8 +269,9 @@ class KVServer:
         Returns:
             list: A random list of replication IDs.
         """
-        server_ids = [server_id for server_id in servers.config.keys() if server_id != self.server_id]
-        return random.sample(server_ids, min(self.replication_factor, len(servers.config.keys())))
+        _servers = JsonConfig('src/configurations/servers.json')
+        server_ids = [server_id for server_id in _servers.config.keys() if server_id != self.server_id]
+        return random.sample(server_ids, min(self.replication_factor, len(_servers.config.keys())))
 
     @staticmethod
     def all_replication_ids_for_deletion() -> List[int]:
@@ -283,6 +284,7 @@ class KVServer:
         Returns:
             list: A random list of all IDs.
         """
-        server_ids = [server_id for server_id in servers.config.keys()]
+        _servers = JsonConfig('src/configurations/servers.json')
+        server_ids = [server_id for server_id in _servers.config.keys()]
         random.shuffle(server_ids)
         return server_ids
