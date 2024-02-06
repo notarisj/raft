@@ -1,4 +1,4 @@
-# Key Value store with raft consensus algorithm
+# RAFT consensus algorithm with a Key Value Store
 
 ## Setup
 
