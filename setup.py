@@ -10,10 +10,10 @@ setup(
     install_requires=[
         'pymongo~=4.3.3',
         'uvicorn~=0.21.0',
-        'fastapi~=0.94.0',
+        'fastapi~=0.109.1',
         'requests~=2.31.0',
         'prompt_toolkit~=3.0.38',
-        'starlette~=0.27.0',
+        'starlette~=0.36.2',
         'setuptools~=65.5.1',
         'tabulate~=0.9.0',
     ],
